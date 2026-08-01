@@ -23,7 +23,7 @@ description: 项目代码仓初始化管理技能。用户要求初始化新项�
 - AI 引擎默认必建，并锁定为 `vendor/ai/maop` -> `https://github.com/aces-org-zhuang/maop.git` submodule；项目初始化必须通过 maop submodule sparse-checkout 和项目 `.opencode/opencode.json` 桥接 maop 的 `.opencode` 能力面。例外：目标仓库本身就是 `maop` 源仓时，不得把自身再添加为 `vendor/ai/maop`，应切换为 maop 源仓模式。
 - `docs/` 只保存长期稳定知识；研究过程、论文、开源对比和证据包进入研究区。
 - 新增、重命名或删除索引型文件时，同步更新对应 README 或 index。
-- `.opencode/opencode.json` 在普通项目初始化时作为桥接配置生成，至少引用 `../vendor/ai/maop/.opencode/skills`，并登记 `maop-opencode` reference；项目本地组件目录只在项目确有本地覆盖时创建。maop 源仓模式下，`.opencode/skills` 是一等源码目录，`maop-opencode` reference 指向本仓 `.opencode`，不创建嵌套 AI engine submodule。
+- `.opencode/opencode.json` 在普通项目初始化时作为桥接配置生成，至少引用 `vendor/ai/maop/.opencode/skills`，并登记 `maop-opencode` reference；项目本地组件目录只在项目确有本地覆盖时创建。maop 源仓模式下，`.opencode/skills` 是一等源码目录，`maop-opencode` reference 指向本仓 `.opencode`，不创建嵌套 AI engine submodule。
 - 外部参考仓和研究参考仓优先使用 Git submodule，不普通 clone 到主仓。
 - 开发规则只生成通用治理元规则，不复制某个项目的技术栈细则；本技能不引入 `profiles` 或 `overlays` 机制。
 - 不伪造未知技术栈命令；未知时写 `待补充`，并标明需要从技术栈配置或用户确认中补齐。
