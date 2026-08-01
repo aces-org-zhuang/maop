@@ -22,8 +22,8 @@
 
 - 普通宿主项目默认必须创建 `vendor/ai/maop` submodule，来源锁定为 `https://github.com/aces-org-zhuang/maop.git`。
 - maop submodule 使用 sparse-checkout，只检出 `.opencode` 和 `README.md`，让 AI 引擎能力面由 maop 维护。
-- 项目仓 `.opencode/opencode.json` 是桥接配置，必须把 `../vendor/ai/maop/.opencode/skills` 加入 `skills.paths`。
-- 项目仓 `.opencode/opencode.json` 必须把 `../vendor/ai/maop/.opencode` 登记为 `maop-opencode` reference。
+- 项目仓 `.opencode/opencode.json` 是桥接配置，必须把 `vendor/ai/maop/.opencode/skills` 加入 `skills.paths`。
+- 项目仓 `.opencode/opencode.json` 必须把 `vendor/ai/maop/.opencode` 登记为 `maop-opencode` reference。
 - 项目本地 `.opencode/skills`、`.opencode/agents`、`.opencode/commands` 只在确有项目专属覆盖时创建；不要复制 maop 的 `.opencode` 内容。
 - 后续新增或修改 engine-side OpenCode 组件应优先进入 maop 子仓。
 
@@ -34,7 +34,7 @@
 - 不创建 `vendor/ai/maop` submodule。
 - `.opencode/skills/` 是本仓一等源码目录，不是项目本地覆盖目录。
 - `.opencode/opencode.json` 可以把 `skills.paths` 指向 `./skills`，并把 `references.maop-opencode.path` 指向当前 `.opencode` 目录。
-- 文档必须说明：宿主项目才通过 `../vendor/ai/maop/.opencode/skills` 消费 maop，本仓不自嵌套。
+- 文档必须说明：宿主项目才通过 `vendor/ai/maop/.opencode/skills` 消费 maop，本仓不自嵌套。
 
 ## opencode.json 策略
 
@@ -45,26 +45,26 @@
   "$schema": "https://opencode.ai/config.json",
   "skills": {
     "paths": [
-      "../vendor/ai/maop/.opencode/skills"
+      "vendor/ai/maop/.opencode/skills"
     ]
   },
   "references": {
     "maop-opencode": {
-      "path": "../vendor/ai/maop/.opencode",
+      "path": "vendor/ai/maop/.opencode",
       "description": "maop-owned OpenCode skills, agents, commands, and engine-side configuration reference."
     }
   }
 }
 ```
 
-既有项目如已有 `.opencode/opencode.json`，只增量合并 `skills.paths` 和 `references.maop-opencode`，保留用户既有字段。maop 源仓模式下按本仓路径合并，不写入 `../vendor/ai/maop/.opencode/skills`。
+既有项目如已有 `.opencode/opencode.json`，只增量合并 `skills.paths` 和 `references.maop-opencode`，保留用户既有字段。maop 源仓模式下按本仓路径合并，不写入 `vendor/ai/maop/.opencode/skills`。
 
 ## 执行步骤
 
 1. 非 maop 源仓模式下，确认 `vendor/ai/maop/.opencode/skills` 存在；不存在时先执行 `sop-07-submodule-governance.md` 引入或修复 maop submodule。
 2. 创建或合并 `.opencode/opencode.json`，必须带 `$schema`。
-3. 非 maop 源仓模式下，将 `../vendor/ai/maop/.opencode/skills` 加入 `skills.paths`，避免与项目本地 skill 重复扫描。
-4. 非 maop 源仓模式下，将 `../vendor/ai/maop/.opencode` 登记为 `references.maop-opencode`。
+3. 非 maop 源仓模式下，将 `vendor/ai/maop/.opencode/skills` 加入 `skills.paths`，避免与项目本地 skill 重复扫描。
+4. 非 maop 源仓模式下，将 `vendor/ai/maop/.opencode` 登记为 `references.maop-opencode`。
 5. maop 源仓模式下，将 `./skills` 加入 `skills.paths`，并将当前 `.opencode` 登记为 `references.maop-opencode`。
 6. 项目确有本地覆盖时，再创建 `.opencode/skills/`、`.opencode/agents/`、`.opencode/commands/`；maop 源仓模式下这些目录属于 maop 能力源码，可按能力开发需要存在。
 7. 配置变更后提醒用户重启 OpenCode。
