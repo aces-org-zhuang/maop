@@ -190,7 +190,7 @@ patent-mcp-server fetch-one INVALID123
 
 ## 相关技能
 
-- **product-definition / knowledge-discovery**: 竞品与资料发现能力，本技能为其提供专利数据源
+- **product-definition / research Discovery Path**: 竞品与资料发现能力，本技能为其提供专利数据源
 - **enhanced-competitor-analysis**: 增强版竞品分析指南，包含专利检索要点
 
 ## 最佳实践

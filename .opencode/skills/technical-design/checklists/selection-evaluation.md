@@ -1,7 +1,7 @@
 # Selection Evaluation Checklist
 
 - [ ] 用户目标、约束、技术栈和 must-have 能力已明确。
-- [ ] 候选来源可追踪，缺候选时已通过 `knowledge-discovery` 发现。
+- [ ] 候选来源可追踪，缺候选时已通过 `research` 的 Discovery Path 发现。
 - [ ] 已评估维护状态、release、issue/PR 响应和贡献者活跃度。
 - [ ] 已评估 license、CVE、依赖漏洞和默认配置暴露面。
 - [ ] 已评估功能覆盖、API 复杂度、集成成本和平台兼容性。

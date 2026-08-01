@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 
 setup(
-    name="knowledge-discovery-sources",
+    name="research-discovery-sources",
     version="1.0.1",
     description="Minimal tech link discovery CLI (HN + GitHub)",
     author="OpenClaw Team",
@@ -13,7 +13,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "knowledge-discovery-sources=tech_link_finder.cli:main",
+            "research-discovery-sources=tech_link_finder.cli:main",
         ]
     },
 )

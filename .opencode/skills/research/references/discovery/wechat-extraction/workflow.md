@@ -2,16 +2,16 @@
 
 ## 基本信息
 
-**工作流名称**: knowledge-discovery-wechat-extraction
+**工作流名称**: research-discovery-wechat-extraction
 **工作流类型**: aitools
-**项目目录**: `{workflow_artifact_root}/knowledge-discovery-wechat-extraction/`
+**项目目录**: `{workflow_artifact_root}/research-discovery-wechat-extraction/`
 **创建时间**: 2026-04-05
-**工作流文件路径**: `{workflow_artifact_root}/knowledge-discovery-wechat-extraction/trace.md`
+**工作流文件路径**: `{workflow_artifact_root}/research-discovery-wechat-extraction/trace.md`
 **本工作流是否有效**: true
 
 ### 执行前验证工作流
 ```bash
-workflow-creator validate {workflow_artifact_root}/knowledge-discovery-wechat-extraction/trace.md
+workflow-creator validate {workflow_artifact_root}/research-discovery-wechat-extraction/trace.md
 ```
 
 ## 执行步骤
@@ -76,7 +76,7 @@ workflow-creator validate {workflow_artifact_root}/knowledge-discovery-wechat-ex
 
 | 检查点 | 观测方法 | 预期状态 | 异常处理 |
 |--------|----------|----------|----------|
-| OBS_POINT: URL验证 | OBS_METHOD: knowledge-discovery --validate-wechat <url> | 返回VALID | 检查URL格式 |
+| OBS_POINT: URL验证 | OBS_METHOD: research-discovery --validate-wechat <url> | 返回VALID | 检查URL格式 |
 | OBS_POINT: 环境检查 | OBS_METHOD: python -c "import playwright" | 无错误 | 安装playwright |
 | OBS_POINT: 浏览器启动 | OBS_METHOD: playwright install chromium | 安装成功 | 检查网络/代理 |
 | OBS_POINT: 内容提取 | OBS_METHOD: 检查提取结果非空 | 标题和正文存在 | 更新选择器 |
@@ -117,7 +117,7 @@ workflow-creator validate {workflow_artifact_root}/knowledge-discovery-wechat-ex
 
 | 类型 | 名称 | 预期使用 |
 |--------|----------|----------|
-| skill | knowledge-discovery | WHEN 用户提供微信文章URL THEN 触发内容提取 |
+| skill | research | WHEN 用户提供微信文章URL THEN 触发内容提取 |
 | skill | expression-delivery | WHEN 文章包含技术架构 THEN 生成可视化图表 |
 | skill | workflow-creator | WHEN 文章包含操作流程 THEN 生成工作流文件 |
 | mcp | browser | WHEN 需要访问网页 THEN 使用Playwright浏览器 |
@@ -144,4 +144,4 @@ workflow-creator validate {workflow_artifact_root}/knowledge-discovery-wechat-ex
 
 | 领域 | 类型 | 说明 | 示例 |
 |------|------|------|------|
-| aitools | skills/agent | AI能力增强 | aitools-knowledge-discovery-wechat |
+| aitools | skills/agent | AI能力增强 | aitools-research-discovery-wechat |

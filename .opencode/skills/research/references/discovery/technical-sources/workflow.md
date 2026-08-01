@@ -2,11 +2,11 @@
 
 ## 基本信息
 
-**工作流名称**: knowledge-discovery-technical-sources
+**工作流名称**: research-discovery-technical-sources
 **工作流类型**: aitools-skills-discovery
 **项目目录**: `{knowledge_artifact_root}/technical-sources`
 **创建时间**: 2026-04-05
-**工作流文件路径**: skills/knowledge-discovery/references/technical-sources/workflow.md
+**工作流文件路径**: skills/research/references/discovery/technical-sources/workflow.md
 **本工作流是否有效**: false
 
 ### 执行前验证工作流

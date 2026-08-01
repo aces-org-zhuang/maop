@@ -1,4 +1,4 @@
-# knowledge-discovery technical source tool (minimal)
+# research discovery technical source tool (minimal)
 
 This is a minimal, self-contained implementation used by the research ticket template.
 

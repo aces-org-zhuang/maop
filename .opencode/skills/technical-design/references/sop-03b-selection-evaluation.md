@@ -10,7 +10,7 @@
 
 ## Boundaries
 
-- 候选资料、链接和初步 repo 搜索可转入 `knowledge-discovery`。
+- 候选资料、链接和初步 repo 搜索可转入 `research` 的 Discovery Path。
 - 论文级证据包、长期研究课题或深度开源仓对比转入 `research`。
 - 选定后需要 submodule 接入、提交和 PR 治理时转入 `submodule-manager`。
 - 需要图表、slides 或选型可视化时转入 `expression-delivery`。
@@ -36,7 +36,7 @@ Recommended structure:
 ## Evaluation Flow
 
 1. Intake：明确目标能力、必须条件、约束、禁用项、许可证边界和技术栈。
-2. Candidate Discovery：已有候选直接评估；缺候选时用 `knowledge-discovery` 发现候选。
+2. Candidate Discovery：已有候选直接评估；缺候选时用 `research` 的 Discovery Path 发现候选。
 3. Screening：按相关性、维护状态、license、安全、生态、集成成本筛掉明显不合适项。
 4. Deep Evaluation：评估活跃度、成熟度、社区健康度、功能覆盖、风险和迁移成本。
 5. Decision：输出推荐项、备选项、拒绝理由和未闭环风险。
