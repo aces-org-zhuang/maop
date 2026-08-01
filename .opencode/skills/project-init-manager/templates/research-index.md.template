@@ -1,0 +1,16 @@
+# {{PROJECT_NAME}} 研究工作区
+
+本工作区保存研究过程、论文、开源仓库对比、证据包和课题内参考仓。它锁定为 `vendor/research/aces-research` -> `https://github.com/aces-org-zhuang/aces-research.git`，不属于主仓默认项目知识库；只有研究任务才读取本入口和目标课题目录。
+
+## 研究区边界
+
+- 研究过程、候选材料、论文草稿和证据包保存在 `topics/<research_slug>/`。
+- 研究参考仓必须放在具体课题 `topics/<research_slug>/repos/<repo_name>`，优先 Git submodule。
+- 不把参考仓放在研究区根目录。
+- 长期稳定结论需要反哺主仓时，只提炼规则、架构事实、失效模式或实现证据到 `docs/`。
+
+## 课题索引
+
+| 课题 | 状态 | 最近续点 | 重要产物 |
+| --- | --- | --- | --- |
+| 暂无 | - | - | - |

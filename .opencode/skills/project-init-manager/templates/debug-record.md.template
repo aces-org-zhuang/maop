@@ -1,0 +1,21 @@
+# {{TITLE}}
+
+## 问题
+
+{{PROBLEM}}
+
+## 定位方法
+
+{{DIAGNOSIS_METHOD}}
+
+## 修复记录
+
+{{FIX_LOG}}
+
+## 最终状态
+
+{{FINAL_STATE}}
+
+## 关联记录
+
+{{RELATED_RECORDS}}

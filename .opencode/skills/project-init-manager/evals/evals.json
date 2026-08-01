@@ -1,0 +1,23 @@
+{
+  "skill_name": "project-init-manager",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我新建了一个空文件夹，想把它初始化成一个后续能开发、归档资料、维护 docs 和 .opencode 的标准项目仓。先给我做初始化。",
+      "expected_output": "应触发 project-init-manager，先 reasoning-map，再读取 sop-00-intake，并按完整 SOP 链路生成初始化计划或执行落盘；默认规划 aces-research 和 maop 两个锁定 submodule。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "帮我审计这个已有仓库的初始化是否完整，重点看 AGENTS.md、docs 体系、研究区、AI 引擎和 submodule 机制。",
+      "expected_output": "应走审计模式，不覆盖已有文件，读取 intake 和 validation SOP，检查 docs、aces-research、maop、.opencode、submodule 和索引同步。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "我要给一个新项目补齐研究工作区和目录治理规则，研究区必须存在，但技术栈还没定。",
+      "expected_output": "应将研究区视为必建并锁定 aces-research，技术栈未知时按职责域设计目录，不伪造具体构建或测试命令，同时规划 maop AI 引擎 submodule。",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "skill_name": "reasoning-map",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我推演一个 Electron 应用里点击按钮后没有任何响应的问题。需要从顶层链路开始标红绿点，再逐层下钻，最后给出故障全景和优先验证动作。",
+      "expected_output": "以带注释 ASCII 地图为核心的中文 Markdown problem-location 推演报告。用户明确要求逐层下钻，因此可使用完整模式，包含 Level0 链路、纵向下钻、横向扩散、结论和优先验证动作。",
+      "must_include": [
+        "problem-location",
+        "Final Panorama Map",
+        "🟢",
+        "🔴",
+        "直接症状",
+        "根因?",
+        "Mutation Log",
+        "行动优先级"
+      ],
+      "must_not_include": [
+        "🟡",
+        "YELLOW",
+        "ORANGE"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "我们要设计一个新的 MCP 服务诊断面板，请推演特性全景：哪些能力已有，哪些缺失，按 Level0/Level1 逐层标 RED/GREEN，并横向扩散到权限、日志、测试和用户反馈。",
+      "expected_output": "以带注释 ASCII 能力地图为核心的中文 Markdown feature-panorama 报告。用户明确要求 Level0/Level1 和横向扩散，因此可使用完整模式，包含缺失能力下钻、横切扩散和实现优先级。",
+      "must_include": [
+        "feature-panorama",
+        "Final Panorama Map",
+        "权限",
+        "日志",
+        "测试",
+        "用户反馈",
+        "缺失"
+      ],
+      "must_not_include": [
+        "🟡",
+        "YELLOW",
+        "ORANGE"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "现在有一个构建失败，同时我们想补齐自动修复建议能力。请先做问题定位推演，再做特性全景推演，要求只使用 RED/GREEN，最多下钻到 Level3。",
+      "expected_output": "两阶段 Markdown 报告，同时包含 problem-location 和 feature-panorama 的最终带注释 ASCII map，仅使用 RED/GREEN，最多 Level3，并列出未解决 RED 点和下一步动作。",
+      "must_include": [
+        "problem-location",
+        "feature-panorama",
+        "Level3",
+        "Final Panorama Map",
+        "未闭环 RED"
+      ],
+      "must_not_include": [
+        "Level4",
+        "🟡",
+        "YELLOW",
+        "ORANGE"
+      ],
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "推演一个异步链路问题：特性1生成 File A，特性2读取 File A 后报格式错误。要求不要停在特性2表面错误，要追溯直接关联和根本关联，并检查生成、写入、通知、读取的时序。",
+      "expected_output": "以带注释 ASCII 生产者-消费者地图为核心的中文 Markdown problem-location 报告，区分直接关联与根本关联，建模时序，使用 MECE 分解，并且只使用红/绿交通灯标记。",
+      "must_include": [
+        "生产者",
+        "消费者",
+        "提交",
+        "就绪",
+        "时序",
+        "直接",
+        "根本",
+        "文件 A"
+      ],
+      "must_not_include": [
+        "🟡",
+        "YELLOW",
+        "ORANGE"
+      ],
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "信息不完整，但请直接推演，不要先问我：一个任务调度后偶尔失败，怀疑和生成物、消费时机、日志缺失有关。需要多分支图推演，不能只画单链路，最后给出退出检查。",
+      "expected_output": "图优先中文 Markdown 推演报告，不先提澄清问题，把未知项映射为 RED 节点。用户明确要求多分支和退出检查，因此可使用完整模式，包含 ASCII 全景图、时序透镜和退出检查。",
+      "must_include": [
+        "Final Panorama Map",
+        "缺失证据",
+        "时序",
+        "退出检查",
+        "🔴"
+      ],
+      "must_not_include": [
+        "请提供",
+        "你能否",
+        "🟡",
+        "YELLOW",
+        "ORANGE"
+      ],
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "什么是 Electron？用三句话解释。",
+      "expected_output": "这是负触发用例。用户要求简单事实解释，而不是递归图谱推演，因此不应使用 reasoning-map 技能。",
+      "should_trigger": false,
+      "must_not_include": [
+        "Final Panorama Map",
+        "Mutation Log",
+        "Level0",
+        "🔴",
+        "🟢"
+      ],
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "帮我 review 这个函数有没有 bug。",
+      "expected_output": "这是负触发用例，除非用户明确要求图谱推演。普通 code-review 技能应优先。",
+      "should_trigger": false,
+      "must_not_include": [
+        "Final Panorama Map",
+        "Mutation Log",
+        "Level0"
+      ],
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "给我一个实现暗色模式开关的简短计划，不需要推演图。",
+      "expected_output": "这是负触发用例，因为用户明确要求简短计划，并说明不需要推演图。",
+      "should_trigger": false,
+      "must_not_include": [
+        "Final Panorama Map",
+        "Mutation Log",
+        "Level0",
+        "🔴",
+        "🟢"
+      ],
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "我的终端无法正常显示 emoji 红绿灯，请用 ASCII 兼容标识推演一个生成物被消费者提前读取的问题。不要使用 🔴 或 🟢，只用 [RED] 和 [GREEN]。",
+      "expected_output": "中文 Markdown problem-location 全景报告，全篇一致使用 ASCII 备用标记 [RED] 和 [GREEN]，不得混入 emoji 交通灯标记，并且仍包含图优先地图、直接/根本关联、时序透镜和有界验证动作。",
+      "should_trigger": true,
+      "must_include": [
+        "Final Panorama Map",
+        "[RED]",
+        "[GREEN]",
+        "直接",
+        "根本",
+        "时序"
+      ],
+      "must_not_include": [
+        "🔴",
+        "🟢",
+        "🟡",
+        "YELLOW",
+        "ORANGE"
+      ],
+      "files": []
+    }
+  ]
+}

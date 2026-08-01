@@ -1,0 +1,35 @@
+{
+  "skill_name": "submodule-manager",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我想把 https://github.com/modelcontextprotocol/servers 作为 submodule 引入当前项目。先按我们的主仓规范设计克隆路径，看看主仓需要记录哪些构建/验证入口，再确认是否执行。",
+      "expected_output": "应触发 submodule-manager，先做只读上下文检查，从 URL 自动推断项目名、来源和完整 proposed_path；proposed_path 必须按扁平化主仓规范路径矩阵生成，例如 vendor/harness/<repo_name> 或 vendor/external/<repo_name>，而不是要求用户提供。应查询远端 refs，检查 .gitmodules/status/diff，并把 docs/02-development/submodules-index.md 更新纳入计划；不应直接执行 git submodule add。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "帮我更新已有 submodule 到最新 upstream，顺便把项目版图也更新一下。",
+      "expected_output": "应拒绝默认静默更新到最新 upstream，先检查当前 submodule 状态、当前 pinned commit、远端默认分支最新 commit 和主仓索引记录；目标 submodule 或写操作不明确时再确认授权。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "审计一下当前仓库的 git submodule 状态，看看有没有没初始化、commit 漂移或者需要记录到 docs 的地方。",
+      "expected_output": "应执行或建议只读检查 .gitmodules、git submodule status --recursive、git diff --submodule 和 git status --short；只读审计不应先问用户，并应检查主仓是否有子仓边界、消费者、构建入口和验证入口索引。",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "把 AtomGit 上的 https://atomgit.com/openeuler/A-Tune.git 作为 submodule 引入，先不要执行，先给我解析平台、按主仓规范生成路径、远端 refs 检查和主仓索引计划。",
+      "expected_output": "应把 atomgit.com 识别为 platform_hint=atomgit，但仍使用 Git-first 流程；从 URL 自动解析 repo_name=A-Tune，并按扁平化主仓规范路径矩阵给出完整 proposed_path，平台和 owner 不进入路径层级；计划 git ls-remote --symref 和 --tags 检查，不应索要 token，不应使用 GitHub 专用 API。",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "我有一个 Gitee SSH 仓库 git@gitee.com:my-org/my-tool.git，想作为 submodule 加进来。帮我先生成计划。",
+      "expected_output": "应识别 SSH URL、host=gitee.com、platform_hint=gitee、owner=my-org、repo=my-tool；提示认证依赖本地 SSH key/agent/known_hosts，使用 git ls-remote 和 git submodule add 计划，不应要求用户粘贴私钥或 token。",
+      "files": []
+    }
+  ]
+}

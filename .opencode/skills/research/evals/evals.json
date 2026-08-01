@@ -1,0 +1,81 @@
+{
+  "skill_name": "research",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我想研究 agentic coding 工具里 prompt surface 的工程实现，并最终写成论文。请先建档并给出研究推进路径。",
+      "expected_output": "The skill reads or creates research/index.md, reads references/subskills-index.md for phase routing, creates a topic under research/<research_slug>/, records status and next step, and starts from topic intake or trend discovery rather than writing into docs/.",
+      "files": [],
+      "expectations": [
+        "Uses research/index.md as the registry",
+        "Uses references/subskills-index.md to discover child skill modules",
+        "Creates or proposes research/<research_slug>/ as the topic root",
+        "Defines a unique research_root in the form research/<research_slug> before writing artifacts",
+        "Does not put research process materials under docs/",
+        "Defines current phase, next step, and freeze points"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "继续上次那个 in_progress 的 LLM 研究课题，帮我从断点继续补证据并推进论文。",
+      "expected_output": "The skill first inspects research/index.md and references/subskills-index.md, identifies active research topics, asks the user to choose if multiple topics are resumable, then reads the selected topic README and resumes from the recorded current phase and next step using the matching child module.",
+      "files": [],
+      "expectations": [
+        "Reads research/index.md before continuing",
+        "Reads the child skill index before selecting a phase module",
+        "Resumes only one selected research_root and does not mix multiple active topics",
+        "Uses active statuses such as in_progress, blocked, on_hold, drafted, or planned",
+        "Reads the selected topic README before producing downstream artifacts",
+        "Checks required upstream artifacts before evidence or paper generation"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "我有两个正在进行的研究，一个是 prompt-surface，一个是 opencode-plugin-ecosystem。帮我继续研究，但不要把两个课题材料混在一起。",
+      "expected_output": "The skill reads research/index.md, detects multiple active topics, asks the user to choose or confirms separate batches, assigns one research_root per topic using research/<Slug>, and refuses to write mixed artifacts into the same directory.",
+      "files": [],
+      "expectations": [
+        "Detects multiple active research topics",
+        "Asks the user to choose a single topic before writing",
+        "Uses research/<Slug> as the isolated research_root",
+        "Does not mix outputs from different topics into one directory"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "把研究里的一个稳定结论变成项目规则，但不要把论文草稿当作项目知识库。",
+      "expected_output": "The skill separates research materials from durable docs, extracts only the stable conclusion into the correct docs location, updates the relevant docs index, and keeps the full research topic in research/.",
+      "files": [],
+      "expectations": [
+        "Keeps full research materials in research/",
+        "Does not copy the whole research folder into docs/",
+        "Updates the appropriate docs index only for stable extracted rules",
+        "Explains the docs/research boundary"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "为 prompt-surface 这个研究课题补充最新技术文章、GitHub 项目和趋势链接，作为后续选仓和论文背景材料。",
+      "expected_output": "The skill resumes or creates the prompt-surface research_root, reads references/subskills-index.md, routes to tech-link-finder as a source discovery module, and writes discovered links under research/<research_slug>/sources/ without writing to docs/ or another topic.",
+      "files": [],
+      "expectations": [
+        "Routes source discovery work through tech-link-finder",
+        "Uses the selected research_root before collecting links",
+        "Writes source links under research/<research_slug>/sources/",
+        "Does not treat collected links as durable docs knowledge"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "这个微信文章 https://mp.weixin.qq.com/s/example 是我当前研究的证据来源，帮我抽取内容并纳入课题证据材料。",
+      "expected_output": "The skill validates that the URL is a WeChat article source, routes extraction to weixin-article, writes the extracted note under the current research_root sources/weixin/, registers it in sources/source-index.md, and keeps the original weixin skill independent for non-research use.",
+      "files": [],
+      "expectations": [
+        "Routes mp.weixin.qq.com extraction through weixin-article",
+        "Requires or determines the current research_root before writing",
+        "Writes extracted article notes under sources/weixin/",
+        "Updates sources/source-index.md or equivalent source registry"
+      ]
+    }
+  ]
+}

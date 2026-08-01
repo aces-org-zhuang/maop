@@ -1,0 +1,21 @@
+# {{TITLE}}
+
+## 失效场景
+
+{{FAILURE_SCENARIO}}
+
+## 定位方式
+
+{{DIAGNOSIS_METHOD}}
+
+## 根因
+
+{{ROOT_CAUSE}}
+
+## 最终修复
+
+{{FINAL_FIX}}
+
+## 验证方式
+
+{{VALIDATION}}

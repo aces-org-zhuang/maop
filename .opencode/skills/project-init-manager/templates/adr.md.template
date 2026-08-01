@@ -1,0 +1,17 @@
+# ADR-{{NUMBER}}: {{TITLE}}
+
+## 状态
+
+{{STATUS}}
+
+## 背景
+
+{{CONTEXT}}
+
+## 决策
+
+{{DECISION}}
+
+## 后果
+
+{{CONSEQUENCES}}

@@ -1,0 +1,22 @@
+# Project OpenCode Components
+
+本目录保存项目本地 OpenCode 组件。
+
+## 目录
+
+- `skills/`: 项目本地 skills。
+- `agents/`: 项目本地 agents。
+- `commands/`: 项目本地 commands。
+- `plugins/`: 项目本地 plugins，可选。
+
+## 配置策略
+
+只有在确认 `opencode.json` schema、已有有效配置或用户明确提供模板时，才生成 `.opencode/opencode.json`。
+
+建议 schema：`https://opencode.ai/config.json`。
+
+修改 skill、agent、command、plugin 或 `opencode.json` 后，需要重启 OpenCode 才会生效。
+
+## maop 边界
+
+AI 引擎 submodule 位于 `vendor/ai/maop/`。`vendor/ai/maop/.opencode/` 属于 maop 仓库，由 maop 独立演进。本项目 `.opencode/` 只保存项目级组件，不复制、不覆盖 maop 的 `.opencode`。

@@ -1,0 +1,69 @@
+# {{PROJECT_NAME}} Agent Rules
+
+## 语言规则
+
+本项目默认采用中文友好的交互和文档风格。必要时保留英文技术术语、代码标识、API 名称、命令和路径。
+
+## 项目定位
+
+{{PROJECT_DESCRIPTION}}
+
+## 工程范围
+
+- 源码域：{{SOURCE_DOMAIN}}
+- 构建域：{{BUILD_DOMAIN}}
+- 安装域：{{INSTALL_DOMAIN}}
+- 测试域：{{TEST_DOMAIN}}
+- 文档域：`docs/`
+- 研究域：`vendor/research/aces-research/`
+- AI 引擎域：`vendor/ai/maop/`
+- 外部依赖域：`vendor/`
+- 自动化域：`scripts/` 和 `.opencode/`
+
+## 关键规则
+
+- 复杂问题定位、架构调整、文档体系演进、研究边界或 submodule 操作前，先使用 `reasoning-map` 推演。
+- 不伪造未知技术栈命令；未知命令标记为 `待补充`。
+- 新增顶层目录时，必须说明职责域、消费者和索引同步位置。
+- 真实凭据不得写入仓库、docs、evidence、日志或 `.opencode` 配置。
+- 开发规则只保留通用治理元规则；技术栈细则必须来自本项目真实配置、源码或用户确认。
+
+## 文档规则
+
+- 长期稳定知识放在 `docs/`。
+- 非研究类阶段性工程记录放在 `guides/`。
+- 研究过程、论文、开源仓库对比和证据包放在 `vendor/research/aces-research/`。
+- 新增、重命名或删除索引型文件时，必须同步对应 README 或 index。
+
+## 研究区规则
+
+- 研究区是必建部分：`vendor/research/aces-research/` -> `https://github.com/aces-org-zhuang/aces-research.git`。
+- 研究区不进入默认项目上下文；只有研究任务才读取研究区 `index.md` 和目标课题。
+- 研究参考仓必须放在具体课题 `topics/<research_slug>/repos/<repo_name>`，优先 Git submodule。
+
+## AI 引擎规则
+
+- AI 引擎是必建 submodule：`vendor/ai/maop/` -> `https://github.com/aces-org-zhuang/maop.git`。
+- `vendor/ai/maop/.opencode/` 属于 maop 仓库，由 maop 独立演进。
+- 项目仓 `.opencode/` 只保存项目级组件和路由，不复制或覆盖 maop 的 `.opencode`。
+
+## 项目结构
+
+必须列出所有已创建顶层目录及职责，不能只列源码目录。
+
+```text
+{{DIRECTORY_MAP}}
+```
+
+## 常用命令
+
+```bash
+{{INSTALL_COMMAND}}
+{{DEV_COMMAND}}
+{{TEST_COMMAND}}
+{{BUILD_COMMAND}}
+```
+
+## OpenCode 本地配置
+
+项目本地 OpenCode 组件位于 `.opencode/`。修改 skill、agent、command 或 `opencode.json` 后，需要重启 OpenCode 才会生效。
