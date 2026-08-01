@@ -11,14 +11,15 @@ description: 必须用于技术设计、架构影响面、技术方案、技术�
 
 1. 读取 `references/sop-00-intake.md`，确认需求输入、项目上下文和设计范围。
 2. 涉及复杂影响面、跨模块关系、异步时序、兼容性、架构、路线或根因不明的设计取舍时，先使用 `reasoning-map`，并对照 `checklists/design-governance.md` 执行事前推演门禁；进入下一设计环节前，关键结论置信度必须 >=90%，低于 90% 时只能输出假设、风险和验证动作，不能定版或推进实现。
-3. 需要图表、原型或其他表达产物时转入 `expression-delivery`；本技能决定是否需要表达产物，`expression-delivery` 决定形式和质量。
-4. 需要技术选型、依赖选型、开源库/框架/仓库评估或 GitHub repo 候选对比时，使用本技能的 Selection Evaluation 子阶段；缺候选时先转入 `research` 的 Discovery Path 发现候选，深度开源实现洞察或证据包也转入 `research`。本技能的开源选型面向解决方案依赖引入，不等同于 research 的论文/样本仓库选择。
-5. 如果项目缺少基础治理、目录规则或 `.opencode` 桥接，转入 `project-init-manager`，不要在本技能中重建初始化规则。
-6. 生成完整技术设计或实施切片前，先执行 Preview Gate，并等待用户确认或明确标注假设后再继续。预览可用 ASCII/Mermaid 架构图、时序图、状态机图、DFD、接口草案或低保真交互草图。
-7. 当用户明确要求“先只输出草图 / 不要完整设计 / 不要写代码”时，不做仓库探索、不读取大量文档；只基于已给输入生成预览和待确认假设。
-8. 用户未提供项目专有系统名称、路径或运行时能力时，草图必须保持跨项目中性；不要引入当前仓库的产品名、目录、运行时、网关或工具链。
-9. 不要把技术设计请求改派给角色型名称；在 maop 技能体系内，本技能就是需求确认后的设计入口。
-10. 设计定版、进入实现或高风险 POC 前执行 Review Gate，review 分数必须 >=80，`checklists/design-governance.md` 关键项必须通过，且关键架构/路线/选型结论置信度必须 >=90%；低于门槛先修订、补证据或设计最小验证，不进入下一环节。
+3. 代码/文档探索、候选扩展、依赖初筛、方案局部评审可使用 subagent Task；使用前按 `development-workflow/references/subagent-context-budgeting.md` 定义边界和 return contract，最终架构、技术路线、primary 依赖和 Review Gate 由主 agent 决定。
+4. 需要图表、原型或其他表达产物时转入 `expression-delivery`；本技能决定是否需要表达产物，`expression-delivery` 决定形式和质量。
+5. 需要技术选型、依赖选型、开源库/框架/仓库评估或 GitHub repo 候选对比时，使用本技能的 Selection Evaluation 子阶段；缺候选时先转入 `research` 的 Discovery Path 发现候选，深度开源实现洞察或证据包也转入 `research`。本技能的开源选型面向解决方案依赖引入，不等同于 research 的论文/样本仓库选择。
+6. 如果项目缺少基础治理、目录规则或 `.opencode` 桥接，转入 `project-init-manager`，不要在本技能中重建初始化规则。
+7. 生成完整技术设计或实施切片前，先执行 Preview Gate，并等待用户确认或明确标注假设后再继续。预览可用 ASCII/Mermaid 架构图、时序图、状态机图、DFD、接口草案或低保真交互草图。
+8. 当用户明确要求“先只输出草图 / 不要完整设计 / 不要写代码”时，不做仓库探索、不读取大量文档；只基于已给输入生成预览和待确认假设。
+9. 用户未提供项目专有系统名称、路径或运行时能力时，草图必须保持跨项目中性；不要引入当前仓库的产品名、目录、运行时、网关或工具链。
+10. 不要把技术设计请求改派给角色型名称；在 maop 技能体系内，本技能就是需求确认后的设计入口。
+11. 设计定版、进入实现或高风险 POC 前执行 Review Gate，review 分数必须 >=80，`checklists/design-governance.md` 关键项必须通过，且关键架构/路线/选型结论置信度必须 >=90%；低于门槛先修订、补证据或设计最小验证，不进入下一环节。
 
 ## Stage Router
 

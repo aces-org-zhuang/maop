@@ -35,9 +35,10 @@ For workflow-heavy, governance, research, technical-design, implementation, proj
 
 1. Use `reasoning-map` before drafting or large edits to map the skill goal, trigger surface, stage boundaries, inputs, outputs, artifacts, validation path, feedback loop, and likely RED points.
 2. Prefer an SOP-routed structure: short `SKILL.md` router plus `references/sop-*.md`, `templates/`, `checklists/`, and `evals/` when the workflow spans multiple phases.
-3. Read `references/sop-full-link-quality.md` for any new or substantially revised SOP-routed skill, and keep its intake -> design -> write -> validate -> feedback loop intact.
-4. Before final delivery, verify trigger quality, execution completeness, output quality, resource routing, validation coverage, and user-visible restart/package guidance. If the user asked for a confidence target, follow `references/self-test-confidence.md`; production-readiness defaults to >=90% confidence.
-5. After edits, use `reasoning-map` again to check whether original RED points, downstream consumers, evals, templates, and feedback routes are covered.
+3. For workflow-heavy skills, include bounded subagent Task guidance when broad search, code/document exploration, candidate expansion, extraction, or independent review would otherwise pollute the main context; use the pattern from `development-workflow/references/subagent-context-budgeting.md` and keep final decisions in the main agent.
+4. Read `references/sop-full-link-quality.md` for any new or substantially revised SOP-routed skill, and keep its intake -> design -> write -> validate -> feedback loop intact.
+5. Before final delivery, verify trigger quality, execution completeness, output quality, resource routing, validation coverage, and user-visible restart/package guidance. If the user asked for a confidence target, follow `references/self-test-confidence.md`; production-readiness defaults to >=90% confidence.
+6. After edits, use `reasoning-map` again to check whether original RED points, downstream consumers, evals, templates, and feedback routes are covered.
 
 ## Information Quality and Density
 
