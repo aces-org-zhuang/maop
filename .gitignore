@@ -1,0 +1,42 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Logs
+*.log
+logs/
+
+# Caches and temporary files
+.cache/
+.tmp/
+tmp/
+temp/
+.DS_Store
+Thumbs.db
+
+# Build outputs
+dist/
+build/
+out/
+coverage/
+
+# Node dependencies
+node_modules/
+!.opencode/node_modules/
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Editor state
+.vscode/
+.idea/
+*.swp

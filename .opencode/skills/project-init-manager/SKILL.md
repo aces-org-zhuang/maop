@@ -20,10 +20,10 @@ description: 项目代码仓初始化管理技能。用户要求初始化新项�
 - `SKILL.md` 是路由层，不承载完整初始化细节。
 - 目录设计先按职责域，再按技术栈映射具体目录名。
 - 研究区必建，并锁定为 `vendor/research/aces-research` -> `https://github.com/aces-org-zhuang/aces-research.git` submodule，与主仓默认项目知识库隔离。
-- AI 引擎必建，并锁定为 `vendor/ai/maop` -> `https://github.com/aces-org-zhuang/maop.git` submodule；项目初始化必须通过 maop submodule sparse-checkout 和项目 `.opencode/opencode.json` 桥接 maop 的 `.opencode` 能力面。
+- AI 引擎默认必建，并锁定为 `vendor/ai/maop` -> `https://github.com/aces-org-zhuang/maop.git` submodule；项目初始化必须通过 maop submodule sparse-checkout 和项目 `.opencode/opencode.json` 桥接 maop 的 `.opencode` 能力面。例外：目标仓库本身就是 `maop` 源仓时，不得把自身再添加为 `vendor/ai/maop`，应切换为 maop 源仓模式。
 - `docs/` 只保存长期稳定知识；研究过程、论文、开源对比和证据包进入研究区。
 - 新增、重命名或删除索引型文件时，同步更新对应 README 或 index。
-- `.opencode/opencode.json` 在新项目初始化时作为桥接配置生成，至少引用 `../vendor/ai/maop/.opencode/skills`，并登记 `maop-opencode` reference；项目本地组件目录只在项目确有本地覆盖时创建。
+- `.opencode/opencode.json` 在普通项目初始化时作为桥接配置生成，至少引用 `../vendor/ai/maop/.opencode/skills`，并登记 `maop-opencode` reference；项目本地组件目录只在项目确有本地覆盖时创建。maop 源仓模式下，`.opencode/skills` 是一等源码目录，`maop-opencode` reference 指向本仓 `.opencode`，不创建嵌套 AI engine submodule。
 - 外部参考仓和研究参考仓优先使用 Git submodule，不普通 clone 到主仓。
 - 开发规则只生成通用治理元规则，不复制某个项目的技术栈细则；本技能不引入 `profiles` 或 `overlays` 机制。
 - 不伪造未知技术栈命令；未知时写 `待补充`，并标明需要从技术栈配置或用户确认中补齐。
@@ -100,8 +100,8 @@ sop-00-intake
 
 - 已初始化或已审计的项目路径。
 - 已创建、已更新、保留未覆盖的关键文件。
-- 技术栈目录映射中仍需用户或配置补齐的项。
+- 技术栈或能力开发目录映射中仍需用户或配置补齐的项。
 - 研究区路径和续点入口。
-- AI 引擎 submodule 路径、sparse-checkout 状态和 `.opencode` 桥接边界。
-- `.opencode/opencode.json` 是否正确引用 `vendor/ai/maop/.opencode/skills` 和 `maop-opencode` reference。
+- AI 引擎 submodule 路径、sparse-checkout 状态和 `.opencode` 桥接边界；maop 源仓模式下说明已排除自嵌套。
+- `.opencode/opencode.json` 是否正确引用 `vendor/ai/maop/.opencode/skills` 和 `maop-opencode` reference；maop 源仓模式下是否正确引用本仓 `.opencode/skills` 并登记本仓 `.opencode` reference。
 - 验证结果和未闭环 RED 点。
