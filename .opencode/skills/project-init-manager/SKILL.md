@@ -102,6 +102,7 @@ sop-00-intake
 - 已创建、已更新、保留未覆盖的关键文件。
 - 技术栈或能力开发目录映射中仍需用户或配置补齐的项。
 - 研究区路径和续点入口。
-- AI 引擎 submodule 路径、sparse-checkout 状态和 `.opencode` 桥接边界；maop 源仓模式下说明已排除自嵌套。
-- `.opencode/opencode.json` 是否正确引用 `vendor/ai/maop/.opencode/skills` 和 `maop-opencode` reference；maop 源仓模式下是否正确引用本仓 `.opencode/skills` 并登记本仓 `.opencode` reference。
+- 普通宿主项目：AI 引擎 submodule 路径、sparse-checkout 状态和 `.opencode` 桥接边界。
+- maop 源仓模式：本仓 `.opencode/skills` 能力源码边界、`.opencode/opencode.json` 本仓引用方式，以及已排除 `vendor/ai/maop` 自嵌套。
+- `.opencode/opencode.json` 是否按当前模式正确登记 `maop-opencode` reference。
 - 验证结果和未闭环 RED 点。

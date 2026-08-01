@@ -12,12 +12,13 @@
 - `docs/debugs/index.md` 存在。
 - `docs/evidences/index.md` 存在。
 - `guides/` 存在或已记录暂缓原因。
-- `.opencode/opencode.json` 存在，并引用 `../vendor/ai/maop/.opencode/skills`。
-- `.opencode/opencode.json` 包含 `references.maop-opencode`，指向 `../vendor/ai/maop/.opencode`。
+- `.opencode/opencode.json` 存在，并按当前模式引用 OpenCode 能力面。
+- 普通宿主项目：`.opencode/opencode.json` 引用 `../vendor/ai/maop/.opencode/skills`，并将 `references.maop-opencode` 指向 `../vendor/ai/maop/.opencode`。
+- maop 源仓模式：`.opencode/opencode.json` 引用本仓 `./skills`，并将 `references.maop-opencode` 指向当前 `.opencode` 目录。
 - `vendor/research/aces-research/index.md` 存在，或已规划锁定 submodule 写操作。
-- `vendor/ai/maop` 存在，或已规划锁定 submodule 写操作。
-- `vendor/ai/maop` 已启用 sparse-checkout，只检出 `.opencode` 和 `README.md`，或已记录待执行命令。
-- 项目仓 `.opencode` 与 `vendor/ai/maop/.opencode` 的桥接边界已记录。
+- 普通宿主项目：`vendor/ai/maop` 存在或已规划锁定 submodule 写操作，并已规划 sparse-checkout 只检出 `.opencode` 和 `README.md`。
+- maop 源仓模式：已明确排除 `vendor/ai/maop` 自嵌套，并说明本仓 `.opencode/skills` 是能力源码。
+- 项目 `.opencode` 与 maop 能力面的边界已记录。
 - 如果使用 submodule，`.gitmodules` 与实际路径一致。
 - 常用命令来自真实配置；未知命令标记为 `待补充`。
 - 未闭环 RED 点已写入最终输出或对应 roadmap/debug 记录。

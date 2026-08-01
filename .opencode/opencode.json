@@ -8,7 +8,7 @@
   "references": {
     "maop-opencode": {
       "path": ".",
-      "description": "maop-owned OpenCode skills, agents, commands, and engine-side configuration reference. Host projects should reference ../vendor/ai/maop/.opencode instead."
+      "description": "maop source repository OpenCode capability surface."
     }
   }
 }

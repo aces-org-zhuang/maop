@@ -12,5 +12,6 @@
 - 写操作命令已展示给用户确认。
 - 新增长期 submodule 后会更新主仓索引。
 - 研究工作区锁定路径和 URL 为 `vendor/research/aces-research` -> `https://github.com/aces-org-zhuang/aces-research.git`。
-- AI 引擎锁定路径和 URL 为 `vendor/ai/maop` -> `https://github.com/aces-org-zhuang/maop.git`。
+- 普通宿主项目：AI 引擎锁定路径和 URL 为 `vendor/ai/maop` -> `https://github.com/aces-org-zhuang/maop.git`。
+- maop 源仓模式：不得执行 `vendor/ai/maop` submodule 写操作。
 - 研究参考仓路径为 `vendor/research/aces-research/topics/<research_slug>/repos/<repo_name>`。
