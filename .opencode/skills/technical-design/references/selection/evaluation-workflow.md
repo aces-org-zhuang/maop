@@ -15,7 +15,13 @@
 - 询问编程语言偏好（可选）
 - 询问最小star数要求（默认100）
 - 询问需要评估的项目数量（默认10）
+- 明确这是解决方案依赖选型，不是 research 样本选择；记录目标能力、必须条件、项目构建方式、包管理器、运行时平台、license 边界和禁用项。
 - 保存配置到 `{selection_artifact_root}/config.md` 或项目既有设计记录。
+
+### 任务1b：执行 reasoning-map 门禁
+- 在推荐候选前，使用 `reasoning-map` 推演目标能力、现有项目边界、候选依赖、集成路径、构建/测试影响、license/security 风险和退出路径。
+- 推荐项关键结论置信度必须 >=90%；低于 90% 时，输出 RED 点和补证动作，不得定版或进入实现计划。
+- 置信度依据必须来自可追踪证据，例如 README/API 文档、release、license、security advisory、示例集成、包管理元数据、构建/测试 probe 或项目约束。
 
 ### 任务2：搜索GitHub项目
 - 使用 web_search 搜索 GitHub 项目
@@ -56,10 +62,11 @@
 
 ### 任务7：生成综合评分和推荐
 - 合并所有评分数据
-- 计算加权总分（活跃度40%、成熟度30%、社区30%）
+- 计算加权总分；解决方案适配、集成成本、构建完整性和风险优先级不得低于活跃度、成熟度和社区指标。
 - 按总分排序
 - 为每个项目生成推荐理由
 - 标注推荐权重（高/中/低）
+- 标注 `decision_confidence`，推荐进入实现或 POC 的方案必须 >=90%。
 - 生成备选清单报告
 - 等待用户确认
 - 输出：`{selection_artifact_root}/candidates.md`
@@ -70,6 +77,7 @@
 - 识别互补关系
 - 标注依赖层级（基础设施层/应用层）
 - 生成依赖关系图（ASCII）
+- 标注建议引入方式：package/SDK/framework/service/CLI/submodule；默认以声明依赖接入，非必要不 fork、不 patch、不复制源码自研化。
 - 保存到 `{selection_artifact_root}/dependencies.md`
 
 ## 阶段二：安全扫描和暴露面分析
@@ -127,6 +135,16 @@
 ## 阶段四：集成建议
 
 ### 任务14：生成集成建议
+- 声明依赖引入方式、版本锁定策略、构建/测试完整性保障、license/security 处理和回滚/替换路径。
+- 只有存在明确不可替代缺口、上游不可接受修复、license 允许且维护成本可控时，才建议 fork/patch 或自研替代；必须把该判断作为 RED 风险交给用户确认。
 - 需要真实集成、安装、验证或交付时，转入 `implementation-delivery`。
 - 只需要方案表达、部署流程图或演示材料时，转入 `expression-delivery`。
 - 输出：`{selection_artifact_root}/integration-plan.md`
+
+### 任务15：生成项目软件构建图
+- 输出 `{selection_artifact_root}/software-build-map.md`，使用 ASCII 或 Mermaid 展示项目软件构建图。
+- 图中必须清晰区分 first-party 自研组件、third-party 开源组件、外部服务/CLI/SDK、构建工具链和运行时边界。
+- 对每个开源组件标注引入方式（package/SDK/framework/service/CLI/submodule）、版本锁定位置、license/security 检查点和 build/test 验证命令或等价验证动作。
+- 对每个自研组件标注它消费哪些开源组件、输出哪些构建产物、在哪个环节被测试或打包。
+- 图后必须补充 Markdown table，记录组件间交互逻辑和关键 IPO（输入、处理、输出）；复杂字段放进表格，不要污染构建图可读性。
+- 如果构建图中存在 fork/patch/源码复制或自研替代，必须标为 RED 风险并说明为什么声明依赖不足。

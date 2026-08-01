@@ -18,8 +18,13 @@ description: |
 - `{research_root}/repos-index.md`
 
 ## 约束
-- 输出必须可追溯：包含仓库URL、选择理由、评分维度。
-- 多因子选型：代码质量 / 文档 / 社区活跃度 / 技术相关性。
+- 选择任何核心样本仓库前，必须先使用 `reasoning-map` 执行研究对象门禁推演，先判断研究主题的直接系统对象、用户工作流、系统边界、架构闭环和底层依赖层级；不要直接从关键词相似度进入仓库清单。
+- 输出必须可追溯：包含仓库URL、选择理由、评分维度、层级归属和 evidence notes。
+- 多因子选型：课题直接性 / 工作流一致性 / 架构一致性 / 产物一致性 / 代码质量 / 文档 / 社区活跃度 / 技术相关性。
+- 核心样本仓库必须满足 `topic_directness >= 0.90`，并在 `selection.md` 说明置信度依据；低于 0.90 的仓库只能进入候选池或 Level0 支撑技术池，不能写入冻结核心样本。
+- 必须先覆盖足够的 Level1 直接研究对象，再扩展 Level0 底层支撑对象。Level1 指与课题在问题域、研发/用户工作流、系统边界和架构闭环上直接同构的开源项目；Level0 指 RAG、向量库、LLM orchestration、workflow engine、sandbox、browser automation、terminal execution、MCP 等底层能力或依赖。
+- 当研究主题是 AI 辅助研发、自动化编程、coding agent、软件工程 agent、代码修改/验证闭环时，优先选择自动化编程或 AI coding agent 开源项目作为 Level1；不要把 RAG、向量数据库、通用 agent 框架或 prompt framework 作为主研究对象，除非它们被证明补足了 Level1 架构中的关键瓶颈。
+- 如果候选清单主要由 Level0 基础技术栈组成，或缺少 Level1 代表性样本，必须把 selection 标记为 RED/未通过，重新搜索并补齐直接研究对象后再冻结 `repos-index.md`。
 - `repos-index.md` 是论文可复现样本边界；深度阅读前必须冻结或明确标记为暂定。
 - 进入核心样本或后续需要源码洞察的仓库，必须记录目标 submodule 路径 `{research_root}/repos/<repo_name>`；不得规划为普通 clone、主仓 `vendor/research/<repo_name>` 或 `aces-research` 根目录子仓。
 - 写入后同步更新 `{research_root}/README.md` 的当前阶段、下一步和样本仓库冻结点。
