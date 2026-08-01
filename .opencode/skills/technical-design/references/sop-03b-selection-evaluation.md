@@ -18,6 +18,7 @@
 - 非必要不侵入修改第三方源码，不把候选仓库复制进项目后自研化，也不把解决方案依赖选型当作 research 的论文样本或源码研究对象。
 - 选型必须自顶向下：先选择系统架构级方案形态和关键能力边界，再选择子系统/模块级组件，最后才选择底层库、SDK、框架或具体实现依赖；不得从底层实现候选直接反推整体架构。
 - 选型是迭代推演过程，不是一次性打分表。每轮 reasoning-map 都可以增加候选、删除候选、扩大候选范围或收敛范围；只有满足收敛条件时才输出推荐项。
+- 最终选型必须收敛到确定且唯一的主方案：同一个特性、能力块或模块边界只能引入一个 primary 依赖/框架/SDK；同质候选只能作为 fallback、备选或 rejected 记录，不得同时引入两个同质依赖。
 
 ## Artifact Root
 
@@ -46,8 +47,8 @@ Recommended structure:
 4. Iterative Expansion/Convergence：每轮 reasoning-map 记录新增候选、删除候选、扩大范围、收敛范围和未闭环 RED 点；如果发现系统级或模块级候选不足，必须回退扩大范围。
 5. Screening：按解决方案适配、架构完整性、维护状态、license、安全、生态、集成成本、构建完整性和退出成本筛掉明显不合适项。
 6. Deep Evaluation：评估活跃度、成熟度、社区健康度、功能覆盖、风险、迁移成本、版本锁定方式和项目构建/测试影响。
-7. Convergence Gate：只有关键架构能力块已有候选覆盖、模块/依赖边界清晰、重复造轮子风险已排除、候选差异已比较、关键结论置信度 >=90% 时，才允许进入 Decision；否则继续扩展或收敛。
-8. Decision：输出推荐项、备选项、拒绝理由、引入方式和未闭环风险；置信度低于 90% 时不得定版，只能进入验证计划。
+7. Convergence Gate：只有关键架构能力块已有候选覆盖、模块/依赖边界清晰、重复造轮子风险已排除、候选差异已比较、每个特性/能力块只有一个 primary 选择、关键结论置信度 >=90% 时，才允许进入 Decision；否则继续扩展或收敛。
+8. Decision：输出唯一推荐项、备选项、拒绝理由、引入方式和未闭环风险；置信度低于 90% 或同一特性仍存在多个同质 primary 候选时不得定版，只能进入验证计划。
 9. Software Build Map：输出项目软件构建图，清晰展示自研组件、开源组件、依赖引入方式、版本锁定、构建/运行边界和验证路径；图后必须用 Markdown table 补充组件交互逻辑和关键 IPO（输入、处理、输出），避免把图塞入过多文字。
 10. Validation Plan：设计最小验证动作，例如 spike、sample integration、API probe、license/security check、build/test probe 或 POC Gate。
 
@@ -68,5 +69,6 @@ Recommended structure:
 - 最终建议必须能追溯到用户约束和评估证据。
 - 不确定项必须列为风险或验证动作，不用高分掩盖。
 - `selection-matrix.md` 必须记录自顶向下选型层级、每轮候选增删、扩展/收敛原因和最终收敛条件。
+- `selection-matrix.md` 必须明确每个特性/能力块的唯一 primary 选择；同质候选必须标为 fallback、alternative 或 rejected，并说明不同时引入的原因。
 - 选定方案进入实现前，必须说明 `reasoning-map` 门禁结论、关键置信度、依赖引入方式、版本/构建保障、license/security 边界和 POC Gate。
 - 依赖选型完成后，必须产出 `software-build-map.md` 或等价项目软件构建图，清晰区分 first-party 自研组件与 third-party 开源组件，并标注它们如何进入构建、运行和验证链路；同时补充组件交互逻辑和关键 IPO 表。
