@@ -57,22 +57,22 @@ mp.weixin.qq.com URL 阅读、总结、提取、证据化
 
 ## Path Index
 
-- `references/sop-00-root-intake.md`: 创建或续接 `research_root`。
-- `references/sop-01-pipeline-routing.md`: path-based 路由和部分执行规则。
-- `references/sop-02-discovery.md`: 外部资料、技术链接、趋势、tool/skill 发现。
-- `references/sop-03-weixin-search.md`: 关键词 + Playwright MCP + 搜狗微信搜索。
-- `references/sop-04-innovation-discovery.md`: 创新方法论和机会发现。
-- `references/sop-05-research-workspace.md`: research workspace、README 和产物规范。
-- `references/sop-06-evidence.md`: 来源验证、claim-evidence 和证据边界。
-- `references/sop-07-innovation-report.md`: 技术创新报告和创新汇报输出。
-- `references/subskills-index.md`: 原深度研究子技能索引。
+- `paths/sop-00-root-intake.md`: 创建或续接 `research_root`。
+- `paths/sop-01-pipeline-routing.md`: path-based 路由和部分执行规则。
+- `paths/sop-02-discovery.md`: 外部资料、技术链接、趋势、tool/skill 发现。
+- `paths/sop-03-weixin-search.md`: 关键词 + Playwright MCP + 搜狗微信搜索。
+- `paths/sop-04-innovation-discovery.md`: 创新方法论和机会发现。
+- `paths/sop-05-research-workspace.md`: research workspace、README 和产物规范。
+- `paths/sop-06-evidence.md`: 来源验证、claim-evidence 和证据边界。
+- `paths/sop-07-innovation-report.md`: 技术创新报告和创新汇报输出。
+- `router/subskills-index.md`: 原深度研究子技能索引。
 
 ## Migrated Assets
 
-- `references/discovery/technical-sources/`: 技术资料和趋势发现流程。
-- `references/discovery/wechat-extraction/`: 微信文章提取、安全和输出格式。
-- `references/discovery/skills-ecosystem/`: tool/skill 发现与安装规则。
-- `references/innovation/methodology/`: 创新方法论参考。
+- `assets/discovery/technical-sources/`: 技术资料和趋势发现流程。
+- `assets/discovery/wechat-extraction/`: 微信文章提取、安全和输出格式。
+- `assets/discovery/skills-ecosystem/`: tool/skill 发现与安装规则。
+- `assets/innovation/methodology/`: 创新方法论参考。
 - `tools/discovery/`: 资料发现 CLI 原型与辅助脚本。
 - `templates/innovation-report.md`: 技术创新报告模板。
 - `checklists/innovation-report.md`: 技术创新报告质量检查清单。

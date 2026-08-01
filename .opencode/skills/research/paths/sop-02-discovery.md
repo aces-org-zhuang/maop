@@ -20,5 +20,5 @@
 
 ## References
 
-- `references/discovery/technical-sources/workflow.md`
-- `references/discovery/skills-ecosystem/workflow.md`
+- `assets/discovery/technical-sources/workflow.md`
+- `assets/discovery/skills-ecosystem/workflow.md`

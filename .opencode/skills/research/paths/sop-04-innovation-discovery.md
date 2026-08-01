@@ -47,4 +47,4 @@
 
 ## References
 
-- `references/innovation/methodology/innovation-problem-discovery.md`
+- `assets/innovation/methodology/innovation-problem-discovery.md`

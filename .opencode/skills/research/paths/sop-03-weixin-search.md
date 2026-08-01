@@ -33,4 +33,4 @@
 
 ## Related Assets
 
-- `references/discovery/wechat-extraction/`
+- `assets/discovery/wechat-extraction/`

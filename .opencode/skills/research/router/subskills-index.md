@@ -1,6 +1,6 @@
 # Research Path And Subskill Index
 
-本文件是 `research` 的 path 与深度研究子技能索引。根级 `SKILL.md` 先创建或续接 `research_root`，再按用户请求选择最小必要 path。Discovery、Weixin 和 Innovation 已内置在 `research/references/sop-*.md`；深度仓库/论文/证据阶段继续使用子技能。
+本文件是 `research` 的 path 与深度研究子技能索引。根级 `SKILL.md` 先创建或续接 `research_root`，再按用户请求选择最小必要 path。Discovery、Weixin 和 Innovation 已内置在 `research/paths/sop-*.md`；深度仓库/论文/证据阶段继续使用子技能。
 
 ## Built-in Paths
 
@@ -17,19 +17,19 @@
 
 | Stage | 子模块 | 何时读取/加载 | 最小产物 |
 | --- | --- | --- | --- |
-| Trend Discovery | `trend-research/SKILL.md` | 新课题需要热点调研或 10 个候选方向 | `trend/hot-topics.md`、`trend/directions.md`、`trend/direction-selected.json` |
-| Repo Selection | `repo-selection/SKILL.md` | 需要候选仓库、评分维度、工程样本边界或用户给出仓库 URL | `selection/candidates.md`、`selection/selection.md`、`repos-index.md` |
-| Repo Insights | `repo-insights-algorithms/SKILL.md` | 已有 `repos-index.md`，需要仓库源码/文档/工程机制洞察 | `insights/<repo-slug>.md`、`insights/evidence-notes.md`、`insights/gaps.md` |
-| Comparison Matrix | `repo-comparison-matrix/SKILL.md` | 已有仓库洞察，需要正交比较和补漏标注 | `matrix/coverage-annotation.md`、`matrix/comparison-matrix.md` |
-| Paper Modeling | `paper-modeling-topics/SKILL.md` | 需要论文模型、大纲和候选选题 | `paper/model.md`、`paper/outline.md`、`paper/topics.md`、`paper/topic-selected.json` |
-| Core Claims | `core-claims/SKILL.md` | 已冻结论文题目，需要可追溯核心观点 | `paper/core-claims.md`、`paper/claim-map.md` |
-| Evidence Validation | `evidence-validation/SKILL.md` | 需要 claim->evidence 闭环和证据边界 | `evidence/snippets.md`、`evidence/validation.md`、`evidence/threats-to-validity.md` |
+| Trend Discovery | `modules/trend-research/SKILL.md` | 新课题需要热点调研或 10 个候选方向 | `trend/hot-topics.md`、`trend/directions.md`、`trend/direction-selected.json` |
+| Repo Selection | `modules/repo-selection/SKILL.md` | 需要候选仓库、评分维度、工程样本边界或用户给出仓库 URL | `selection/candidates.md`、`selection/selection.md`、`repos-index.md` |
+| Repo Insights | `modules/repo-insights-algorithms/SKILL.md` | 已有 `repos-index.md`，需要仓库源码/文档/工程机制洞察 | `insights/<repo-slug>.md`、`insights/evidence-notes.md`、`insights/gaps.md` |
+| Comparison Matrix | `modules/repo-comparison-matrix/SKILL.md` | 已有仓库洞察，需要正交比较和补漏标注 | `matrix/coverage-annotation.md`、`matrix/comparison-matrix.md` |
+| Paper Modeling | `modules/paper-modeling-topics/SKILL.md` | 需要论文模型、大纲和候选选题 | `paper/model.md`、`paper/outline.md`、`paper/topics.md`、`paper/topic-selected.json` |
+| Core Claims | `modules/core-claims/SKILL.md` | 已冻结论文题目，需要可追溯核心观点 | `paper/core-claims.md`、`paper/claim-map.md` |
+| Evidence Validation | `modules/evidence-validation/SKILL.md` | 需要 claim->evidence 闭环和证据边界 | `evidence/snippets.md`、`evidence/validation.md`、`evidence/threats-to-validity.md` |
 
 ## Auxiliary Subskills
 
 | 模块 | 何时读取 | 用途 |
 | --- | --- | --- |
-| `patent-fetch/SKILL.md` | 研究需要专利证据、专利来源追踪或竞品专利材料时 | 通过 patent-mcp-server 获取专利详情 |
+| `modules/patent-fetch/SKILL.md` | 研究需要专利证据、专利来源追踪或竞品专利材料时 | 通过 patent-mcp-server 获取专利详情 |
 
 ## Routing Rules
 
