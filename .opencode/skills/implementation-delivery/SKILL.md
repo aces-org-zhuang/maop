@@ -61,7 +61,7 @@ description: 必须用于实现交付、按设计落地代码、bugfix、测试�
 - 高风险实现前先做 POC 或等价薄切片验证，避免错误需求或设计在代码阶段滚动放大。
 - 真实脚本、构建、生成和高成本实现前先 reasoning-map 推演，减少失败率。
 - 交付前必须 review，分数 >=80，且完成声明必须有 fresh verification evidence。
-- AET 的实现、TDD、bugfix 和 CVE 经验只作为可选模式，不作为跨项目硬规则。
+- 旧项目交付守护经验、TDD、bugfix 和 CVE 处理经验只作为可迁移模式，不作为跨项目硬规则。
 
 ## 资源索引
 
@@ -74,7 +74,7 @@ description: 必须用于实现交付、按设计落地代码、bugfix、测试�
 - `references/sop-06-fresh-verification.md`: 新鲜验证证据纪律。
 - `references/sop-07-code-review.md`: 代码审查和风险检查。
 - `references/sop-08-delivery-summary.md`: 交付摘要、验收映射和外部操作材料。
-- `references/pattern-aet-implementation.md`: AET 可迁移实现模式。
+- `references/pattern-delivery-guards.md`: 旧项目交付守护的可迁移模式。
 - `templates/`: 可选实现和交付模板。
 - `templates/poc-slice-plan.md`: 高风险实现前的 POC Gate 模板；ASCII 只是默认形式之一。
 - `checklists/`: 验证与审查清单。

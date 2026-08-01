@@ -57,7 +57,7 @@ description: 必须用于技术设计、架构影响面、技术方案、接口�
 - 长设计前先给低成本预览，避免遗漏影响面后继续放大到实现阶段。
 - 复杂影响面、真实脚本运行、构建验证或高成本实现前先用 `reasoning-map` 做推演预检。
 - 设计定版前必须 review，分数 >=80 才进入实现阶段。
-- AET 的 RAS/RDS/SDD、fence 等只作为可选模式，不作为跨项目硬规则。
+- 旧项目设计守护经验只作为可迁移模式，不作为跨项目硬规则。
 
 ## 资源索引
 
@@ -69,7 +69,7 @@ description: 必须用于技术设计、架构影响面、技术方案、接口�
 - `references/sop-05-change-boundary.md`: 模块边界、冻结区、兼容性和迁移。
 - `references/sop-06-risk-validation-plan.md`: 风险、验证策略和实施切片。
 - `references/sop-07-design-review.md`: 设计完整性评审。
-- `references/pattern-aet-design.md`: AET 可迁移设计模式。
+- `references/pattern-design-guards.md`: 旧项目设计守护的可迁移模式。
 - `templates/`: 可选设计产物模板。
 - `templates/design-sketch.md`: 长技术设计前的设计预览模板；ASCII 只是默认形式之一。
 - `checklists/`: 设计质量清单。

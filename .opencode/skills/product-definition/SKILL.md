@@ -51,7 +51,7 @@ description: 必须用于产品定义、PRD、MVP、用户场景、功能范围�
 - 长产物前先给低成本预览，避免错误需求滚动传递到设计和实现阶段。
 - 需求定版前必须 review，分数 >=80 才进入设计阶段。
 - 若项目已有 PRD 或需求模板，优先遵循项目模板；没有模板时再使用本技能模板。
-- AET 和 InnovationMaster 的经验只作为可选 pattern，不作为跨项目硬规则。
+- 旧项目探索/评审经验只作为可迁移 pattern，不作为跨项目硬规则。
 
 ## 资源索引
 
@@ -63,7 +63,7 @@ description: 必须用于产品定义、PRD、MVP、用户场景、功能范围�
 - `references/sop-04b-innovation-opportunity.md`: 轻量创新机会识别，承接旧综合创新分析中的可迁移产品定义部分。
 - `references/sop-05-prd-generation.md`: 产品定义或 PRD 落稿。
 - `references/sop-06-review-and-revision.md`: 完整性评审、修订和追踪。
-- `references/pattern-innovation-master.md`: InnovationMaster 可迁移产品探索模式。
+- `references/pattern-product-exploration.md`: 旧项目产品探索的可迁移模式。
 - `templates/`: 可选产物模板。
 - `templates/product-sketch.md`: 长 PRD 前的产品预览模板；ASCII 只是默认形式之一。
 - `checklists/`: 质量检查清单。

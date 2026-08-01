@@ -2,17 +2,17 @@
 
 ## 基本信息
 
-**工作流名称**: tech-link-finder-discovery
+**工作流名称**: knowledge-discovery-technical-sources
 **工作流类型**: aitools-skills-discovery
-**项目目录**: .aces/tech-link-finder
+**项目目录**: .aces/knowledge-discovery/technical-sources
 **创建时间**: 2026-04-05
-**工作流文件路径**: skills/tech-link-finder/references/workflow.md
+**工作流文件路径**: skills/knowledge-discovery/references/technical-sources/workflow.md
 **本工作流是否有效**: false
 
 ### 执行前验证工作流
 执行以下命令
 ```bash
-workflow-creator validate .aces/tech-link-finder/references/workflow.md
+workflow-creator validate .aces/knowledge-discovery/technical-sources/references/workflow.md
 ```
 
 ## 执行步骤
@@ -91,7 +91,7 @@ workflow-creator validate .aces/tech-link-finder/references/workflow.md
 ## 目录结构
 
 ```markdown
-.aces/flows/aitools-skills-discovery/tech-link-finder/
+.aces/flows/aitools-knowledge-discovery/technical-sources/
 ├── output/                  # 输出文件目录
 │   ├── links.json           # 技术链接集合
 │   ├── trends.md            # 趋势分析报告

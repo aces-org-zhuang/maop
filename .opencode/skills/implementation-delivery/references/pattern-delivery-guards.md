@@ -1,6 +1,6 @@
-# Pattern - AET Implementation
+# Pattern - Delivery Guards
 
-本文件记录 AET 中可迁移的实现交付经验。它是参考模式，不是硬规则。
+本文件记录旧项目中可迁移的实现交付经验。它是参考模式，不是硬规则。
 
 ## 可迁移部分
 

@@ -95,7 +95,7 @@ def _github_repo_search(query: str, hits: int, timeout_s: int) -> list[LinkItem]
     headers = {
         "Accept": "application/vnd.github+json",
         "Authorization": f"Bearer {token}",
-        "User-Agent": "tech-link-finder/1.0.1",
+        "User-Agent": "knowledge-discovery-sources/1.0.1",
         "X-GitHub-Api-Version": "2022-11-28",
     }
     r = requests.get(url, params=params, headers=headers, timeout=timeout_s)
@@ -181,7 +181,7 @@ def _to_markdown(queries: list[str], by_query: dict[str, list[LinkItem]]) -> str
 
 
 def main(argv: Optional[list[str]] = None) -> int:
-    p = argparse.ArgumentParser(prog="tech-link-finder", add_help=True)
+    p = argparse.ArgumentParser(prog="knowledge-discovery-sources", add_help=True)
     p.add_argument(
         "--input", required=True, help="Markdown file containing bullet queries"
     )

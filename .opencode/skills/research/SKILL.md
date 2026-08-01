@@ -137,9 +137,9 @@ description: |
 
 ### Steps
 
-1. 使用 Skill 工具加载 `tech-link-finder`；不要只手工 webfetch。
-2. 按 `tech-link-finder` 的发现/分析/收集流程搜索并筛选资料。
-3. 如果材料包含 `mp.weixin.qq.com` 且需要抽取正文，使用 Skill 工具加载 `weixin-article`。
+1. 使用 Skill 工具加载 `knowledge-discovery`；不要只手工 webfetch。
+2. 按 `knowledge-discovery` 的发现/分析/收集流程搜索并筛选资料。
+3. 如果材料包含 `mp.weixin.qq.com` 且需要抽取正文，使用 `knowledge-discovery` 的 WeChat extraction path。
 4. 写入 sources 产物。
 5. 更新课题 README 的当前阶段和下一步。
 

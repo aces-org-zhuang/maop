@@ -1,4 +1,4 @@
-# tech-link-finder (minimal)
+# knowledge-discovery technical source tool (minimal)
 
 This is a minimal, self-contained implementation used by the research ticket template.
 
@@ -9,5 +9,5 @@ Data sources:
 Usage:
 
 ```bash
-tech-link-finder --input path/to/search_keywords.md --output path/to/tech-link.md
+python -m tech_link_finder --input path/to/search_keywords.md --output path/to/technical-sources.md
 ```

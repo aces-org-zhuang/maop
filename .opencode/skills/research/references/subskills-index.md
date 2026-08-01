@@ -16,8 +16,8 @@
 | Stage | 子模块 | 何时读取/加载 | 最小产物 |
 | --- | --- | --- | --- |
 | Stage 1 趋势与方向发现 | `trend-research/SKILL.md` | 新课题开始、需要热点调研、需要 10 个候选方向时由独立 subagent 执行 | `trend/hot-topics.md`、`trend/directions.md`、`trend/direction-selected.json` |
-| Stage 2 资料发现 | `tech-link-finder` | 需要技术文章、趋势资料、开源项目线索、学习资源或外部资料扩展时由独立 subagent 执行 | `sources/source-index.md`、`sources/links.md`、`sources/tech-trends.md` |
-| Stage 2a 微信文章来源抽取 | `weixin-article` | 输入材料包含 `mp.weixin.qq.com` 链接，且需要抽取、总结或作为证据来源时由独立 subagent 执行 | `sources/weixin/<article-slug>.md`、`sources/source-index.md` |
+| Stage 2 资料发现 | `knowledge-discovery` | 需要技术文章、趋势资料、开源项目线索、学习资源或外部资料扩展时由独立 subagent 执行 | `sources/source-index.md`、`sources/links.md`、`sources/tech-trends.md` |
+| Stage 2a 微信文章来源抽取 | `knowledge-discovery` | 输入材料包含 `mp.weixin.qq.com` 链接，且需要抽取、总结或作为证据来源时由独立 subagent 执行 | `sources/weixin/<article-slug>.md`、`sources/source-index.md` |
 | Stage 3 仓库选型 | `repo-selection/SKILL.md` | 需要候选仓库、评分维度、工程样本边界或用户给出仓库 URL 时由独立 subagent 执行 | `selection/candidates.md`、`selection/selection.md`、`repos-index.md` |
 | Stage 4 仓库洞察 | `repo-insights-algorithms/SKILL.md` | 已有 `repos-index.md`，需要按仓库阅读代码、文档或工程机制时由独立 subagent 执行 | `insights/<repo-slug>.md`、`insights/evidence-notes.md`、`insights/gaps.md` |
 | Stage 5 对比矩阵 | `repo-comparison-matrix/SKILL.md` | 已有仓库洞察，需要正交比较和补漏标注时由独立 subagent 执行 | `matrix/coverage-annotation.md`、`matrix/comparison-matrix.md` |
@@ -31,7 +31,7 @@
 | --- | --- | --- |
 | `patent-fetch/SKILL.md` | 研究需要专利证据、专利来源追踪或竞品专利材料时 | 通过 patent-mcp-server 获取专利详情 |
 
-`tech-link-finder` 和 `weixin-article` 保持独立技能身份；research 只在 Stage 2/Stage 2a 中按需用 Skill 工具加载，并约束其输出路径。
+`knowledge-discovery` 是资料发现和微信文章来源抽取的统一入口；research 只在 Stage 2/Stage 2a 中按需加载，并约束其输出路径。
 
 ## 路由规则
 

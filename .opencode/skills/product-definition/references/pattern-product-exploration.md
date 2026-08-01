@@ -1,6 +1,6 @@
-# Pattern - InnovationMaster
+# Pattern - Product Exploration
 
-本文件记录 InnovationMaster 中可迁移的产品探索经验。它是参考模式，不是硬规则。
+本文件记录旧项目中可迁移的产品探索经验。它是参考模式，不是硬规则。
 
 ## 可迁移部分
 
