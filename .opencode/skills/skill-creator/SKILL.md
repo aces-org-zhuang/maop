@@ -163,6 +163,12 @@ Save test cases to `evals/evals.json`. Don't write assertions yet — just the p
 
 See `references/schemas.md` for the full schema (including the `assertions` field, which you'll add later).
 
+### Self-Test Confidence Gate
+
+When the user asks whether a skill can test itself, improve its own trigger rate, prove execution completeness, use `opencode run`, use `reasoning-map` to review effectiveness, or reach a confidence target such as 90%, read `references/self-test-confidence.md` and follow that SOP.
+
+Do not claim release readiness for a skill with a stated confidence target unless the self-test SOP computes final confidence and the result meets the requested threshold. For the common production-readiness target, the final confidence must be at least 90%.
+
 ## Running and evaluating test cases
 
 This section is one continuous sequence — don't stop partway through. Do NOT use `/skill-test` or any other testing skill.
@@ -469,6 +475,8 @@ The agents/ directory contains instructions for specialized subagents. Read them
 
 The references/ directory has additional documentation:
 - `references/schemas.md` — JSON structures for evals.json, grading.json, etc.
+- `references/sop-routed-skills.md` — How to structure complex skills with a short `SKILL.md` router and staged SOP files.
+- `references/self-test-confidence.md` — How to run `opencode run` trigger tests, evaluate execution completeness and quality, use `reasoning-map`, and enforce a >=90% confidence gate.
 
 ---
 
