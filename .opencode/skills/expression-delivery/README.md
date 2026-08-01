@@ -18,6 +18,6 @@
 - POC Gate: 高风险交互、响应式、动画、渲染或生成路径先薄切片验证。
 - Verification Gate: 完成声明前提供 fresh evidence。
 
-## 迁移来源
+## 收敛范围
 
-本技能吸收并替代以下旧自动入口：`frontend-design`、`ui-ux-pro-max`、`prototype-quality-check`、`html-pptx`、`slide-height-checker`、`ipd-uml` 和 `image-drawing-skill`。
+本技能统一承接前端界面、原型、图表、slides、图片和多模态表达产物，避免为每一种表达形式保留分散入口。
