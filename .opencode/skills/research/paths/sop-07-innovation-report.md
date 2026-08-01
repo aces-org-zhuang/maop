@@ -13,6 +13,7 @@
 - 技术创新主导：报告必须围绕技术问题与技术方案展开。
 - 市场最小支撑：市场/竞品信息只做最小必要支撑，默认放在背景章节。
 - 证据化表达：关键结论必须可追溯到 research_root 内的证据、来源或前序产物。
+- 报告素材整合前必须读取 `paths/sop-retrieval-reasoning.md`，对背景、业界方案、创新方案、技术壁垒、取证方法和效果证据执行扩展/收敛检索；未收敛材料只能写成假设、风险或待验证项。
 - 禁止泛商业化：不要写成融资、增长、营销或商业计划书。
 - 图文并茂：对比表、架构图、场景图必须服务论证，不做装饰性输出。
 - 质量门禁：完整报告前先 Preview Gate；复杂技术论证先 Reasoning Gate；定版前 Review Gate >=80；完成声明前提供 evidence。
@@ -45,6 +46,7 @@
 
 ## Chapter Requirements
 
+- 全文关键章节必须能追溯到已收敛证据集，并说明检索扩展/收敛轮次或引用对应 discovery/evidence 产物。
 - 第 2 章：量化数据必须标注来源或说明为内部估算。
 - 第 3 章：必须包含业界方案对比表。
 - 第 5 章：每一步必须包含 step / motivation / painAddressed / keyProblem / differentiationVsIncumbent / keyTechPoint / expectedOutput。

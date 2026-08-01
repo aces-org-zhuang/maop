@@ -50,6 +50,7 @@ mp.weixin.qq.com URL 阅读、总结、提取、证据化
 - 如果请求命中多个 path，按依赖顺序执行最小必要路径；不要默认展开全链路。
 - 如果缺少上游输入，只补齐当前 path 所需的最小输入。
 - 复杂课题、影响面、证据链或创新路径选择前，先使用 `reasoning-map` 推演。
+- 检索、搜索、文章提取、创新机会发现和创新报告素材整合必须遵循 `paths/sop-retrieval-reasoning.md`：先扩展检索，再收敛证据，再围绕 RED 点继续扩展，再收敛，直到满足退出条件；不要一次性关键词搜索后直接写结论。
 - 仓库研究、开源样本选择、源码洞察和横向对比前，必须先经过 `modules/repo-selection/SKILL.md` 的研究对象门禁；核心样本必须先证明 Level1 直接研究对象充足且 `topic_directness >= 0.90`，不得把 Level0 基础技术栈仓库直接当作主研究对象。
 - 需要产品定义/PRD 时转入 `product-definition`。
 - 需要技术选型或设计决策时转入 `technical-design`。
@@ -66,6 +67,7 @@ mp.weixin.qq.com URL 阅读、总结、提取、证据化
 - `paths/sop-05-research-workspace.md`: research workspace、README 和产物规范。
 - `paths/sop-06-evidence.md`: 来源验证、claim-evidence 和证据边界。
 - `paths/sop-07-innovation-report.md`: 技术创新报告和创新汇报输出。
+- `paths/sop-retrieval-reasoning.md`: Discovery、Weixin、WeChat Extraction、Innovation Discovery 和 Innovation Report 的扩展/收敛检索推演循环。
 - `router/subskills-index.md`: 原深度研究子技能索引。
 
 ## Migrated Assets

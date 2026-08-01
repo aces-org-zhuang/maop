@@ -16,6 +16,14 @@ workflow-creator validate {workflow_artifact_root}/research-discovery-wechat-ext
 
 ## 执行步骤
 
+### Stage 0: 检索推演规划
+[x] Task: 规划文章证据化的扩展/收敛循环
+    操作(必选)：
+        Step1: 读取 `paths/sop-retrieval-reasoning.md`
+        Step2: 使用 reasoning-map 判断该 URL 是证据、线索、背景还是待验证材料
+        Step3: 规划是否需要扩展同主题文章、原文引用、作者/公众号上下文、关联链接或反例材料
+        Step4: 记录本轮扩展/收敛目标和退出条件
+
 ### Stage 1: URL验证
 [x] Task: 验证URL格式
     操作(必选)：
@@ -45,7 +53,9 @@ workflow-creator validate {workflow_artifact_root}/research-discovery-wechat-ext
         Step1: 生成结构化摘要(100-150字)
         Step2: 提取关键要点(3-5条)
         Step3: 识别技术内容并生成可视化图表
-        Step4: 保存结果到指定格式
+        Step4: 标注正文证据、线索、背景和待验证判断
+        Step5: 如果关键 RED 点未闭环，按检索推演循环扩展同主题或反例来源后再收敛
+        Step6: 保存结果到指定格式
 
 ### Stage 5: 输出交付
 [ ] Task: 交付处理结果
