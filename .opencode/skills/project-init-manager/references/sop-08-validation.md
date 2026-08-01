@@ -12,10 +12,10 @@
 4. 检查 docs 索引目录和 `failure-modes`、`debugs`、`evidences` index。
 5. 检查 `.opencode/README.md` 和本地组件目录。
 6. 检查研究区 `vendor/research/aces-research/index.md` 或锁定 submodule 计划。
-7. 检查 AI 引擎 `vendor/ai/maop` submodule 或锁定 submodule 计划。
-8. 检查项目仓 `.opencode` 与 `vendor/ai/maop/.opencode` 的边界说明。
+7. 检查 AI 引擎 `vendor/ai/maop` submodule 或锁定 submodule 计划。maop 源仓模式下检查是否明确排除自嵌套。
+8. 检查项目仓 `.opencode` 与 `vendor/ai/maop/.opencode` 的边界说明；maop 源仓模式下检查本仓 `.opencode` 是否被标记为能力源码目录。
 9. 检查 `.gitmodules` 与实际 submodule 状态；如果涉及真实 submodule，读取 `checklists/submodule-safety.md`。
-10. 检查技术栈命令是否来自真实配置；未知命令必须保留 `待补充`。
+10. 检查技术栈或能力开发命令是否来自真实配置；未知命令必须保留 `待补充`。
 11. 输出 pass/fail、未闭环 RED 点和下一步。
 
 ## 推荐验证命令
@@ -51,3 +51,4 @@ git submodule status --recursive
 - 未说明项目仓 `.opencode` 与 maop `.opencode` 的边界。
 - 创建了多个顶层目录，但 `AGENTS.md` 项目结构没有完整列出。
 - 写了 OpenCode 配置但没有 schema 或重启提醒。
+- maop 源仓模式没有排除 `vendor/ai/maop` 自嵌套，或没有说明 `.opencode/skills` 是能力源码。

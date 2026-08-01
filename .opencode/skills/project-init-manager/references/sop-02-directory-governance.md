@@ -16,7 +16,7 @@
 - 文档域：长期稳定项目知识。
 - 过程记录域：非研究工程记录、调试、失效模式、实现证据。
 - 研究域：研究过程、论文、开源项目对比、证据包。
-- AI 引擎域：独立演进的 AI engine、agent runtime、engine-side `.opencode` 和相关能力代码。
+- AI 引擎域：独立演进的 AI engine、agent runtime、engine-side `.opencode`、skills/agents/commands 和相关能力代码。
 - 外部依赖域：vendor 源码、参考仓、submodule。
 - 资源域：静态资源、运行资源、样例数据。
 - 自动化域：安装、验证、生成、迁移、发布、诊断脚本，以及 OpenCode 本地组件。
@@ -35,9 +35,10 @@
 - `guides/`: 非研究类阶段性工程记录、PR 记录、历史输出。
 - `vendor/`: 外部仓库、研究工作区、供应商资源和 submodule。
 - `vendor/research/aces-research/`: 锁定研究工作区 submodule。
-- `vendor/ai/maop/`: 锁定 AI 引擎 submodule。
+- `.opencode/`: OpenCode 配置说明；maop 源仓模式下还是 AI 能力源码目录。
+- `vendor/ai/maop/`: 普通宿主项目的锁定 AI 引擎 submodule；maop 源仓模式除外。
 - `scripts/`: 可重复执行的安装、验证、生成、迁移、发布、诊断脚本。
-- `.opencode/`: 项目本地 skills、agents、commands、MCP/OpenCode 配置说明。
+- `.opencode/skills/`、`.opencode/agents/`、`.opencode/commands/`: 普通宿主项目仅在确有本地覆盖时创建；maop 源仓模式下属于能力开发面。
 - `resources/` 或 `assets/`: 运行资源或静态资源，按项目语义选择。
 - `data/`: 样例数据、内置数据或测试数据，必须说明是否可公开、可打包。
 - `tests/`: 跨模块测试；若测试 co-located，则可不创建但要记录规则。

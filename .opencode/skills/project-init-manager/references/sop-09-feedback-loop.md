@@ -30,9 +30,9 @@
   -> 研究区 index 和课题 README
 
 AI 引擎能力、engine-side skills/agents/commands
-  -> vendor/ai/maop/
-  -> maop 自身 .opencode 和仓库规则
-  -> 主仓只记录消费关系、pinned commit 和验证方式
+  -> maop 源仓模式：本仓 .opencode/ 和 maop 仓库规则
+  -> 普通宿主项目：vendor/ai/maop/ submodule
+  -> 普通宿主项目主仓只记录消费关系、pinned commit 和验证方式
 ```
 
 ## 执行规则
@@ -50,7 +50,7 @@ AI 引擎能力、engine-side skills/agents/commands
 - 新增 docs 文件后，最近的 README 或 index 是否能找到它。
 - 新增研究课题后，研究区 index 是否有续点。
 - 新增 submodule 后，`.gitmodules` 和 docs 索引是否一致。
-- maop 变更是否留在 maop submodule 内，项目仓只更新 pinned commit 或消费文档。
+- maop 源仓模式下，maop 能力变更是否留在本仓 `.opencode/`；普通宿主项目是否只更新 maop submodule pinned commit 或消费文档。
 - 修复 bug 后，是否需要失效模式或实现证据记录。
 
 ## 常见 RED 点

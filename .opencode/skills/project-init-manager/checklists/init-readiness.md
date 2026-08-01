@@ -12,4 +12,6 @@
 - 技术栈未知时，已决定只写职责域规则，不伪造命令。
 - `.opencode/opencode.json` 是否生成已有明确依据。
 - 研究区锁定为 `vendor/research/aces-research` -> `https://github.com/aces-org-zhuang/aces-research.git`。
-- AI 引擎锁定为 `vendor/ai/maop` -> `https://github.com/aces-org-zhuang/maop.git`。
+- 已判断是否为 maop 源仓模式。
+- 普通宿主项目：AI 引擎锁定为 `vendor/ai/maop` -> `https://github.com/aces-org-zhuang/maop.git`。
+- maop 源仓模式：不得添加 `vendor/ai/maop`，本仓 `.opencode/skills` 是能力源码目录。

@@ -6,7 +6,7 @@
 
 ## 锁定 submodule
 
-新项目初始化必须规划这两个 submodule：
+新项目初始化默认必须规划这两个 submodule：
 
 ```text
 vendor/research/aces-research -> https://github.com/aces-org-zhuang/aces-research.git
@@ -15,13 +15,15 @@ vendor/ai/maop                 -> https://github.com/aces-org-zhuang/maop.git
 
 `aces-research` 承载研究资产；`maop` 承载 AI 引擎能力和 engine-side `.opencode`。两个 submodule 都应通过 `.gitmodules` 记录来源，并在主仓索引中记录 pinned commit、边界、消费者和验证方式。`maop` 与其他 submodule 不同：它必须启用 sparse-checkout，只检出 `.opencode` 和 `README.md`，再由项目 `.opencode/opencode.json` 桥接到 maop 的 OpenCode 能力面。
 
+例外：如果 `sop-00-intake.md` 判定目标仓库本身就是 `maop` 源仓，则不得添加 `vendor/ai/maop`。此时本仓 `.opencode/` 是 AI 引擎能力源，`vendor/ai/maop` 只作为宿主项目初始化规则出现在文档中。
+
 ## 路径规则
 
 ```text
 vendor/research/aces-research                        锁定研究工作区 submodule
 vendor/research/aces-research/topics/<slug>/repos/<repo_name>
                                                      课题内研究参考仓 submodule
-vendor/ai/maop                                       锁定 AI 引擎 submodule
+vendor/ai/maop                                       锁定 AI 引擎 submodule；maop 源仓模式除外
 vendor/runtime/<repo_name>                           运行时或打包资源仓
 vendor/assets/<repo_name>                            资源型外部仓
 vendor/harness/<repo_name>                           agent、MCP、verifier、workflow harness
@@ -33,14 +35,14 @@ vendor/external/<repo_name>                          无法归类但长期保留
 1. 检查 `.gitmodules` 是否存在。
 2. 检查 `git submodule status --recursive` 和 `git status --short`。
 3. 新增 submodule 前，从 URL 推导 `repo_name`、目标路径和用途。
-4. 对锁定 submodule，校验 URL 和 path 是否与标准一致；不一致时输出迁移计划，不直接覆盖。
+4. 对锁定 submodule，校验 URL 和 path 是否与标准一致；不一致时输出迁移计划，不直接覆盖。maop 源仓模式下跳过 `vendor/ai/maop` 校验，并记录“自嵌套已排除”。
 5. 写操作前向用户确认将执行的 `git submodule add`、checkout、update 或 remove 命令。
 6. 新增长期 submodule 后，在主仓 `docs/02-development/submodules-index.md` 或等价索引中记录 path、url、pinned ref、边界、消费者、验证方式。
 7. 研究课题内参考仓还要更新研究区课题 README 或 `repos-index.md`。
 
 ## maop sparse-checkout 执行步骤
 
-新项目初始化或修复 `vendor/ai/maop` 后，执行：
+新项目初始化或修复 `vendor/ai/maop` 后，执行。maop 源仓模式不得执行这些命令：
 
 ```bash
 git submodule add https://github.com/aces-org-zhuang/maop.git vendor/ai/maop
@@ -85,3 +87,4 @@ git -C vendor/ai/maop sparse-checkout list
 - `.gitmodules` path 与 docs 索引不一致。
 - maop 没有 sparse-checkout，或项目 `.opencode/opencode.json` 没有桥接 maop skills，导致项目开发时丢失 AI 引擎能力。
 - maop `.opencode` 与项目仓 `.opencode` 双源维护，导致能力版本无法通过 submodule commit 固定。
+- 目标仓库本身就是 maop 源仓时仍添加 `vendor/ai/maop`，导致仓库自嵌套。
