@@ -83,6 +83,8 @@ skill-name/
     └── assets/     - Files used in output (templates, icons, fonts)
 ```
 
+For workflow-heavy skills, prefer an SOP-routed structure: keep `SKILL.md` as a short routing layer, and move concrete implementation steps into `references/sop-*.md`, templates, and checklists. Read `references/sop-routed-skills.md` when creating repository initialization, governance, multi-stage workflow, submodule, documentation, or agent orchestration skills.
+
 #### Progressive Disclosure
 
 Skills use a three-level loading system:
@@ -94,6 +96,7 @@ These word counts are approximate and you can feel free to go longer if needed.
 
 **Key patterns:**
 - Keep SKILL.md under 500 lines; if you're approaching this limit, add an additional layer of hierarchy along with clear pointers about where the model using the skill should go next to follow up.
+- Treat `SKILL.md` as the router for complex skills: include first steps, Stage Router, resource index, and delivery standards; keep phase-level execution in SOP files.
 - Reference files clearly from SKILL.md with guidance on when to read them
 - For large reference files (>300 lines), include a table of contents
 
