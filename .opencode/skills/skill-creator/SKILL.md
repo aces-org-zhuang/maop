@@ -29,6 +29,26 @@ Then after the skill is done (but again, the order is flexible), you can also ru
 
 Cool? Cool.
 
+## Full-Link Quality Guard
+
+For workflow-heavy, governance, research, technical-design, implementation, project initialization, submodule, documentation, or multi-stage skills, preserve a full-link quality strategy instead of only drafting a prompt body:
+
+1. Use `reasoning-map` before drafting or large edits to map the skill goal, trigger surface, stage boundaries, inputs, outputs, artifacts, validation path, feedback loop, and likely RED points.
+2. Prefer an SOP-routed structure: short `SKILL.md` router plus `references/sop-*.md`, `templates/`, `checklists/`, and `evals/` when the workflow spans multiple phases.
+3. Read `references/sop-full-link-quality.md` for any new or substantially revised SOP-routed skill, and keep its intake -> design -> write -> validate -> feedback loop intact.
+4. Before final delivery, verify trigger quality, execution completeness, output quality, resource routing, validation coverage, and user-visible restart/package guidance. If the user asked for a confidence target, follow `references/self-test-confidence.md`; production-readiness defaults to >=90% confidence.
+5. After edits, use `reasoning-map` again to check whether original RED points, downstream consumers, evals, templates, and feedback routes are covered.
+
+## Information Quality and Density
+
+Skill outputs should be dense enough for another agent to execute without rediscovering the structure. Prefer high-signal artifacts over long prose:
+
+- Use Markdown tables for routing matrices, acceptance criteria, checklist mappings, trigger examples, should/should-not-trigger cases, and input/processing/output summaries.
+- Use ASCII maps for stage routing, producer -> artifact -> validator -> consumer chains, lifecycle flows, and compact dependency graphs.
+- Use Mermaid diagrams when relationships are easier to inspect visually, such as multi-branch workflows, state machines, component interactions, or feedback loops.
+- Keep diagrams readable: put detailed interaction logic, IPO, acceptance criteria, and evidence in tables next to the diagram instead of stuffing long labels into the graph.
+- Prefer templates and checklists for repeatable output formats so future invocations produce consistent, reviewable artifacts.
+
 ## Communicating with the user
 
 The skill creator is liable to be used by people across a wide range of familiarity with coding jargon. If you haven't heard (and how could you, it's only very recently that it started), there's a trend now where the power of Claude is inspiring plumbers to open up their terminals, parents and grandparents to google "how to install npm". On the other hand, the bulk of users are probably fairly computer-literate.
@@ -84,6 +104,8 @@ skill-name/
 ```
 
 For workflow-heavy skills, prefer an SOP-routed structure: keep `SKILL.md` as a short routing layer, and move concrete implementation steps into `references/sop-*.md`, templates, and checklists. Read `references/sop-routed-skills.md` when creating repository initialization, governance, multi-stage workflow, submodule, documentation, or agent orchestration skills.
+
+For any new or substantially revised SOP-routed skill, also read `references/sop-full-link-quality.md` and carry the quality chain through intake, reasoning-map, routing, artifacts, validation, evals, and feedback-loop updates.
 
 #### Progressive Disclosure
 
@@ -476,6 +498,7 @@ The agents/ directory contains instructions for specialized subagents. Read them
 The references/ directory has additional documentation:
 - `references/schemas.md` — JSON structures for evals.json, grading.json, etc.
 - `references/sop-routed-skills.md` — How to structure complex skills with a short `SKILL.md` router and staged SOP files.
+- `references/sop-full-link-quality.md` — How to preserve full-link quality from intake through reasoning-map, SOP routing, dense artifacts, validation, evals, and feedback loops.
 - `references/sop-consolidating-workflow-skills.md` — How to merge repeated workflow skills into fewer high-cohesion SOP-routed skills without duplicating existing maop domains.
 - `references/self-test-confidence.md` — How to run `opencode run` trigger tests, evaluate execution completeness and quality, use `reasoning-map`, and enforce a >=90% confidence gate.
 
