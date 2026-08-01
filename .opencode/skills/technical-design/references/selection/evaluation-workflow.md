@@ -76,6 +76,7 @@
 - 标注推荐权重（高/中/低）
 - 标注 `decision_confidence`，推荐进入实现或 POC 的方案必须 >=90%。
 - 标注 `selection_convergence`：候选是否已覆盖关键架构能力块、模块边界是否清晰、是否已排除重复造轮子风险、是否还有必须扩大范围的 RED 点。
+- 标注 `primary_uniqueness`：同一个 feature/capability/module 是否只有一个 primary 依赖；同质候选必须降级为 fallback、alternative 或 rejected，并说明不同时引入的原因。
 - 生成备选清单报告
 - 等待用户确认
 - 输出：`{selection_artifact_root}/candidates.md`
@@ -84,6 +85,7 @@
 - 检查项目间是否存在直接依赖
 - 分析技术栈重叠
 - 识别互补关系
+- 检查同质依赖冲突：如果两个候选覆盖同一特性或模块边界，必须收敛到一个 primary；另一个只能作为 fallback/alternative/rejected，不能一起进入依赖图。
 - 标注依赖层级（基础设施层/应用层）
 - 生成依赖关系图（ASCII）
 - 标注建议引入方式：package/SDK/framework/service/CLI/submodule；默认以声明依赖接入，非必要不 fork、不 patch、不复制源码自研化。

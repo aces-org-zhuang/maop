@@ -13,9 +13,9 @@ Use this template for dependency, framework, library, SDK, or repository selecti
 
 ## Candidates
 
-| Candidate | Source | Fit | Health | Maturity | Risk | Integration Cost | Verdict |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-|  |  |  |  |  |  |  |  |
+| Feature/Capability | Candidate | Source | Fit | Health | Maturity | Risk | Integration Cost | Role | Verdict |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|  |  |  |  |  |  |  |  | primary / fallback / alternative / rejected |  |
 
 ## Top-Down Candidate Space
 
@@ -33,7 +33,13 @@ Use this template for dependency, framework, library, SDK, or repository selecti
 | 2 | Subsystem/module coverage |  |  | expanded / narrowed |  |
 | 3 | Implementation dependency fit |  |  | expanded / narrowed |  |
 
-Convergence is reached only when key architecture capability blocks are covered, module boundaries are clear, wheel-rebuilding risk is bounded, candidate differences are compared, and remaining RED points no longer block the design goal.
+Convergence is reached only when key architecture capability blocks are covered, module boundaries are clear, wheel-rebuilding risk is bounded, candidate differences are compared, each feature/capability has exactly one primary dependency, and remaining RED points no longer block the design goal.
+
+## Primary Uniqueness
+
+| Feature/Capability | Primary dependency | Fallback/Alternative | Rejected same-purpose candidates | Why only one primary |
+| --- | --- | --- | --- | --- |
+|  |  |  |  |  |
 
 ## Recommendation
 
