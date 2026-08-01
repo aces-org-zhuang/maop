@@ -13,7 +13,7 @@ vendor/research/aces-research -> https://github.com/aces-org-zhuang/aces-researc
 vendor/ai/maop                 -> https://github.com/aces-org-zhuang/maop.git
 ```
 
-`aces-research` 承载研究资产；`maop` 承载 AI 引擎能力和 engine-side `.opencode`。两个 submodule 都应通过 `.gitmodules` 记录来源，并在主仓索引中记录 pinned commit、边界、消费者和验证方式。
+`aces-research` 承载研究资产；`maop` 承载 AI 引擎能力和 engine-side `.opencode`。两个 submodule 都应通过 `.gitmodules` 记录来源，并在主仓索引中记录 pinned commit、边界、消费者和验证方式。`maop` 与其他 submodule 不同：它必须启用 sparse-checkout，只检出 `.opencode` 和 `README.md`，再由项目 `.opencode/opencode.json` 桥接到 maop 的 OpenCode 能力面。
 
 ## 路径规则
 
@@ -38,11 +38,29 @@ vendor/external/<repo_name>                          无法归类但长期保留
 6. 新增长期 submodule 后，在主仓 `docs/02-development/submodules-index.md` 或等价索引中记录 path、url、pinned ref、边界、消费者、验证方式。
 7. 研究课题内参考仓还要更新研究区课题 README 或 `repos-index.md`。
 
+## maop sparse-checkout 执行步骤
+
+新项目初始化或修复 `vendor/ai/maop` 后，执行：
+
+```bash
+git submodule add https://github.com/aces-org-zhuang/maop.git vendor/ai/maop
+git -C vendor/ai/maop sparse-checkout set --no-cone /.opencode/ /README.md
+git -C vendor/ai/maop sparse-checkout list
+```
+
+如果项目提供脚本，可封装为 `npm run maop-opencode:sparse` 或等价命令。验证输出必须包含：
+
+```text
+/.opencode/
+/README.md
+```
+
 ## .opencode 边界
 
-- 主仓 `.opencode/` 是项目级 agent/skill/command 配置。
+- 主仓 `.opencode/opencode.json` 是桥接配置。
 - `vendor/ai/maop/.opencode/` 是 AI 引擎级配置，由 maop submodule 自身维护。
-- 主仓可以索引 maop 的 `.opencode` 能力，但不复制、不覆盖、不直接改写，除非当前任务明确是在维护 maop submodule。
+- 主仓通过 `skills.paths` 和 `maop-opencode` reference 消费 maop 的 `.opencode` 能力。
+- 不把 maop 的 `.opencode` 复制回项目仓，也不在主仓维护同一批 skill 文件。
 
 ## 安全规则
 
@@ -65,4 +83,5 @@ vendor/external/<repo_name>                          无法归类但长期保留
 - submodule 已加入但没有主仓索引记录消费者和验证方式。
 - 研究参考仓放在研究区根目录，而不是具体课题 `repos/`。
 - `.gitmodules` path 与 docs 索引不一致。
-- maop `.opencode` 与项目仓 `.opencode` 混写，导致两个仓库无法分开演进。
+- maop 没有 sparse-checkout，或项目 `.opencode/opencode.json` 没有桥接 maop skills，导致项目开发时丢失 AI 引擎能力。
+- maop `.opencode` 与项目仓 `.opencode` 双源维护，导致能力版本无法通过 submodule commit 固定。

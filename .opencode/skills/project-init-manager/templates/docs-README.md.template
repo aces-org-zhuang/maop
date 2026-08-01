@@ -1,6 +1,6 @@
 # {{PROJECT_NAME}} 文档中心
 
-`docs/` 保存长期稳定知识。非研究类阶段性工程记录放在 `guides/`；研究过程、论文、开源仓库对比和证据包放在 `vendor/research/aces-research/`。AI 引擎能力位于 `vendor/ai/maop/` submodule。
+`docs/` 保存长期稳定知识。非研究类阶段性工程记录放在 `guides/`；研究过程、论文、开源仓库对比和证据包放在 `vendor/research/aces-research/`。AI 引擎能力位于 `vendor/ai/maop/` submodule，并通过 sparse-checkout + `.opencode/opencode.json` 桥接到项目 OpenCode。
 
 ## 快速入口
 
@@ -19,7 +19,7 @@
 | 查看调试记录 | `debugs/index.md` |
 | 查看实现证据 | `evidences/index.md` |
 | 继续研究课题 | `vendor/research/aces-research/index.md` |
-| 查看 AI 引擎 | `vendor/ai/maop/` |
+| 查看 AI 引擎 OpenCode 能力 | `vendor/ai/maop/.opencode/README.md` |
 
 ## 目录边界
 

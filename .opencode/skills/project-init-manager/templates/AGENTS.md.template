@@ -44,8 +44,9 @@
 ## AI 引擎规则
 
 - AI 引擎是必建 submodule：`vendor/ai/maop/` -> `https://github.com/aces-org-zhuang/maop.git`。
-- `vendor/ai/maop/.opencode/` 属于 maop 仓库，由 maop 独立演进。
-- 项目仓 `.opencode/` 只保存项目级组件和路由，不复制或覆盖 maop 的 `.opencode`。
+- `vendor/ai/maop/` 使用 sparse-checkout，只检出 `.opencode` 和 `README.md`。
+- 项目仓 `.opencode/opencode.json` 作为桥接配置，必须引用 `vendor/ai/maop/.opencode/skills` 和 `maop-opencode` reference。
+- `vendor/ai/maop/.opencode/` 属于 maop 仓库，由 maop 独立演进；项目仓不复制或覆盖 maop 的 `.opencode`。
 
 ## 项目结构
 
@@ -66,4 +67,4 @@
 
 ## OpenCode 本地配置
 
-项目本地 OpenCode 组件位于 `.opencode/`。修改 skill、agent、command 或 `opencode.json` 后，需要重启 OpenCode 才会生效。
+项目本地 OpenCode 桥接配置位于 `.opencode/opencode.json`。它引用 `vendor/ai/maop/.opencode/skills`，保证项目开发时可使用 maop AI 引擎能力。修改 maop skill、agent、command 或项目 `opencode.json` 后，需要重启 OpenCode 才会生效。

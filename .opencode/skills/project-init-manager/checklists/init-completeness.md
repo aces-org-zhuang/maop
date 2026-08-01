@@ -12,11 +12,12 @@
 - `docs/debugs/index.md` 存在。
 - `docs/evidences/index.md` 存在。
 - `guides/` 存在或已记录暂缓原因。
-- `.opencode/README.md` 存在。
-- `.opencode/skills/`、`.opencode/agents/`、`.opencode/commands/` 存在。
+- `.opencode/opencode.json` 存在，并引用 `../vendor/ai/maop/.opencode/skills`。
+- `.opencode/opencode.json` 包含 `references.maop-opencode`，指向 `../vendor/ai/maop/.opencode`。
 - `vendor/research/aces-research/index.md` 存在，或已规划锁定 submodule 写操作。
 - `vendor/ai/maop` 存在，或已规划锁定 submodule 写操作。
-- 项目仓 `.opencode` 与 `vendor/ai/maop/.opencode` 的边界已记录。
+- `vendor/ai/maop` 已启用 sparse-checkout，只检出 `.opencode` 和 `README.md`，或已记录待执行命令。
+- 项目仓 `.opencode` 与 `vendor/ai/maop/.opencode` 的桥接边界已记录。
 - 如果使用 submodule，`.gitmodules` 与实际路径一致。
 - 常用命令来自真实配置；未知命令标记为 `待补充`。
 - 未闭环 RED 点已写入最终输出或对应 roadmap/debug 记录。
