@@ -21,6 +21,7 @@
 11. OpenCode 本地配置说明。
 12. 研发流水线引导：需求用 `product-definition`，设计用 `technical-design`，实现/验证/交付用 `implementation-delivery`；复杂影响面用 `reasoning-map`，深度研究用 `research`。
 13. 全链路质量保障：Reasoning Gate、Preview Gate、Review Gate、POC Gate、Verification Gate、Confidence Gate 和 Stop Rule。
+14. Submodule 提交与 PR 规则：修改 submodule 内容时，submodule 仓库必须独立分支、提交、推送并创建 PR；主仓 PR 只更新远端可见的 submodule 指针并关联 submodule PR。
 
 ## 通用治理规则边界
 
@@ -63,9 +64,10 @@
 4. 根据 `sop-06-research-workspace.md` 写入研究区必建和隔离规则。
 5. 写入研发流水线引导，帮助后续 agent 在需求、设计、实现、验证和交付之间选择正确 maop 技能。
 6. 写入全链路质量保障，要求真实脚本/构建/高成本实现前先 reasoning-map 推演预检，高成本产物前做 Preview Gate，必要节点 Review Gate >=80，高风险实现先 POC，完成声明前 fresh verification，90%+ 置信度必须有 eval 和残余风险说明。
-7. 技术栈命令未知时保留 `待补充`，不要猜测。
-8. 检查是否误复制既有项目特化规则；如果发现，只保留可泛化的治理元规则。
-9. 生成或合并 `docs/AGENTS.md`。
+7. 写入 Submodule 提交与 PR 规则，要求 submodule 内容变更必须先走 submodule 仓库分支和 PR，主仓只提交远端可见的 submodule 指针并在 PR 中关联 submodule PR。
+8. 技术栈命令未知时保留 `待补充`，不要猜测。
+9. 检查是否误复制既有项目特化规则；如果发现，只保留可泛化的治理元规则。
+10. 生成或合并 `docs/AGENTS.md`。
 
 ## 模板
 
@@ -80,3 +82,4 @@
 - 没有写明研究资料不得进入主仓 `docs/`。
 - 把既有项目的技术栈细则或历史记录当成通用初始化默认规则。
 - 把 Preview Gate 误写成必须 ASCII，或把 POC Gate 误写成所有任务必经。
+- 主仓 PR 指向 submodule 本地 commit，或 submodule 内容变更没有对应 submodule PR。
