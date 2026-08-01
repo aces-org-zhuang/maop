@@ -42,6 +42,12 @@
       "prompt": "继续上次那个 in_progress 的 LLM 研究课题，帮我从断点继续补证据并推进论文。",
       "expected_output": "触发 research；先读取 vendor/research/aces-research/index.md，选择唯一 active research_root，读取该 topic README，再按记录的 current_paths / next_suggestions 继续对应 path，不混写多个课题。",
       "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "基于当前课题材料写一份技术创新报告，要包含技术壁垒和取证方法。",
+      "expected_output": "触发 research；先创建或续接 research_root，然后执行 Innovation Report Path，读取 sop-07-innovation-report.md、templates/innovation-report.md 和 checklists/innovation-report.md，经过 Preview Gate、Evidence Gate 和 Review Gate >=80，输出 outputs/innovation-report.md。",
+      "files": []
     }
   ]
 }

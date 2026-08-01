@@ -11,6 +11,7 @@
 | Weixin Search | 微信关键词搜索、公众号搜索、搜狗微信搜索 | `discovery/weixin-search.md`、`sources/source-index.md` |
 | WeChat Extraction | `mp.weixin.qq.com` URL 阅读、总结、提取 | `sources/weixin/<article-slug>.md`、`sources/source-index.md` |
 | Innovation Discovery | 创新方法论、TRIZ、蓝海、设计思维、精益创业、创新机会 | `innovation/methodology.md`、`innovation/opportunities.md`、`innovation/assumptions.md`、`innovation/validation-plan.md` |
+| Innovation Report | 技术创新报告、创新产品分析报告、创新汇报文档、技术壁垒或技术取证报告 | `outputs/innovation-report-preview.md`、`outputs/innovation-report.md` |
 
 ## Deep Research Subskills
 

@@ -1,6 +1,6 @@
 ---
 name: research
-description: 必须用于基于 research_root 沉淀的发现、资料搜索、微信关键词搜索、微信文章提取、技术趋势发现、tool/skill 发现、创新方法论、创新机会识别、证据包、仓库研究、论文建模和既有课题续点。触发后先创建或续接 research_root，再只执行本次请求需要的流水线路径；不要把研究材料写入主仓 docs/ 或主仓 research/。
+description: 必须用于基于 research_root 沉淀的发现、资料搜索、微信关键词搜索、微信文章提取、技术趋势发现、tool/skill 发现、创新方法论、创新机会识别、技术创新报告、创新产品分析报告、创新汇报文档、证据包、仓库研究、论文建模和既有课题续点。触发后先创建或续接 research_root，再只执行本次请求需要的流水线路径；不要把研究材料写入主仓 docs/ 或主仓 research/。
 ---
 
 # Research Discovery Pipeline
@@ -30,6 +30,9 @@ mp.weixin.qq.com URL 阅读、总结、提取、证据化
 
 创新方法论、TRIZ、蓝海、设计思维、精益创业、创新机会
   -> Innovation Discovery Path
+
+技术创新报告、创新产品分析报告、创新汇报文档、技术壁垒或技术取证报告
+  -> Innovation Report Path
 
 仓库 URL、开源样本、仓库研究、源码洞察、横向对比
   -> Repo Research Path
@@ -61,6 +64,7 @@ mp.weixin.qq.com URL 阅读、总结、提取、证据化
 - `references/sop-04-innovation-discovery.md`: 创新方法论和机会发现。
 - `references/sop-05-research-workspace.md`: research workspace、README 和产物规范。
 - `references/sop-06-evidence.md`: 来源验证、claim-evidence 和证据边界。
+- `references/sop-07-innovation-report.md`: 技术创新报告和创新汇报输出。
 - `references/subskills-index.md`: 原深度研究子技能索引。
 
 ## Migrated Assets
@@ -70,6 +74,8 @@ mp.weixin.qq.com URL 阅读、总结、提取、证据化
 - `references/discovery/skills-ecosystem/`: tool/skill 发现与安装规则。
 - `references/innovation/methodology/`: 创新方法论参考。
 - `tools/discovery/`: 资料发现 CLI 原型与辅助脚本。
+- `templates/innovation-report.md`: 技术创新报告模板。
+- `checklists/innovation-report.md`: 技术创新报告质量检查清单。
 
 ## Default Research Root Layout
 
@@ -97,7 +103,10 @@ mp.weixin.qq.com URL 阅读、总结、提取、证据化
 ├── insights/
 ├── evidence/
 ├── paper/
+├── reports/
 └── outputs/
+    ├── innovation-report-preview.md
+    └── innovation-report.md
 ```
 
 ## Completion Rule
