@@ -13,13 +13,14 @@ description: 必须用于判断研发请求应进入需求、设计、实现还�
 2. 若跨阶段执行，先安排质量门禁：Reasoning Gate、Preview Gate、Review Gate、POC Gate、Verification Gate 和 Confidence Gate。
 3. 明确每一段应转入的专门技能：`product-definition`、`technical-design`、`implementation-delivery`、`expression-delivery`、`research`。
 4. 遇到复杂根因、时序、影响面、不确定方案、高成本生成、真实脚本运行、构建验证或跨模块修改前，先使用 `reasoning-map` 做低成本推演预检，减少真实执行失败率。
-5. 遇到深度研究、开源仓库对比或证据包时，转入 `research`。
-6. 遇到外部资料、技术链接、微信文章、微信关键词搜索、学习资源、趋势发现、工具/skill 查找、创新机会或研究沉淀时，转入 `research` 并先创建或续接 `research_root`。
-7. 用户只要求流程图、时序图、架构图、状态图、前端 UI、原型、HTML slides、图片或其他表达产物时，转入 `expression-delivery`，不要展开完整 technical-design 或 implementation-delivery 主流程。
-8. 用户要求 90%+ 置信度时，必须给出 eval、验证证据和未闭环风险；不能只口头声明置信度。
-9. 用户要求复杂 Mermaid、前端界面、幻灯片、多模态图像、长文档或其他高成本产物时，必须显式经过 Preview Gate；如果同时涉及复杂影响面、根因、时序或方案取舍，顺序是 Reasoning Gate -> Preview Gate -> Review Gate -> Generation -> Verification Gate。
-10. 必要节点需要 Review Gate：需求定版、设计定版、复杂图/前端/多模态预览确认、高风险 POC 后、交付前 review 分数必须 >=80；低于 80 先修正，不进入下游或完成声明。
-11. 不要把本技能变成万能执行技能；路由完成后交给对应专门技能。
+5. 大范围检索、代码/文档探索、候选扩展、证据抽取或独立评审可按 `references/subagent-context-budgeting.md` 使用 subagent Task；主 agent 保留 reasoning-map、收敛、评审和最终决策责任。
+6. 遇到深度研究、开源仓库对比或证据包时，转入 `research`。
+7. 遇到外部资料、技术链接、微信文章、微信关键词搜索、学习资源、趋势发现、工具/skill 查找、创新机会或研究沉淀时，转入 `research` 并先创建或续接 `research_root`。
+8. 用户只要求流程图、时序图、架构图、状态图、前端 UI、原型、HTML slides、图片或其他表达产物时，转入 `expression-delivery`，不要展开完整 technical-design 或 implementation-delivery 主流程。
+9. 用户要求 90%+ 置信度时，必须给出 eval、验证证据和未闭环风险；不能只口头声明置信度。
+10. 用户要求复杂 Mermaid、前端界面、幻灯片、多模态图像、长文档或其他高成本产物时，必须显式经过 Preview Gate；如果同时涉及复杂影响面、根因、时序或方案取舍，顺序是 Reasoning Gate -> Preview Gate -> Review Gate -> Generation -> Verification Gate。
+11. 必要节点需要 Review Gate：需求定版、设计定版、复杂图/前端/多模态预览确认、高风险 POC 后、交付前 review 分数必须 >=80；低于 80 先修正，不进入下游或完成声明。
+12. 不要把本技能变成万能执行技能；路由完成后交给对应专门技能。
 
 ## Stage Router
 
@@ -80,6 +81,11 @@ Workflow Control
   Confidence Gate
     -> require eval, verification evidence, and residual risk notes for 90%+ confidence claims
     -> name the gate explicitly when the user asks for 90%+ confidence
+
+  Subagent Context Gate
+    -> use bounded subagent Task for retrieval, exploration, candidate expansion, extraction, or independent review
+    -> main agent keeps final reasoning-map, synthesis, convergence, and decision ownership
+    -> follow references/subagent-context-budgeting.md
 ```
 
 ## 防滚动放大规则
