@@ -11,7 +11,7 @@ description: 必须用于技术设计、架构影响面、技术方案、接口�
 
 1. 读取 `references/sop-00-intake.md`，确认需求输入、项目上下文和设计范围。
 2. 涉及复杂影响面、跨模块关系、异步时序、兼容性或根因不明的设计取舍时，先使用 `reasoning-map`。
-3. 需要图表时调用 `ipd-uml`；本技能决定是否需要图，`ipd-uml` 决定图表类型和质量。
+3. 需要图表、原型或其他表达产物时转入 `expression-delivery`；本技能决定是否需要表达产物，`expression-delivery` 决定形式和质量。
 4. 需要深度开源实现洞察或证据包时转入 `research`；需要快速 GitHub 选型时可使用 `github-selection`。
 5. 如果项目缺少基础治理、目录规则或 `.opencode` 桥接，转入 `project-init-manager`，不要在本技能中重建初始化规则。
 6. 生成完整技术设计或实施切片前，先执行 Preview Gate，并等待用户确认或明确标注假设后再继续。预览可用 ASCII/Mermaid 架构图、时序图、状态机图、DFD、接口草案或低保真交互草图。

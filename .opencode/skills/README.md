@@ -8,7 +8,6 @@ Add each skill as `.opencode/skills/<skill-name>/SKILL.md` inside the maop repos
 
 - Core governance: `skill-creator`, `project-init-manager`, `submodule-manager`, `find-skills`.
 - Reasoning and research: `reasoning-map`, `research`, `tech-link-finder`, `weixin-article`, `patent-fetch`, `github-selection`.
-- Design and presentation: `frontend-design`, `ipd-uml`, `html-pptx`, `image-drawing-skill`.
-- General development workflow: `development-workflow`, `product-definition`, `technical-design`, `implementation-delivery`.
+- General development workflow: `development-workflow`, `product-definition`, `technical-design`, `implementation-delivery`, `expression-delivery`.
 
 See `development-workflow/README.md` for the recommended product -> design -> implementation routing.

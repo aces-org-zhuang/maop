@@ -11,7 +11,7 @@
 3. 等待用户确认草图；如果用户要求继续且草图中仍有假设，必须在 PRD 中显式保留这些假设。
 4. 保持章节与需求来源可追踪，不把前序分析结论丢失在摘要里。
 5. 将功能需求、非功能需求、验收标准、开放问题和依赖分开写。
-6. 如果需要原型，只产出 prototype brief；真实界面实现交给 `frontend-design`。
+6. 如果需要原型，只产出 prototype brief；真实界面、图表、slides 或其他表达产物交给 `expression-delivery`。
 7. 输出前运行 `checklists/prd-completeness.md`。
 
 ## Validation

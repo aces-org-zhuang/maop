@@ -118,14 +118,14 @@ workflow-creator validate .aces/flows/aitools/weixin-article-extract/trace.md
 | 类型 | 名称 | 预期使用 |
 |--------|----------|----------|
 | skill | weixin-article | WHEN 用户提供微信文章URL THEN 触发内容提取 |
-| skill | ipd-uml | WHEN 文章包含技术架构 THEN 生成可视化图表 |
+| skill | expression-delivery | WHEN 文章包含技术架构 THEN 生成可视化图表 |
 | skill | workflow-creator | WHEN 文章包含操作流程 THEN 生成工作流文件 |
 | mcp | browser | WHEN 需要访问网页 THEN 使用Playwright浏览器 |
 
 ### Markdown文档规范
 
 表格展示：结构化数据使用Markdown表格
-图形化展示: 使用技能ipd-uml绘制IPD图表
+图形化展示: 使用 `expression-delivery` 绘制图表
 引用链接：避免重复内容，使用相对路径引用
 文件大小：单文件控制合理大小，必要时拆分
 目录索引：超过500行的文档必须包含目录

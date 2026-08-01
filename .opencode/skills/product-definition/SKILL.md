@@ -13,7 +13,7 @@ description: 必须用于产品定义、PRD、MVP、用户场景、功能范围�
 2. 若问题边界、用户、目标、约束或成功标准存在复杂不确定性，先使用 `reasoning-map` 推演影响面。
 3. 根据 Stage Router 只读取当前需要的 SOP。不要把所有 SOP 一次性载入。
 4. 若需要深度外部证据、开源仓对比、论文级证据包或长期课题沉淀，转入 `research`；普通 PRD 竞品扫描不自动进入研究工作区。
-5. 若需要真实前端界面实现，转入 `frontend-design`；本技能只负责产品定义和 prototype brief。
+5. 若需要真实前端界面、原型、图表、slides 或其他表达产物，转入 `expression-delivery`；本技能只负责产品定义和 prototype brief。
 6. 生成完整 PRD、产品定义文档或长需求清单前，先执行 Preview Gate，并等待用户确认或明确标注假设后再继续。预览可用 ASCII Product Sketch、需求地图、验收表格、Mermaid 流程或低保真线框，按产物选择。
 7. 不要把产品定义请求改派给角色型名称；在 maop 技能体系内，本技能就是 PRD/需求/轻量竞品分析入口。
 8. 需求定版、PRD 定版或进入 `technical-design` 前执行 Review Gate，review 分数必须 >=80；低于 80 先修订并复审。
@@ -60,6 +60,7 @@ description: 必须用于产品定义、PRD、MVP、用户场景、功能范围�
 - `references/sop-02-user-scenario.md`: 用户场景、边界和流程梳理。
 - `references/sop-03-requirements-definition.md`: 功能、非功能需求和验收标准。
 - `references/sop-04-lightweight-market-analysis.md`: 轻量竞品、差异化和创新分析。
+- `references/sop-04b-innovation-opportunity.md`: 轻量创新机会识别，承接旧综合创新分析中的可迁移产品定义部分。
 - `references/sop-05-prd-generation.md`: 产品定义或 PRD 落稿。
 - `references/sop-06-review-and-revision.md`: 完整性评审、修订和追踪。
 - `references/pattern-innovation-master.md`: InnovationMaster 可迁移产品探索模式。

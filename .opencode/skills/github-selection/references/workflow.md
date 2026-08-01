@@ -116,8 +116,9 @@
 - 等待用户确认
 - 输出：outputs/phase3-features.md
 
-## 阶段四：软件集成
+## 阶段四：集成建议
 
-### 任务14：调用软件集成技能
-- 使用 [skill: software-integration] 进行软件集成
+### 任务14：生成集成建议
+- 需要真实集成、安装、验证或交付时，转入 `implementation-delivery`。
+- 只需要方案表达、部署流程图或演示材料时，转入 `expression-delivery`。
 - 输出：outputs/phase4-deploy.md

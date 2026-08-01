@@ -127,7 +127,7 @@ workflow-creator validate .aces/tech-link-finder/references/workflow.md
 | mcp | web_search | WHEN 需要搜索技术文章 THEN 使用web_search工具搜索指定关键词 |
 | skill | github-selection | WHEN 需要搜索开源项目 THEN 使用github-selection技能发现相关项目 |
 | slashcommand | /search | WHEN 需要快速搜索 THEN 使用/search命令获取技术信息 |
-| skill | ipd-uml | WHEN 需要可视化趋势 THEN 使用ipd-uml技能生成趋势图表 |
+| skill | expression-delivery | WHEN 需要可视化趋势 THEN 使用 expression-delivery 生成趋势图表 |
 
 ## 注意事项
 
@@ -160,7 +160,7 @@ workflow-creator validate .aces/tech-link-finder/references/workflow.md
 ### Markdown文档规范
 
 - **表格展示**：结构化数据使用Markdown表格
-- **图形化展示**：使用技能ipd-uml绘制IPD图表，精简表达
+- **图形化展示**：使用 `expression-delivery` 绘制图表，精简表达
 - **引用链接**：避免重复内容，使用相对路径引用
 - **文件大小**：单文件控制合理大小，必要时拆分
 - **目录索引**：超过500行的文档必须包含目录

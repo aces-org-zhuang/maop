@@ -13,6 +13,9 @@
 
 设计或任务已明确，需要代码、验证或交付
   -> implementation-delivery
+
+需要 UI、原型、图表、slides、图片或多模态表达产物
+  -> expression-delivery
 ```
 
 ## 技能边界
@@ -20,15 +23,14 @@
 - `product-definition`: 把想法、业务目标、MVP、PRD、用户场景、功能范围和验收标准沉淀为产品定义；高成本 PRD 前先做 Preview Gate。
 - `technical-design`: 把已确认需求转为技术方案、接口/数据/状态设计、变更边界、风险和验证策略；高成本设计前先做 Reasoning Gate 和 Preview Gate，必要节点 Review Gate >=80。
 - `implementation-delivery`: 执行代码实现、bugfix、测试验证、代码审查和交付摘要；真实脚本/高成本实现前先做 Reasoning Gate，高风险实现前先做 POC Gate，交付前 Review Gate >=80，完成声明前必须有 Verification Gate。
+- `expression-delivery`: 执行前端 UI、原型、图表、HTML slides、图片和多模态表达产物；高成本生成前必须 Preview Gate，复杂视觉/交互/渲染前先 Reasoning Gate，交付前 Review Gate >=80 和 Verification Gate。
 
 ## 与 maop 既有技能的关系
 
 - 复杂推演、根因、影响面和时序问题使用 `reasoning-map`。
 - 深度研究、开源仓库对比、证据包和论文级材料使用 `research`。
-- 前端视觉和真实界面实现使用 `frontend-design`。
-- 架构图、时序图、状态图、DFD 等图表使用 `ipd-uml`。
-- 只要图表时直接使用 `ipd-uml`，不要进入完整 `technical-design` 主流程。
-- 演示型 HTML slides 使用 `html-pptx`。
+- 前端视觉、真实界面、原型、架构图、时序图、状态图、DFD、演示型 HTML slides、图片和多模态表达使用 `expression-delivery`。
+- 只要表达产物时直接使用 `expression-delivery`，不要进入完整 `technical-design` 或 `implementation-delivery` 主流程。
 - 项目初始化、AGENTS、docs、研究区和 `.opencode` 桥接使用 `project-init-manager`。
 
 ## 项目 AGENTS.md 引导建议
