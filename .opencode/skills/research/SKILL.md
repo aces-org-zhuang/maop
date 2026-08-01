@@ -50,6 +50,7 @@ mp.weixin.qq.com URL 阅读、总结、提取、证据化
 - 如果请求命中多个 path，按依赖顺序执行最小必要路径；不要默认展开全链路。
 - 如果缺少上游输入，只补齐当前 path 所需的最小输入。
 - 复杂课题、影响面、证据链或创新路径选择前，先使用 `reasoning-map` 推演。
+- 仓库研究、开源样本选择、源码洞察和横向对比前，必须先经过 `modules/repo-selection/SKILL.md` 的研究对象门禁；核心样本必须先证明 Level1 直接研究对象充足且 `topic_directness >= 0.90`，不得把 Level0 基础技术栈仓库直接当作主研究对象。
 - 需要产品定义/PRD 时转入 `product-definition`。
 - 需要技术选型或设计决策时转入 `technical-design`。
 - 需要图表、slides、原型或视觉表达时转入 `expression-delivery`。
