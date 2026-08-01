@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "已有 PRD，帮我设计这个功能怎么接入现有系统，注意接口和兼容性。",
-      "expected_output": "触发 technical-design；完整设计前先给 ASCII Design Sketch，并读取 references/sop-00-intake.md。",
+      "expected_output": "触发 technical-design；完整设计前先执行 Preview Gate，并读取 references/sop-00-intake.md。",
       "files": []
     },
     {
@@ -16,7 +16,7 @@
     {
       "id": 3,
       "prompt": "画一个登录流程的时序图，只要图，不要完整技术设计。",
-      "expected_output": "不应进入 technical-design 主流程；应调用或建议 ipd-uml。",
+      "expected_output": "不应进入 technical-design 主流程；应调用或建议 expression-delivery。",
       "files": []
     },
     {

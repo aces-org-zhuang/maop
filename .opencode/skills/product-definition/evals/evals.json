@@ -22,7 +22,7 @@
     {
       "id": 4,
       "prompt": "帮我找 5 个 GitHub 项目做技术选型和安全评估。",
-      "expected_output": "不应触发 product-definition；应转向 github-selection 或 research/repo-selection。",
+      "expected_output": "不应触发 product-definition；应转向 technical-design 的 Selection Evaluation 或 research/repo-selection。",
       "files": []
     }
   ]

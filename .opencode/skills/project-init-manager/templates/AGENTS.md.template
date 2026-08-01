@@ -67,6 +67,15 @@
 - 项目仓 `.opencode/opencode.json` 作为桥接配置，必须引用 `vendor/ai/maop/.opencode/skills` 和 `maop-opencode` reference。
 - `vendor/ai/maop/.opencode/` 属于 maop 仓库，由 maop 独立演进；项目仓不复制或覆盖 maop 的 `.opencode`。
 
+## Submodule 提交与 PR 规则
+
+- 修改 submodule 内容时，必须先在对应 submodule 仓库创建分支、提交、推送并创建 submodule PR。
+- 主仓只提交 submodule 指针更新，不把 submodule 内容复制到主仓。
+- 主仓 PR 必须说明关联的 submodule PR、submodule 分支或远端可见 commit。
+- 主仓 PR 指向的 submodule commit 必须已推送到 submodule 远端，不能指向仅存在于本地的 commit。
+- 如果 submodule 远端已有新提交，先 fetch/rebase 或 merge，避免用 force push 覆盖他人工作。
+- 同一需求涉及主仓和 submodule 时，先完成 submodule PR，再更新主仓 submodule 指针并创建或更新主仓 PR。
+
 ## 项目结构
 
 必须列出所有已创建顶层目录及职责，不能只列源码目录。

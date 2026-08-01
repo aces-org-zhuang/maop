@@ -12,7 +12,7 @@ description: 必须用于实现交付、按设计落地代码、bugfix、测试�
 1. 读取 `references/sop-00-intake.md`，确认输入是实现、bugfix、验证、代码审查、安全/CVE 还是交付说明。
 2. 若缺少产品需求或技术设计，回到 `product-definition` 或 `technical-design`；不要凭空补齐关键需求和架构决策。
 3. bug 根因、复杂时序、跨模块影响或安全问题不清时，先使用 `reasoning-map`。
-4. 前端视觉和交互实现需要高质量设计时，按需使用 `frontend-design`。
+4. 前端视觉、交互、原型或其他表达产物需要高质量设计时，转入 `expression-delivery`。
 5. 仓库外状态变更必须以当前环境真实可验证的结果为准；本技能可以生成交付材料，但不能假装完成未执行或无法验证的外部操作。
 6. 进入较大或高风险实现前，先执行 POC Gate，确认最小纵向切片、目标文件、验证信号和回滚风险。POC 可以是薄代码切片、交互原型、Mermaid/状态机验证、前端静态 preview、数据转换样例或算法小样。
 7. 当用户明确要求“先不要改代码 / 只输出 POC Plan”时，不做文件编辑，不扩大仓库探索；只输出 POC 计划、缺失输入和停止条件，形式可为 ASCII、Mermaid、表格或原型说明。
@@ -61,7 +61,7 @@ description: 必须用于实现交付、按设计落地代码、bugfix、测试�
 - 高风险实现前先做 POC 或等价薄切片验证，避免错误需求或设计在代码阶段滚动放大。
 - 真实脚本、构建、生成和高成本实现前先 reasoning-map 推演，减少失败率。
 - 交付前必须 review，分数 >=80，且完成声明必须有 fresh verification evidence。
-- AET 的实现、TDD、bugfix 和 CVE 经验只作为可选模式，不作为跨项目硬规则。
+- 旧项目交付守护经验、TDD、bugfix 和 CVE 处理经验只作为可迁移模式，不作为跨项目硬规则。
 
 ## 资源索引
 
@@ -74,7 +74,7 @@ description: 必须用于实现交付、按设计落地代码、bugfix、测试�
 - `references/sop-06-fresh-verification.md`: 新鲜验证证据纪律。
 - `references/sop-07-code-review.md`: 代码审查和风险检查。
 - `references/sop-08-delivery-summary.md`: 交付摘要、验收映射和外部操作材料。
-- `references/pattern-aet-implementation.md`: AET 可迁移实现模式。
+- `references/pattern-delivery-guards.md`: 旧项目交付守护的可迁移模式。
 - `templates/`: 可选实现和交付模板。
 - `templates/poc-slice-plan.md`: 高风险实现前的 POC Gate 模板；ASCII 只是默认形式之一。
 - `checklists/`: 验证与审查清单。

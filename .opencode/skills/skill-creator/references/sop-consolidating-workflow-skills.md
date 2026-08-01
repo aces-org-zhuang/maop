@@ -19,7 +19,7 @@ Separate source material into four buckets before writing anything:
 
 1. Inventory existing skills and map their trigger descriptions, outputs, required tools, and hidden assumptions.
 2. Identify the smallest number of workflow-level domains that are meaningful to users. Prefer 2-4 workflow skills over one giant skill or many atomic skills.
-3. Check maop first: if `research`, `frontend-design`, `ipd-uml`, `html-pptx`, `project-init-manager`, `submodule-manager`, or another existing skill owns a domain, keep that boundary.
+3. Check maop first: if `research`, `expression-delivery`, `project-init-manager`, `submodule-manager`, or another existing skill owns a domain, keep that boundary.
 4. Write each new `SKILL.md` as a short router: first steps, Stage Router, resource index, delivery standards, and explicit non-goals.
 5. Move phase-level instructions into `references/sop-*.md`.
 6. Move project-specific source-system behavior into `references/pattern-*.md` or `references/adapter-*.md`.

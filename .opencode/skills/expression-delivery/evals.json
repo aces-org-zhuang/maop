@@ -1,0 +1,16 @@
+{
+  "evals": [
+    {
+      "id": "expression-mermaid-preview",
+      "prompt": "我要生成一个复杂 Mermaid 架构图，但不要直接给最终图，先确认预览和质量门禁。",
+      "should_trigger": "expression-delivery",
+      "must_include": ["Preview Gate", "Mermaid", "Review Gate"]
+    },
+    {
+      "id": "expression-frontend-preview",
+      "prompt": "为这个产品做一个前端页面视觉方案，先不要写最终代码，给我预览和验证方式。",
+      "should_trigger": "expression-delivery",
+      "must_include": ["Preview Gate", "frontend", "Verification Gate"]
+    }
+  ]
+}

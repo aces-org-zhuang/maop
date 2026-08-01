@@ -1,6 +1,6 @@
 ---
 name: technical-design
-description: 必须用于技术设计、架构影响面、技术方案、接口设计、数据/状态设计、变更边界、兼容性风险、验证策略和实施切片。用户说“需求已确认”“不要写代码”“先设计接入现有系统”“接口和状态”“验证策略”时优先使用本技能；不要用于产品方向判断、代码实现或项目初始化。
+description: 必须用于技术设计、架构影响面、技术方案、技术选型、依赖选型、开源库/框架/仓库评估、GitHub repo 候选对比、接口设计、数据/状态设计、变更边界、兼容性风险、验证策略和实施切片。用户说“需求已确认”“不要写代码”“先设计接入现有系统”“接口和状态”“验证策略”“选哪个库/框架/仓库”“开源项目评估”时优先使用本技能；不要用于产品方向判断、代码实现或项目初始化。
 ---
 
 # Technical Design
@@ -11,8 +11,8 @@ description: 必须用于技术设计、架构影响面、技术方案、接口�
 
 1. 读取 `references/sop-00-intake.md`，确认需求输入、项目上下文和设计范围。
 2. 涉及复杂影响面、跨模块关系、异步时序、兼容性或根因不明的设计取舍时，先使用 `reasoning-map`。
-3. 需要图表时调用 `ipd-uml`；本技能决定是否需要图，`ipd-uml` 决定图表类型和质量。
-4. 需要深度开源实现洞察或证据包时转入 `research`；需要快速 GitHub 选型时可使用 `github-selection`。
+3. 需要图表、原型或其他表达产物时转入 `expression-delivery`；本技能决定是否需要表达产物，`expression-delivery` 决定形式和质量。
+4. 需要技术选型、依赖选型、开源库/框架/仓库评估或 GitHub repo 候选对比时，使用本技能的 Selection Evaluation 子阶段；缺候选时先转入 `research` 的 Discovery Path 发现候选，深度开源实现洞察或证据包也转入 `research`。
 5. 如果项目缺少基础治理、目录规则或 `.opencode` 桥接，转入 `project-init-manager`，不要在本技能中重建初始化规则。
 6. 生成完整技术设计或实施切片前，先执行 Preview Gate，并等待用户确认或明确标注假设后再继续。预览可用 ASCII/Mermaid 架构图、时序图、状态机图、DFD、接口草案或低保真交互草图。
 7. 当用户明确要求“先只输出草图 / 不要完整设计 / 不要写代码”时，不做仓库探索、不读取大量文档；只基于已给输入生成预览和待确认假设。
@@ -35,6 +35,9 @@ description: 必须用于技术设计、架构影响面、技术方案、接口�
 需要比较方案、架构或技术路线
   -> Stage 3 Solution Options: references/sop-03-solution-options.md
 
+需要技术选型、依赖选型、开源库/框架/仓库评估或候选 repo 对比
+  -> Stage 3b Selection Evaluation: references/sop-03b-selection-evaluation.md
+
 需要接口、数据、状态、错误处理或权限设计
   -> Stage 4 Interface Data State: references/sop-04-interface-data-state.md
 
@@ -54,10 +57,11 @@ description: 必须用于技术设计、架构影响面、技术方案、接口�
 - 设计必须能追溯到需求，不用个人偏好替代约束。
 - 设计阶段不写生产代码；若用户要求实现，转入 `implementation-delivery`。
 - 明确变更边界、兼容性、迁移风险和验证方式。
+- 技术选型必须输出候选、推荐理由、拒绝理由、风险和验证动作；缺少候选时先用 `research` 的 Discovery Path 发现，不用猜测补齐。
 - 长设计前先给低成本预览，避免遗漏影响面后继续放大到实现阶段。
 - 复杂影响面、真实脚本运行、构建验证或高成本实现前先用 `reasoning-map` 做推演预检。
 - 设计定版前必须 review，分数 >=80 才进入实现阶段。
-- AET 的 RAS/RDS/SDD、fence 等只作为可选模式，不作为跨项目硬规则。
+- 旧项目设计守护经验只作为可迁移模式，不作为跨项目硬规则。
 
 ## 资源索引
 
@@ -65,14 +69,18 @@ description: 必须用于技术设计、架构影响面、技术方案、接口�
 - `references/sop-01-context-discovery.md`: 项目、文档和代码上下文发现。
 - `references/sop-02-requirement-trace.md`: 需求到设计决策映射。
 - `references/sop-03-solution-options.md`: 方案选项与取舍。
+- `references/sop-03b-selection-evaluation.md`: 技术选型、依赖选型、开源库/框架/仓库评估和候选 repo 对比。
+- `references/selection/evaluation-workflow.md`: 选型评估详细流程。
 - `references/sop-04-interface-data-state.md`: 接口、数据、状态、错误和权限设计。
 - `references/sop-05-change-boundary.md`: 模块边界、冻结区、兼容性和迁移。
 - `references/sop-06-risk-validation-plan.md`: 风险、验证策略和实施切片。
 - `references/sop-07-design-review.md`: 设计完整性评审。
-- `references/pattern-aet-design.md`: AET 可迁移设计模式。
+- `references/pattern-design-guards.md`: 旧项目设计守护的可迁移模式。
 - `templates/`: 可选设计产物模板。
 - `templates/design-sketch.md`: 长技术设计前的设计预览模板；ASCII 只是默认形式之一。
+- `templates/selection-matrix.md`: 技术选型候选矩阵模板。
 - `checklists/`: 设计质量清单。
+- `checklists/selection-evaluation.md`: 技术选型检查清单。
 
 ## 交付标准
 
