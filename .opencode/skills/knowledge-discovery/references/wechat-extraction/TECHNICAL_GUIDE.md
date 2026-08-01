@@ -138,7 +138,7 @@ Identify and document:
 - Dependencies and prerequisites
 
 ### Workflow File Generation
-Create executable workflow files in `.aces/flow/` directory:
+Create executable workflow files in the project-approved `{workflow_artifact_root}` directory:
 ```python
 # Example workflow structure
 workflow:

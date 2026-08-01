@@ -4,7 +4,7 @@
 
 **工作流名称**: knowledge-discovery-technical-sources
 **工作流类型**: aitools-skills-discovery
-**项目目录**: .aces/knowledge-discovery/technical-sources
+**项目目录**: `{knowledge_artifact_root}/technical-sources`
 **创建时间**: 2026-04-05
 **工作流文件路径**: skills/knowledge-discovery/references/technical-sources/workflow.md
 **本工作流是否有效**: false
@@ -12,7 +12,7 @@
 ### 执行前验证工作流
 执行以下命令
 ```bash
-workflow-creator validate .aces/knowledge-discovery/technical-sources/references/workflow.md
+workflow-creator validate {knowledge_artifact_root}/technical-sources/references/workflow.md
 ```
 
 ## 执行步骤
@@ -91,7 +91,7 @@ workflow-creator validate .aces/knowledge-discovery/technical-sources/references
 ## 目录结构
 
 ```markdown
-.aces/flows/aitools-knowledge-discovery/technical-sources/
+{knowledge_artifact_root}/technical-sources/
 ├── output/                  # 输出文件目录
 │   ├── links.json           # 技术链接集合
 │   ├── trends.md            # 趋势分析报告
@@ -125,7 +125,7 @@ workflow-creator validate .aces/knowledge-discovery/technical-sources/references
 | 类型 | 名称 | 预期使用 |
 |--------|----------|----------|
 | mcp | web_search | WHEN 需要搜索技术文章 THEN 使用web_search工具搜索指定关键词 |
-| skill | github-selection | WHEN 需要搜索开源项目 THEN 使用github-selection技能发现相关项目 |
+| skill | technical-design | WHEN 需要评估开源项目候选并做选型决策 THEN 使用 technical-design 的 Selection Evaluation 子阶段 |
 | slashcommand | /search | WHEN 需要快速搜索 THEN 使用/search命令获取技术信息 |
 | skill | expression-delivery | WHEN 需要可视化趋势 THEN 使用 expression-delivery 生成趋势图表 |
 

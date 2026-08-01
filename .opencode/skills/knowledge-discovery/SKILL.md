@@ -1,6 +1,6 @@
 ---
 name: knowledge-discovery
-description: Use when the user needs external knowledge, technical links, latest articles, WeChat mp.weixin.qq.com extraction, learning resources, trend discovery, tool/skill discovery, or wants to find/install agent skills. Routes search, source extraction, skills ecosystem lookup, source quality filtering, and handoff to research, github-selection, or expression-delivery.
+description: Use when the user needs external knowledge, technical links, latest articles, WeChat mp.weixin.qq.com extraction, learning resources, trend discovery, tool/skill discovery, or wants to find/install agent skills. Routes search, source extraction, skills ecosystem lookup, source quality filtering, and handoff to research, technical-design, or expression-delivery.
 ---
 
 # Knowledge Discovery
@@ -13,13 +13,13 @@ description: Use when the user needs external knowledge, technical links, latest
 - 用户要求“最新技术文章 / 教程 / 学习资料 / 技术趋势 / 技术链接 / 知识库”：使用 technical source discovery path。
 - 用户要求“找 skill / 有没有 skill / 如何扩展 agent 能力 / 安装某个 skill”：使用 skills ecosystem path。
 - 用户要求深度研究、论文、证据包或课题续点：只做 sources discovery 后转入 `research`。
-- 用户要求开源仓候选评估、技术选型、submodule 集成：发现候选后转入 `github-selection`。
+- 用户要求开源仓候选评估、技术选型或依赖选型：发现候选后转入 `technical-design` 的 Selection Evaluation 子阶段。
 - 用户要求把发现结果做图表、slides、原型、图片或可视化：转入 `expression-delivery`。
 
 ## Non-goals
 
 - 不替代 `research` 的研究工作区、证据包和论文流水线。
-- 不替代 `github-selection` 的开源仓评估、风险比较和 submodule 治理。
+- 不替代 `technical-design` 的技术选型决策、风险比较和验证策略。
 - 不替代 `expression-delivery` 的视觉、图表、slides、图片和原型产物。
 - 不安装或运行第三方 skill，除非用户明确同意。
 
@@ -39,7 +39,7 @@ description: Use when the user needs external knowledge, technical links, latest
 - 使用宽到窄关键词组合，覆盖中英文资料源。
 - 优先官方文档、企业技术博客、主流社区、高质量开源仓和近期资料。
 - 可按热度、更新时间、来源权威、相关性、Star/update frequency 排序。
-- 需要开源仓进一步比较时，停止在候选清单并转入 `github-selection`。
+- 需要开源仓进一步比较时，停止在候选清单并转入 `technical-design`。
 - 详细流程见 `references/technical-sources/workflow.md`。
 
 ## Path: WeChat Article Extraction

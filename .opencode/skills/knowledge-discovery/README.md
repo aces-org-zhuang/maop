@@ -11,6 +11,6 @@
 ## 路由边界
 
 - 深度研究、论文、证据包和研究工作区：转入 `research`。
-- 开源仓选型、候选对比、submodule 治理：转入 `github-selection`。
+- 开源仓选型、候选对比、技术选型决策：转入 `technical-design`。
 - 图表、slides、原型、图片和视觉表达：转入 `expression-delivery`。
 - 自建新 skill：转入 `skill-creator`。

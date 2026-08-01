@@ -7,7 +7,7 @@ Add each skill as `.opencode/skills/<skill-name>/SKILL.md` inside the maop repos
 ## Skill Groups
 
 - Core governance: `skill-creator`, `project-init-manager`, `submodule-manager`.
-- Reasoning, research, and knowledge discovery: `reasoning-map`, `knowledge-discovery`, `research`, `github-selection`.
+- Reasoning, research, and knowledge discovery: `reasoning-map`, `knowledge-discovery`, `research`.
 - General development workflow: `development-workflow`, `product-definition`, `technical-design`, `implementation-delivery`, `expression-delivery`.
 
 See `development-workflow/README.md` for the recommended product -> design -> implementation routing.

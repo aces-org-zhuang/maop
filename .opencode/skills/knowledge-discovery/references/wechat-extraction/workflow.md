@@ -4,14 +4,14 @@
 
 **工作流名称**: knowledge-discovery-wechat-extraction
 **工作流类型**: aitools
-**项目目录**: .aces/flows/aitools/knowledge-discovery-wechat-extraction/
+**项目目录**: `{workflow_artifact_root}/knowledge-discovery-wechat-extraction/`
 **创建时间**: 2026-04-05
-**工作流文件路径**: .aces/flows/aitools/knowledge-discovery-wechat-extraction/trace.md
+**工作流文件路径**: `{workflow_artifact_root}/knowledge-discovery-wechat-extraction/trace.md`
 **本工作流是否有效**: true
 
 ### 执行前验证工作流
 ```bash
-workflow-creator validate .aces/flows/aitools/knowledge-discovery-wechat-extraction/trace.md
+workflow-creator validate {workflow_artifact_root}/knowledge-discovery-wechat-extraction/trace.md
 ```
 
 ## 执行步骤
@@ -91,7 +91,7 @@ workflow-creator validate .aces/flows/aitools/knowledge-discovery-wechat-extract
 
 ## 目录结构
 ```markdown
-.aces/projects/aitools/knowledge-discovery-wechat-extraction/
+{knowledge_artifact_root}/wechat-extraction/
 ├── output/                  # 输出文件目录
 │   ├── articles/            # 提取的文章
 │   ├── summaries/           # 摘要文件
