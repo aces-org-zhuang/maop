@@ -91,6 +91,7 @@ sop-00-intake
 - `references/sop-07-submodule-governance.md`: `.gitmodules`、vendor 路径、锁定 submodule、研究参考仓 submodule 规则。
 - `references/sop-08-validation.md`: 初始化完整性检查和验收输出。
 - `references/sop-09-feedback-loop.md`: 后续开发、调试、研究、证据的反哺规则。
+- `references/pattern-workflow-workspace.md`: 可选 AI 研发工作区模式；仅在项目明确需要长期保存需求、设计、实现、验证和评审产物时读取，不作为默认初始化规则。
 - `templates/`: 可落盘模板，按 SOP 指引读取。
 - `checklists/`: 执行前、执行后和 submodule 安全检查。
 

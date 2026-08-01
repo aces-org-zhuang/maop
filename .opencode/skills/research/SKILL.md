@@ -20,6 +20,7 @@ description: |
 - 如果用户请求很宽泛，选择最早缺失的 Stage，而不是综合执行全流程。
 - 如果阶段输入缺失，回退到能补齐输入的最早 Stage，并更新 README 的状态/下一步。
 - 研究材料只能写入 `{research_workspace}/topics/<research_slug>/`；不要写入主仓 `docs/`、主仓 `research/` 或主仓其他目录。
+- `product-definition` 或 `technical-design` 需要深度外部证据、开源样本、论文级证据包或可复现研究材料时，可以转入本技能；普通 PRD 竞品扫描、轻量产品分析、一次性技术判断不自动进入 research 工作区。
 
 ## Stage 0: Resolve Topic
 

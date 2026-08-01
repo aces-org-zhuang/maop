@@ -1,0 +1,29 @@
+{
+  "skill_name": "product-definition",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我有一个给团队内部用的 AI 会议纪要工具想法，帮我沉淀成 PRD。",
+      "expected_output": "触发 product-definition；生成完整 PRD 前先给 ASCII Product Sketch，并读取 references/sop-00-intake.md。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "这个需求验收标准太虚了，帮我改成可测试的。",
+      "expected_output": "路由到需求定义或评审修订，输出场景-动作-结果形式验收标准。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "做一个轻量竞品分析，看看这个需求和现有替代方案差异，不要进入长期研究。",
+      "expected_output": "触发 product-definition 的 lightweight market analysis；不转入 research 工作区。",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "帮我找 5 个 GitHub 项目做技术选型和安全评估。",
+      "expected_output": "不应触发 product-definition；应转向 github-selection 或 research/repo-selection。",
+      "files": []
+    }
+  ]
+}

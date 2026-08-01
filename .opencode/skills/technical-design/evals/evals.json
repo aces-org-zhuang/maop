@@ -1,0 +1,29 @@
+{
+  "skill_name": "technical-design",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "已有 PRD，帮我设计这个功能怎么接入现有系统，注意接口和兼容性。",
+      "expected_output": "触发 technical-design；完整设计前先给 ASCII Design Sketch，并读取 references/sop-00-intake.md。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "这个改动影响好几个模块，先帮我推演变更边界和风险，不要写代码。",
+      "expected_output": "触发 technical-design，并在复杂影响面下使用 reasoning-map 或输出变更边界。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "画一个登录流程的时序图，只要图，不要完整技术设计。",
+      "expected_output": "不应进入 technical-design 主流程；应调用或建议 ipd-uml。",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "需求不清，只有一句‘做个团队知识库’，先帮我想清楚用户和验收标准。",
+      "expected_output": "不应触发 technical-design；应转向 product-definition。",
+      "files": []
+    }
+  ]
+}

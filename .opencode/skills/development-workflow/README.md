@@ -1,0 +1,63 @@
+# Development Workflow Index
+
+本索引用于说明 maop 中三个通用研发流水线技能的边界和推荐顺序。`SKILL.md` 是自动触发入口；本 README 只做维护索引。
+
+## 推荐顺序
+
+```text
+产品/需求不清
+  -> product-definition
+
+需求已确认，需要技术方案
+  -> technical-design
+
+设计或任务已明确，需要代码、验证或交付
+  -> implementation-delivery
+```
+
+## 技能边界
+
+- `product-definition`: 把想法、业务目标、MVP、PRD、用户场景、功能范围和验收标准沉淀为产品定义；高成本 PRD 前先做 Preview Gate。
+- `technical-design`: 把已确认需求转为技术方案、接口/数据/状态设计、变更边界、风险和验证策略；高成本设计前先做 Reasoning Gate 和 Preview Gate，必要节点 Review Gate >=80。
+- `implementation-delivery`: 执行代码实现、bugfix、测试验证、代码审查和交付摘要；真实脚本/高成本实现前先做 Reasoning Gate，高风险实现前先做 POC Gate，交付前 Review Gate >=80，完成声明前必须有 Verification Gate。
+
+## 与 maop 既有技能的关系
+
+- 复杂推演、根因、影响面和时序问题使用 `reasoning-map`。
+- 深度研究、开源仓库对比、证据包和论文级材料使用 `research`。
+- 前端视觉和真实界面实现使用 `frontend-design`。
+- 架构图、时序图、状态图、DFD 等图表使用 `ipd-uml`。
+- 只要图表时直接使用 `ipd-uml`，不要进入完整 `technical-design` 主流程。
+- 演示型 HTML slides 使用 `html-pptx`。
+- 项目初始化、AGENTS、docs、研究区和 `.opencode` 桥接使用 `project-init-manager`。
+
+## 项目 AGENTS.md 引导建议
+
+项目初始化时可把下面的简短规则写入根 `AGENTS.md`：
+
+```text
+## 研发流水线引导
+
+- 需求、PRD、用户场景、功能范围或验收标准不清时，优先使用 `product-definition`。
+- 需求已确认但需要架构、接口、数据、状态、风险或验证策略时，优先使用 `technical-design`。
+- 设计或任务已明确，需要实现、bugfix、测试、代码审查或交付摘要时，优先使用 `implementation-delivery`。
+- 涉及复杂影响面、根因、时序或跨模块取舍时，先使用 `reasoning-map`。
+- 深度研究、开源仓库对比或证据包进入 `research`；普通产品/技术判断不要默认写入研究工作区。
+- 高成本产物前先做 Preview Gate；预览形式可为 ASCII、Mermaid、wireframe、HTML preview、状态机图、数据流图或表格草案。
+- 必要节点执行 Review Gate，review 分数 >=80 才能进入下游或完成声明。
+- 高风险实现前先做 POC Gate；完成声明前必须有 Verification Gate。
+- 用户要求 90%+ 置信度时，必须给出 eval、验证证据和未闭环风险。
+```
+
+## 全链路质量门禁
+
+- Reasoning Gate: 架构、跨模块、根因、异步时序、影响面、需求不确定、方案取舍、真实脚本运行、构建验证或高成本实现前必须使用 `reasoning-map` 做低成本推演预检；它能在真实运行前减少失败率，但不替代 Preview Gate 和 Verification Gate。
+- Preview Gate: 高成本产物前先确认低成本预览，形式可以是 ASCII、Mermaid、wireframe、HTML preview、状态机图、数据流图或表格草案。
+- Review Gate: 需求定版、设计定版、复杂预览确认、高风险 POC 后和交付前必须 review，分数 >=80 才能进入下游或完成声明。
+- POC Gate: 高风险实现、未知依赖、复杂交互、多模态生成、性能/算法不确定时先做 POC 或等价薄切片验证。
+- Verification Gate: 声称完成前必须有本轮 fresh evidence。
+- Confidence Gate: 用户要求 90%+ 置信度时，必须给出 eval、验证证据和未闭环风险。
+
+## 约束
+
+这些流水线技能不要求项目采用固定目录、固定评审规则、固定阶段数量或特定自动化平台。项目已有流程优先；没有流程时再使用技能内的模板和 checklists。

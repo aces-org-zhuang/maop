@@ -28,6 +28,25 @@
 - 真实凭据不得写入仓库、docs、evidence、日志或 `.opencode` 配置。
 - 开发规则只保留通用治理元规则；技术栈细则必须来自本项目真实配置、源码或用户确认。
 
+## 研发流水线引导
+
+- 需求、PRD、用户场景、功能范围或验收标准不清时，优先使用 `product-definition`。
+- 需求已确认但需要架构、接口、数据、状态、风险或验证策略时，优先使用 `technical-design`。
+- 设计或任务已明确，需要实现、bugfix、测试、代码审查或交付摘要时，优先使用 `implementation-delivery`。
+- 涉及复杂影响面、根因、时序或跨模块取舍时，先使用 `reasoning-map`。
+- 深度研究、开源仓库对比或证据包进入 `research`；普通产品/技术判断不要默认写入研究工作区。
+- 项目已有流程优先；没有流程时再使用 maop 技能内的模板和 checklists。
+
+## 全链路质量保障
+
+- Reasoning Gate：涉及架构、跨模块、根因、异步时序、影响面、需求不确定、方案取舍、真实脚本运行、构建验证或高成本实现前，先使用 `reasoning-map` 做低成本推演预检；它能在真实执行前减少失败率，但不替代 Preview Gate 和 Verification Gate。
+- Preview Gate：生成 PRD、技术设计、Mermaid/图表、前端界面、幻灯片、长文档或其他高成本产物前，先给低成本预览并确认。预览形式按产物选择，可以是 ASCII 草图、Mermaid、wireframe、HTML preview、状态机图、数据流图或表格草案。即使复杂任务先执行 Reasoning Gate，也必须在最终生成前显式经过 Preview Gate。
+- Review Gate：需求定版、设计定版、复杂预览确认、高风险 POC 后和交付前必须 review，分数 >=80 才能进入下游或完成声明；低于 80 先修正并复审。
+- POC Gate：高风险实现、未知依赖、复杂交互、多模态生成、性能/算法不确定时，先做 POC 或等价薄切片验证。
+- Verification Gate：声称完成前必须有本轮 fresh evidence，例如测试、构建、lint、类型检查、截图、手工流程或项目认可的验证信号。
+- Confidence Gate：用户要求 90%+ 置信度时，必须给出 eval、验证证据和未闭环风险；不能只口头声明置信度。
+- Stop Rule：Preview、reasoning-map、POC 或验证暴露阻塞时，先回到需求/设计/实现对应阶段修正，不要继续扩大错误。
+
 ## 文档规则
 
 - 长期稳定知识放在 `docs/`。

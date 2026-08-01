@@ -476,6 +476,7 @@ The agents/ directory contains instructions for specialized subagents. Read them
 The references/ directory has additional documentation:
 - `references/schemas.md` — JSON structures for evals.json, grading.json, etc.
 - `references/sop-routed-skills.md` — How to structure complex skills with a short `SKILL.md` router and staged SOP files.
+- `references/sop-consolidating-workflow-skills.md` — How to merge repeated workflow skills into fewer high-cohesion SOP-routed skills without duplicating existing maop domains.
 - `references/self-test-confidence.md` — How to run `opencode run` trigger tests, evaluate execution completeness and quality, use `reasoning-map`, and enforce a >=90% confidence gate.
 
 ---

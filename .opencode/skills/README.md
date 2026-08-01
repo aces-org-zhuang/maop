@@ -3,3 +3,12 @@
 This directory is reserved for maop-owned OpenCode skills.
 
 Add each skill as `.opencode/skills/<skill-name>/SKILL.md` inside the maop repository. Host projects can expose this directory through `skills.paths` in their project `.opencode/opencode.json`.
+
+## Skill Groups
+
+- Core governance: `skill-creator`, `project-init-manager`, `submodule-manager`, `find-skills`.
+- Reasoning and research: `reasoning-map`, `research`, `tech-link-finder`, `weixin-article`, `patent-fetch`, `github-selection`.
+- Design and presentation: `frontend-design`, `ipd-uml`, `html-pptx`, `image-drawing-skill`.
+- General development workflow: `development-workflow`, `product-definition`, `technical-design`, `implementation-delivery`.
+
+See `development-workflow/README.md` for the recommended product -> design -> implementation routing.

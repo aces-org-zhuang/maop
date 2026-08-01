@@ -19,6 +19,8 @@
 9. 常用命令；未知命令写 `待补充`。
 10. 技术栈注意事项。
 11. OpenCode 本地配置说明。
+12. 研发流水线引导：需求用 `product-definition`，设计用 `technical-design`，实现/验证/交付用 `implementation-delivery`；复杂影响面用 `reasoning-map`，深度研究用 `research`。
+13. 全链路质量保障：Reasoning Gate、Preview Gate、Review Gate、POC Gate、Verification Gate、Confidence Gate 和 Stop Rule。
 
 ## 通用治理规则边界
 
@@ -59,9 +61,11 @@
 2. 根据 `sop-02-directory-governance.md` 的目录职责域生成项目结构说明。
 3. 根据 `sop-03-docs-system.md` 写入文档边界和反哺机制。
 4. 根据 `sop-06-research-workspace.md` 写入研究区必建和隔离规则。
-5. 技术栈命令未知时保留 `待补充`，不要猜测。
-6. 检查是否误复制既有项目特化规则；如果发现，只保留可泛化的治理元规则。
-7. 生成或合并 `docs/AGENTS.md`。
+5. 写入研发流水线引导，帮助后续 agent 在需求、设计、实现、验证和交付之间选择正确 maop 技能。
+6. 写入全链路质量保障，要求真实脚本/构建/高成本实现前先 reasoning-map 推演预检，高成本产物前做 Preview Gate，必要节点 Review Gate >=80，高风险实现先 POC，完成声明前 fresh verification，90%+ 置信度必须有 eval 和残余风险说明。
+7. 技术栈命令未知时保留 `待补充`，不要猜测。
+8. 检查是否误复制既有项目特化规则；如果发现，只保留可泛化的治理元规则。
+9. 生成或合并 `docs/AGENTS.md`。
 
 ## 模板
 
@@ -75,3 +79,4 @@
 - 新增文档规则后没有同步到 docs 局部规则。
 - 没有写明研究资料不得进入主仓 `docs/`。
 - 把既有项目的技术栈细则或历史记录当成通用初始化默认规则。
+- 把 Preview Gate 误写成必须 ASCII，或把 POC Gate 误写成所有任务必经。

@@ -1,0 +1,25 @@
+{
+  "suite_name": "development-workflow-boundary-and-poc",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我想做一个 AI 会议纪要工具，请从需求到设计再到 POC 实现计划串起来，但不要写代码。",
+      "expected_output": "应按 product-definition -> technical-design -> implementation-delivery 的顺序说明，并包含 ASCII Product Sketch、ASCII Design Sketch、POC Slice Plan 三个控制点。"
+    },
+    {
+      "id": 2,
+      "prompt": "初始化一个新项目，并在 AGENTS.md 里引导后续需求、设计、实现、验证该用哪些 maop 技能。",
+      "expected_output": "应触发 project-init-manager，并写入或说明 AGENTS.md 的研发流水线引导章节。"
+    },
+    {
+      "id": 3,
+      "prompt": "继续我的研究课题，做开源仓库对比和证据包。",
+      "expected_output": "应触发 research，不应进入 product-definition。"
+    },
+    {
+      "id": 4,
+      "prompt": "这个 bug 涉及异步状态和跨模块事件顺序，先推演根因再修。",
+      "expected_output": "应触发 implementation-delivery 的 bug diagnosis，并先使用 reasoning-map。"
+    }
+  ]
+}
