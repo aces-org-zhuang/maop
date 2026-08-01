@@ -77,3 +77,8 @@ Verification Gate
 - `references/sop-06-image-generation.md`: 图片和多模态表达。
 - `references/sop-07-verification.md`: 表达产物验证。
 - `references/sop-08-review.md`: Review Gate。
+- `references/diagram-examples/`: 图表类型示例库。
+- `references/html-slides/`: HTML slides 设计、排版、Mermaid 和高度控制参考。
+- `references/image-generation/`: 图片生成提示词、API 和历史构建参考。
+- `data/ui-ux-library/`: UI/UX 风格、颜色、字体、产品类型、技术栈和设计系统检索数据。
+- `tools/`: HTML 校验、slide height 检查、图片生成和 UI/UX 检索辅助脚本。

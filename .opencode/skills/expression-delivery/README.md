@@ -21,3 +21,11 @@
 ## 收敛范围
 
 本技能统一承接前端界面、原型、图表、slides、图片和多模态表达产物，避免为每一种表达形式保留分散入口。
+
+## 迁移资产
+
+- `references/diagram-examples/`: 图表类型示例库，覆盖 E-R、组件、时序、流程、DFD、状态、用例、FMEA、威胁模型、决策树和甘特图。
+- `references/html-slides/`: HTML slides 设计、排版、颜色、字体、Mermaid 渲染和高度控制参考。
+- `references/image-generation/`: 图片生成 prompt、Gemini Banana API 和历史构建参考。
+- `data/ui-ux-library/`: UI/UX 风格、颜色、字体、产品类型、技术栈和设计系统检索数据。
+- `tools/`: HTML 校验、slide height 检查、图片生成和 UI/UX 检索辅助脚本。

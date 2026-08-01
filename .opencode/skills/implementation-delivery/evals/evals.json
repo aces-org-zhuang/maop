@@ -16,7 +16,7 @@
     {
       "id": 3,
       "prompt": "帮我实现一个前端设置页，要有完整视觉和交互细节。",
-      "expected_output": "触发 implementation-delivery 后应按需调用 frontend-design，不能把前端视觉质量规则复制进本技能。",
+      "expected_output": "触发 implementation-delivery 后应按需转入 expression-delivery，不能把前端视觉质量规则复制进本技能。",
       "files": []
     },
     {
