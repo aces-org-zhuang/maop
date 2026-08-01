@@ -19,9 +19,17 @@
 - 保存配置到 `{selection_artifact_root}/config.md` 或项目既有设计记录。
 
 ### 任务1b：执行 reasoning-map 门禁
-- 在推荐候选前，使用 `reasoning-map` 推演目标能力、现有项目边界、候选依赖、集成路径、构建/测试影响、license/security 风险和退出路径。
+- 在推荐候选前，使用 `reasoning-map` 自顶向下推演目标能力、系统架构级方案形态、关键能力块、现有项目边界、候选依赖、集成路径、构建/测试影响、license/security 风险和退出路径。
+- 先形成系统级候选空间，再拆到子系统/模块级候选，最后才进入底层库、SDK、框架或具体实现依赖候选；不要从底层库清单直接反推整体方案。
+- 每轮选型必须记录候选清单变化：新增了什么、删除了什么、为什么扩大范围、为什么收敛范围、哪些 RED 点仍需继续推演。
 - 推荐项关键结论置信度必须 >=90%；低于 90% 时，输出 RED 点和补证动作，不得定版或进入实现计划。
 - 置信度依据必须来自可追踪证据，例如 README/API 文档、release、license、security advisory、示例集成、包管理元数据、构建/测试 probe 或项目约束。
+
+### 任务1c：建立自顶向下候选层级
+- Architecture-level：系统级方案形态、关键能力组合、是否依赖现成平台/框架/服务，先排除会导致大规模自研或重复造轮子的方向。
+- Subsystem/module-level：按能力块选择可组合的模块、服务、SDK、框架或 CLI，并检查它们是否覆盖目标架构中的必要边界。
+- Implementation-level：只有当系统级和模块级边界清晰后，才选择底层库、适配器、插件、驱动、协议实现或具体 repo。
+- 保存层级化候选记录到 `{selection_artifact_root}/selection-matrix.md` 或等价选型矩阵。
 
 ### 任务2：搜索GitHub项目
 - 使用 web_search 搜索 GitHub 项目
@@ -67,6 +75,7 @@
 - 为每个项目生成推荐理由
 - 标注推荐权重（高/中/低）
 - 标注 `decision_confidence`，推荐进入实现或 POC 的方案必须 >=90%。
+- 标注 `selection_convergence`：候选是否已覆盖关键架构能力块、模块边界是否清晰、是否已排除重复造轮子风险、是否还有必须扩大范围的 RED 点。
 - 生成备选清单报告
 - 等待用户确认
 - 输出：`{selection_artifact_root}/candidates.md`

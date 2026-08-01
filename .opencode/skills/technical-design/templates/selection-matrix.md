@@ -17,6 +17,24 @@ Use this template for dependency, framework, library, SDK, or repository selecti
 | --- | --- | --- | --- | --- | --- | --- | --- |
 |  |  |  |  |  |  |  |  |
 
+## Top-Down Candidate Space
+
+| Level | Selection question | Candidate set | Add/remove rationale | Remaining RED points |
+| --- | --- | --- | --- | --- |
+| System architecture | Which solution shape covers the end-to-end capability without unnecessary self-build? |  |  |  |
+| Subsystem/module | Which components cover each architecture capability block? |  |  |  |
+| Implementation dependency | Which library/SDK/framework/repo should be adopted for the selected module boundary? |  |  |  |
+
+## Expansion and Convergence Log
+
+| Round | Reasoning-map focus | Added candidates | Removed candidates | Scope change | Convergence status |
+| --- | --- | --- | --- | --- | --- |
+| 1 | System architecture candidate space |  |  | expanded / narrowed |  |
+| 2 | Subsystem/module coverage |  |  | expanded / narrowed |  |
+| 3 | Implementation dependency fit |  |  | expanded / narrowed |  |
+
+Convergence is reached only when key architecture capability blocks are covered, module boundaries are clear, wheel-rebuilding risk is bounded, candidate differences are compared, and remaining RED points no longer block the design goal.
+
 ## Recommendation
 
 - Recommended option:
