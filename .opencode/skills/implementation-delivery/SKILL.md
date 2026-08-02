@@ -20,7 +20,7 @@ description: 必须用于实现交付、按设计落地代码、bugfix、测试�
 9. 当用户明确要求“先不要改代码 / 只输出 POC Plan”时，不做文件编辑，不扩大仓库探索；只输出 POC 计划、缺失输入和停止条件，形式可为 ASCII、Mermaid、表格或原型说明。
 10. 用户未提供项目专有系统名称、路径或运行时能力时，POC plan 必须保持跨项目中性；不要引入当前仓库的产品名、目录、运行时、网关或工具链。
 11. 不要把实现交付请求改派给角色型名称；在 maop 技能体系内，本技能就是实现、修复、验证和交付入口。
-12. 真实脚本、构建、生成和高成本实现前先使用 `reasoning-map` 做推演预检；交付前执行 Review Gate，review 分数必须 >=80。
+12. 真实脚本、构建、生成和高成本实现前先使用 `reasoning-map` 做推演预检；交付前执行 Review Gate，review 分数必须 >=80；测试、构建、POC、review 或 verification 失败时按 `development-workflow/references/auto-remediation-gate-loop.md` 自动修复并重跑，硬阻断才询问用户。
 
 ## Stage Router
 
@@ -64,7 +64,7 @@ description: 必须用于实现交付、按设计落地代码、bugfix、测试�
 - 真实脚本、构建、生成和高成本实现前先 reasoning-map 推演，减少失败率。
 - POC、正式实现、构建、测试、外部调用、打包和验证前必须通过 Configuration Readiness Gate；能从项目文件自动解析的配置先解析，缺失 required 配置时停止并一次性列出，不边做边问。
 - subagent Task 只用于有边界的探索、审查或证据整理；主 agent 必须保留修改范围、最终补丁、验证结论和交付责任。
-- 交付前必须 review，分数 >=80，且完成声明必须有 fresh verification evidence。
+- 交付前必须 review，分数 >=80，且完成声明必须有 fresh verification evidence；不达标或验证失败时默认自动修复最多 7 轮，连续 2 轮无进展或遇到环境/权限/配置硬阻断时才停。
 - 旧项目交付守护经验、TDD、bugfix 和 CVE 处理经验只作为可迁移模式，不作为跨项目硬规则。
 
 ## 资源索引

@@ -78,7 +78,7 @@
 - 标注 `selection_convergence`：候选是否已覆盖关键架构能力块、模块边界是否清晰、是否已排除重复造轮子风险、是否还有必须扩大范围的 RED 点。
 - 标注 `primary_uniqueness`：同一个 feature/capability/module 是否只有一个 primary 依赖；同质候选必须降级为 fallback、alternative 或 rejected，并说明不同时引入的原因。
 - 生成备选清单报告
-- 等待用户确认
+- 默认继续生成后续依赖分析；只有用户明确要求确认、primary 唯一性无法判断、required 配置/授权缺失或关键 tradeoff 需要用户偏好时才等待确认。
 - 输出：`{selection_artifact_root}/candidates.md`
 
 ### 任务8：分析项目依赖关系
@@ -119,7 +119,7 @@
 - 检查环境变量要求和敏感配置
 - 统计第三方依赖数量和风险等级
 - 生成暴露面报告
-- 等待用户确认
+- 默认继续进入功能版图分析；只有 license/security RED 阻塞、required 配置/授权缺失或用户明确要求确认时才等待确认。
 - 输出：`{selection_artifact_root}/license-security-risk.md`
 
 ## 阶段三：功能版图分析
@@ -140,7 +140,7 @@
 - 对比不同项目的场景覆盖度
 - 绘制场景关系图（ASCII）
 - 生成功能版图报告
-- 等待用户确认
+- 默认继续进入集成建议；只有功能覆盖方向需要用户偏好、required 配置/授权缺失或用户明确要求确认时才等待确认。
 - 输出：`{selection_artifact_root}/feature-coverage.md`
 
 ## 阶段四：集成建议

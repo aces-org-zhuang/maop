@@ -11,8 +11,8 @@ description: 必须用于表达产物交付，包括前端 UI、HTML/CSS/React �
 
 1. 判断表达产物类型：frontend UI、prototype、diagram、slides、image/multimodal，或组合产物。
 2. 复杂表达结构、多模态链路、前端状态/交互复杂时，先使用 `reasoning-map` 做 Reasoning Gate。
-3. 最终生成前必须执行 Preview Gate，先给低成本预览并等待确认或显式标注假设。
-4. 复杂预览、关键视觉产物和交付前执行 Review Gate，review 分数必须 >=80；低于 80 先修订并复审。
+3. 最终生成前必须执行 Preview Gate；除非用户明确要求确认、高成本外部 API/多模态调用、required 配置/授权缺失，或品牌/风格关键偏好无法推断，否则记录假设并继续生成。
+4. 复杂预览、关键视觉产物和交付前执行 Review Gate，review 分数必须 >=80；低于 80 按 `development-workflow/references/auto-remediation-gate-loop.md` 自动修订并复审，不默认停下来等用户继续。
 5. 复杂交互、动画、canvas、Three.js、响应式、渲染或多模态不确定时执行 POC Gate。
 6. 浏览器渲染、截图、图片生成、外部 API、多模态服务、构建预览、打包或验证前，按 `development-workflow/references/configuration-readiness-gate.md` 统一确认运行时、API/env 凭据边界、输出路径、验证信号和授权；缺失 required 配置时先停止并给出降级方案。
 7. 声称完成前执行 Verification Gate，提供本轮 fresh evidence。
@@ -54,6 +54,10 @@ Review Gate
 
 POC Gate
   -> thin proof for risky interaction, responsive layout, rendering, animation, or generation path
+
+Auto-Remediation Gate Loop
+  -> preview, Mermaid, layout, screenshot, render, slide height, interaction, review, or verification failure should auto-repair and rerun up to 7 rounds
+  -> stop only on missing required config/authorization, high-cost external calls needing approval, user style tradeoff, or 2 no-progress rounds
 
 Configuration Readiness Gate
   -> confirm runtime, browser/API/env boundaries, output paths, validation signals, and authorization before rendering, generation, build preview, packaging, or external calls

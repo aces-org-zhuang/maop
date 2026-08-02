@@ -54,6 +54,7 @@ mp.weixin.qq.com URL 阅读、总结、提取、证据化
 - 外部联网检索、微信/公众号搜索、GitHub/API 访问、下载、工具/skill 安装建议或浏览器提取前，按 `development-workflow/references/configuration-readiness-gate.md` 统一确认检索范围、平台、速率/安全边界、输出路径、凭据边界和用户授权；不要在抓取过程中临时索要配置。
 - 检索、搜索、文章提取、创新机会发现和创新报告素材整合必须遵循 `paths/sop-retrieval-reasoning.md`：先扩展检索，再收敛证据，再围绕 RED 点继续扩展，再收敛，直到满足退出条件；不要一次性关键词搜索后直接写结论。
 - 仓库研究、开源样本选择、源码洞察和横向对比前，必须先经过 `modules/repo-selection/SKILL.md` 的研究对象门禁；核心样本必须先证明 Level1 直接研究对象充足且 `topic_directness >= 0.90`，不得把 Level0 基础技术栈仓库直接当作主研究对象。
+- 检索证据不足、来源质量低、repo selection 不收敛或创新报告证据链不达标时，按 `development-workflow/references/auto-remediation-gate-loop.md` 自动扩展/收敛检索、补 source-index、补反例和复核证据，最多 7 轮；只有外部平台权限、微信/browser/session、required 配置或研究范围偏好阻塞时才询问用户。
 - 需要产品定义/PRD 时转入 `product-definition`。
 - 需要技术选型或设计决策时转入 `technical-design`。
 - 需要图表、slides、原型或视觉表达时转入 `expression-delivery`。
