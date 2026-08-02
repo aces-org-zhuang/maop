@@ -14,7 +14,7 @@ description: 项目代码仓初始化管理技能。用户要求初始化新项�
 3. 执行任何初始化写入、submodule 添加、`.opencode` 生成或 docs/research 目录落盘前，先按 `development-workflow/references/configuration-readiness-gate.md` 统一确认项目路径、初始化模式、允许写入范围、submodule URL/path/ref、研究区策略、`.opencode` 桥接、验证命令和用户授权；不要在执行中途零散索要配置。
 4. 根据 Stage Router 读取后续 SOP。不要提前读取所有 SOP，也不要把所有规则复制到主上下文。
 5. 执行写操作前，确认不会覆盖用户已有文件；遇到已存在文件时先读取并增量合并。
-6. 完成后读取 `references/sop-08-validation.md` 和 `references/sop-09-feedback-loop.md`，做完整性检查和反哺规则落地。
+6. 完成后读取 `references/sop-08-validation.md` 和 `references/sop-09-feedback-loop.md`，做完整性检查和反哺规则落地；完整性检查不达标时按 `development-workflow/references/auto-remediation-gate-loop.md` 自动补缺失结构、索引、桥接、验证记录和反哺规则，硬阻断才询问用户。
 
 ## 总原则
 
@@ -29,6 +29,7 @@ description: 项目代码仓初始化管理技能。用户要求初始化新项�
 - 开发规则只生成通用治理元规则，不复制某个项目的技术栈细则；本技能不引入 `profiles` 或 `overlays` 机制。
 - 不伪造未知技术栈命令；未知时写 `待补充`，并标明需要从技术栈配置或用户确认中补齐。
 - POC、正式初始化和写操作前必须一次性列出 required/optional/unknown 配置并确认；缺少 required 配置时停止，不在执行过程中临时索要。
+- 初始化完整性不达标时默认自动修复最多 7 轮；连续 2 轮无进展、覆盖风险、写入范围不清、submodule 配置/授权缺失或 required 配置缺失时才停。
 
 ## Stage Router
 

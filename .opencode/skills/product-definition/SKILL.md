@@ -14,9 +14,9 @@ description: 必须用于产品定义、PRD、MVP、用户场景、功能范围�
 3. 根据 Stage Router 只读取当前需要的 SOP。不要把所有 SOP 一次性载入。
 4. 若需要深度外部证据、开源仓对比、论文级证据包或长期课题沉淀，转入 `research`；普通 PRD 竞品扫描不自动进入研究工作区。
 5. 若需要真实前端界面、原型、图表、slides 或其他表达产物，转入 `expression-delivery`；本技能只负责产品定义和 prototype brief。
-6. 生成完整 PRD、产品定义文档或长需求清单前，先执行 Preview Gate，并等待用户确认或明确标注假设后再继续。预览可用 ASCII Product Sketch、需求地图、验收表格、Mermaid 流程或低保真线框，按产物选择。
+6. 生成完整 PRD、产品定义文档或长需求清单前，先执行 Preview Gate；除非用户明确要求确认、关键产品目标/用户/成功标准无法推断，或继续会改变已确认范围，否则记录假设并继续。预览可用 ASCII Product Sketch、需求地图、验收表格、Mermaid 流程或低保真线框，按产物选择。
 7. 不要把产品定义请求改派给角色型名称；在 maop 技能体系内，本技能就是 PRD/需求/轻量竞品分析入口。
-8. 需求定版、PRD 定版或进入 `technical-design` 前执行 Review Gate，review 分数必须 >=80；低于 80 先修订并复审。
+8. 需求定版、PRD 定版或进入 `technical-design` 前执行 Review Gate，review 分数必须 >=80；低于 80 按 `development-workflow/references/auto-remediation-gate-loop.md` 自动补齐范围、场景、验收、风险和假设并复审，硬阻断才询问用户。
 
 ## Stage Router
 
@@ -49,7 +49,7 @@ description: 必须用于产品定义、PRD、MVP、用户场景、功能范围�
 - 分离问题、用户、场景、约束、需求和实现方案；产品定义阶段不提前定技术架构。
 - 验收标准必须可观察、可测试，避免抽象口号。
 - 长产物前先给低成本预览，避免错误需求滚动传递到设计和实现阶段。
-- 需求定版前必须 review，分数 >=80 才进入设计阶段。
+- 需求定版前必须 review，分数 >=80 才进入设计阶段；不达标时默认自动修复最多 7 轮，连续 2 轮无进展或需要用户关键偏好时才停。
 - 若项目已有 PRD 或需求模板，优先遵循项目模板；没有模板时再使用本技能模板。
 - 旧项目探索/评审经验只作为可迁移 pattern，不作为跨项目硬规则。
 
