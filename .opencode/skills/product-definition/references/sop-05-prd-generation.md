@@ -12,7 +12,7 @@
 4. 保持章节与需求来源可追踪，不把前序分析结论丢失在摘要里。
 5. 将功能需求、非功能需求、验收标准、开放问题和依赖分开写。
 6. 如果需要原型，只产出 prototype brief；真实界面、图表、slides 或其他表达产物交给 `expression-delivery`。
-7. 输出前运行 `checklists/prd-completeness.md`。
+7. 输出前运行 `checklists/prd-completeness.md`；如果 PRD completeness、Review Gate 或下游可消费性不达标，按 `development-workflow/references/auto-remediation-gate-loop.md` 自动补齐并复审，最多 7 轮，硬阻断才询问用户。
 
 ## Validation
 

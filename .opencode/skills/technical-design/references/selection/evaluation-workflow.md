@@ -79,6 +79,7 @@
 - 标注 `primary_uniqueness`：同一个 feature/capability/module 是否只有一个 primary 依赖；同质候选必须降级为 fallback、alternative 或 rejected，并说明不同时引入的原因。
 - 生成备选清单报告
 - 默认继续生成后续依赖分析；只有用户明确要求确认、primary 唯一性无法判断、required 配置/授权缺失或关键 tradeoff 需要用户偏好时才等待确认。
+- 如果继续后发现 convergence、decision_confidence、primary_uniqueness 或 deployment-first 证据不达标，按 `development-workflow/references/auto-remediation-gate-loop.md` 自动扩展/收敛候选并复评，最多 7 轮。
 - 输出：`{selection_artifact_root}/candidates.md`
 
 ### 任务8：分析项目依赖关系
@@ -120,6 +121,7 @@
 - 统计第三方依赖数量和风险等级
 - 生成暴露面报告
 - 默认继续进入功能版图分析；只有 license/security RED 阻塞、required 配置/授权缺失或用户明确要求确认时才等待确认。
+- 如果继续后发现 license/security、暴露面、默认配置或依赖风险不达标，按 `development-workflow/references/auto-remediation-gate-loop.md` 自动补证据、替换候选或补风险边界并复评，最多 7 轮。
 - 输出：`{selection_artifact_root}/license-security-risk.md`
 
 ## 阶段三：功能版图分析
@@ -141,6 +143,7 @@
 - 绘制场景关系图（ASCII）
 - 生成功能版图报告
 - 默认继续进入集成建议；只有功能覆盖方向需要用户偏好、required 配置/授权缺失或用户明确要求确认时才等待确认。
+- 如果继续后发现功能覆盖、模块边界、使用场景或 feature map 不达标，按 `development-workflow/references/auto-remediation-gate-loop.md` 自动补用例、补候选、补对比并复评，最多 7 轮。
 - 输出：`{selection_artifact_root}/feature-coverage.md`
 
 ## 阶段四：集成建议
