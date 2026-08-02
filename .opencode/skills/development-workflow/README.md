@@ -60,11 +60,18 @@
 ## 全链路质量门禁
 
 - Reasoning Gate: 架构、跨模块、根因、异步时序、影响面、需求不确定、方案取舍、真实脚本运行、构建验证或高成本实现前必须使用 `reasoning-map` 做低成本推演预检；它能在真实运行前减少失败率，但不替代 Preview Gate 和 Verification Gate。
+- Knowledge & Handoff Gate: 跨阶段或产生稳定知识时，先读最小 `docs/` 和上游 packet，维护 Reuse Ledger，明确归档、修订和下游交接；按 `references/knowledge-handoff-gate.md` 执行。
 - Preview Gate: 高成本产物前先确认低成本预览，形式可以是 ASCII、Mermaid、wireframe、HTML preview、状态机图、数据流图或表格草案。
 - Review Gate: 需求定版、设计定版、复杂预览确认、高风险 POC 后和交付前必须 review，分数 >=80 才能进入下游或完成声明。
 - POC Gate: 高风险实现、未知依赖、复杂交互、多模态生成、性能/算法不确定时先做 POC 或等价薄切片验证。
 - Verification Gate: 声称完成前必须有本轮 fresh evidence。
 - Confidence Gate: 用户要求 90%+ 置信度时，必须给出 eval、验证证据和未闭环风险。
+
+## 交接产物
+
+- `Product Handoff Packet`: 产品定义交给技术设计时使用，包含角色、Use Case、范围、需求、验收、假设、已读材料和已拒绝重复研究。
+- `Technical Handoff Packet`: 技术设计交给实现时使用，包含需求追踪、源码目录结构、模块 owner、接口/状态影响、风险、验证策略和实施切片。
+- `Delivery Evidence Packet`: 实现交付时使用，包含实际变更、需求/设计映射、fresh verification evidence、docs 修订状态和残余风险。
 
 ## 约束
 
