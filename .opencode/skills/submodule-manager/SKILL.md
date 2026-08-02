@@ -14,6 +14,7 @@ description: Git submodule 管理技能。用户提供外部代码仓地址，�
 - 自动解析优先：项目名、host、推荐目录名、现有冲突、当前 pinned commit、远端 refs 等能从 Git 或 URL 得到的信息，不向用户询问。
 - 多平台兼容：GitHub、AtomGit、Gitee、GitLab、自建 Git 服务和本地 Git 路径都按 Git URL 处理，平台差异只作为 `platform_hint` 和诊断信息。
 - 写操作授权：会修改 `.gitmodules`、Git index、submodule checkout 或 pinned commit 前，向用户确认执行授权。
+- 写操作前置确认：执行 `submodule add/update/sync/deinit/rm` 或 pinned commit 写入前，按 `development-workflow/references/configuration-readiness-gate.md` 一次性确认 repo URL、path、target ref、认证边界、planned_commands、validation_commands 和写入授权；不要在执行过程中临时索要配置。
 - 路径规范：新增 submodule 前必须按主仓路径规范生成完整 `proposed_path`。不能把路径设计交给用户临场决定。
 - 主仓索引：submodule 不能只是孤岛目录。主仓必须记录子仓路径、边界、用途、构建/验证入口和消费关系。
 - 文档最小化：只有 submodule 机制、命令、路径、边界或验证规则发生长期变化时才更新 docs；不要把每次引入的主观价值评审写成长期规则。
@@ -38,7 +39,7 @@ git ls-remote --symref <repo-url> HEAD
 git ls-remote --tags <repo-url>
 ```
 
-只读检查和远端元数据查询不需要用户授权。写操作前必须确认。
+只读检查和远端元数据查询不需要用户授权。写操作前必须完成 Configuration Readiness Gate 并确认授权。
 
 ## 内部记录结构
 

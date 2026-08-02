@@ -12,14 +12,15 @@ description: 必须用于技术设计、架构影响面、技术方案、技术�
 1. 读取 `references/sop-00-intake.md`，确认需求输入、项目上下文和设计范围。
 2. 涉及复杂影响面、跨模块关系、异步时序、兼容性、架构、路线或根因不明的设计取舍时，先使用 `reasoning-map`，并对照 `checklists/design-governance.md` 执行事前推演门禁；进入下一设计环节前，关键结论置信度必须 >=90%，低于 90% 时只能输出假设、风险和验证动作，不能定版或推进实现。
 3. 代码/文档探索、候选扩展、依赖初筛、方案局部评审可使用 subagent Task；使用前按 `development-workflow/references/subagent-context-budgeting.md` 定义边界和 return contract，最终架构、技术路线、primary 依赖和 Review Gate 由主 agent 决定。
-4. 需要图表、原型或其他表达产物时转入 `expression-delivery`；本技能决定是否需要表达产物，`expression-delivery` 决定形式和质量。
-5. 需要技术选型、依赖选型、开源库/框架/仓库评估或 GitHub repo 候选对比时，使用本技能的 Selection Evaluation 子阶段；缺候选时先转入 `research` 的 Discovery Path 发现候选，深度开源实现洞察或证据包也转入 `research`。本技能的开源选型面向解决方案依赖引入，不等同于 research 的论文/样本仓库选择。
-6. 如果项目缺少基础治理、目录规则或 `.opencode` 桥接，转入 `project-init-manager`，不要在本技能中重建初始化规则。
-7. 生成完整技术设计或实施切片前，先执行 Preview Gate，并等待用户确认或明确标注假设后再继续。预览可用 ASCII/Mermaid 架构图、时序图、状态机图、DFD、接口草案或低保真交互草图。
-8. 当用户明确要求“先只输出草图 / 不要完整设计 / 不要写代码”时，不做仓库探索、不读取大量文档；只基于已给输入生成预览和待确认假设。
-9. 用户未提供项目专有系统名称、路径或运行时能力时，草图必须保持跨项目中性；不要引入当前仓库的产品名、目录、运行时、网关或工具链。
-10. 不要把技术设计请求改派给角色型名称；在 maop 技能体系内，本技能就是需求确认后的设计入口。
-11. 设计定版、进入实现或高风险 POC 前执行 Review Gate，review 分数必须 >=80，`checklists/design-governance.md` 关键项必须通过，且关键架构/路线/选型结论置信度必须 >=90%；低于门槛先修订、补证据或设计最小验证，不进入下一环节。
+4. 进入 POC、implementation handoff、真实构建/验证设计或外部服务接入前，按 `development-workflow/references/configuration-readiness-gate.md` 统一确认必需路径、命令、依赖、版本锁、环境变量/凭据边界、外部服务、验证信号和授权；缺失 required 配置时只输出补证/降级方案，不推进下游。
+5. 需要图表、原型或其他表达产物时转入 `expression-delivery`；本技能决定是否需要表达产物，`expression-delivery` 决定形式和质量。
+6. 需要技术选型、依赖选型、开源库/框架/仓库评估或 GitHub repo 候选对比时，使用本技能的 Selection Evaluation 子阶段；缺候选时先转入 `research` 的 Discovery Path 发现候选，深度开源实现洞察或证据包也转入 `research`。本技能的开源选型面向解决方案依赖引入，不等同于 research 的论文/样本仓库选择。
+7. 如果项目缺少基础治理、目录规则或 `.opencode` 桥接，转入 `project-init-manager`，不要在本技能中重建初始化规则。
+8. 生成完整技术设计或实施切片前，先执行 Preview Gate，并等待用户确认或明确标注假设后再继续。预览可用 ASCII/Mermaid 架构图、时序图、状态机图、DFD、接口草案或低保真交互草图。
+9. 当用户明确要求“先只输出草图 / 不要完整设计 / 不要写代码”时，不做仓库探索、不读取大量文档；只基于已给输入生成预览和待确认假设。
+10. 用户未提供项目专有系统名称、路径或运行时能力时，草图必须保持跨项目中性；不要引入当前仓库的产品名、目录、运行时、网关或工具链。
+11. 不要把技术设计请求改派给角色型名称；在 maop 技能体系内，本技能就是需求确认后的设计入口。
+12. 设计定版、进入实现或高风险 POC 前执行 Review Gate，review 分数必须 >=80，`checklists/design-governance.md` 关键项必须通过，Configuration Readiness Gate 必须通过，且关键架构/路线/选型结论置信度必须 >=90%；低于门槛先修订、补证据或设计最小验证，不进入下一环节。
 
 ## Stage Router
 
@@ -62,6 +63,7 @@ description: 必须用于技术设计、架构影响面、技术方案、技术�
 - 技术选型必须输出候选、推荐理由、拒绝理由、风险和验证动作；缺少候选时先用 `research` 的 Discovery Path 发现，不用猜测补齐。
 - 方案、架构、路线和依赖选型推进必须通过 `reasoning-map` 门禁：关键判断置信度 >=90% 才能进入下一设计环节、实现计划或 POC；未达标时保留为暂定方案并列出补证动作。
 - 开源库/框架/仓库选型默认以项目依赖方式引入，优先声明依赖、锁定版本、满足 license/security 边界并保障项目构建完整性；非必要不侵入修改第三方源码，不把候选仓库复制进项目后自研化，也不把选型评估误当作 research 样本冻结。
+- POC、implementation handoff、外部服务接入和构建/验证设计前必须通过 Configuration Readiness Gate；不要把路径、命令、env、凭据边界或服务配置留到实现过程中再问。
 - 长设计前先给低成本预览，避免遗漏影响面后继续放大到实现阶段。
 - 复杂影响面、真实脚本运行、构建验证或高成本实现前先用 `reasoning-map` 做推演预检。
 - 设计定版前必须 review，分数 >=80 才进入实现阶段。
