@@ -146,7 +146,10 @@
 ## 阶段四：集成建议
 
 ### 任务14：生成集成建议
-- 声明依赖引入方式、版本锁定策略、构建/测试完整性保障、license/security 处理和回滚/替换路径。
+- 先读取 `references/sop-03c-deployment-integration.md`，按 deployment-first adoption order 声明依赖引入方式、版本锁定策略、构建/测试完整性保障、license/security 处理和回滚/替换路径。
+- 优先考虑 managed service/API、package、SDK/framework、CLI/release binary、container image、system package 或 pinned submodule；只有部署引入不足时才设计 source-build、fork/patch 或自研替代。
+- 目录规划必须统一到项目 tech 流水线：优先使用项目已有 scripts/tools/infra/ops/build/docker/artifacts/config 规范；没有规范时先提出候选并通过 Configuration Readiness Gate 确认，不默认 `.aces/deploy` 或历史脚本目录。
+- 如果设计 build/install 入口，只定义命令契约、配置来源、输出产物、日志位置和验证信号；真实安装、构建、镜像构建或脚本生成转入 `implementation-delivery`。
 - 只有存在明确不可替代缺口、上游不可接受修复、license 允许且维护成本可控时，才建议 fork/patch 或自研替代；必须把该判断作为 RED 风险交给用户确认。
 - 需要真实集成、安装、验证或交付时，转入 `implementation-delivery`。
 - 只需要方案表达、部署流程图或演示材料时，转入 `expression-delivery`。
@@ -155,7 +158,7 @@
 ### 任务15：生成项目软件构建图
 - 输出 `{selection_artifact_root}/software-build-map.md`，使用 ASCII 或 Mermaid 展示项目软件构建图。
 - 图中必须清晰区分 first-party 自研组件、third-party 开源组件、外部服务/CLI/SDK、构建工具链和运行时边界。
-- 对每个开源组件标注引入方式（package/SDK/framework/service/CLI/submodule）、版本锁定位置、license/security 检查点和 build/test 验证命令或等价验证动作。
+- 对每个开源组件标注引入方式（package/SDK/framework/service/CLI/submodule）、adoption form（service/API、package、SDK/framework、CLI/binary、image、system package、submodule、source-build、fork/patch/self-build）、为什么不采用更高优先级部署方式、版本锁定位置、license/security 检查点和 build/test 验证命令或等价验证动作。
 - 对每个自研组件标注它消费哪些开源组件、输出哪些构建产物、在哪个环节被测试或打包。
 - 图后必须补充 Markdown table，记录组件间交互逻辑和关键 IPO（输入、处理、输出）；复杂字段放进表格，不要污染构建图可读性。
 - 如果构建图中存在 fork/patch/源码复制或自研替代，必须标为 RED 风险并说明为什么声明依赖不足。

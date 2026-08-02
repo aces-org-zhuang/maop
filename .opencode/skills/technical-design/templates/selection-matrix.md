@@ -13,9 +13,9 @@ Use this template for dependency, framework, library, SDK, or repository selecti
 
 ## Candidates
 
-| Feature/Capability | Candidate | Source | Fit | Health | Maturity | Risk | Integration Cost | Role | Verdict |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-|  |  |  |  |  |  |  |  | primary / fallback / alternative / rejected |  |
+| Feature/Capability | Candidate | Source | Adoption form | Why not higher-priority deployment mode | Fit | Health | Maturity | Risk | Integration Cost | Role | Verdict |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|  |  |  | service/API / package / SDK / CLI-binary / image / system-package / submodule / source-build / fork-patch / self-build |  |  |  |  |  |  | primary / fallback / alternative / rejected |  |
 
 ## Top-Down Candidate Space
 
@@ -45,6 +45,9 @@ Convergence is reached only when key architecture capability blocks are covered,
 
 - Recommended option:
 - Why this option:
+- Adoption form:
+- Why not higher-priority deployment mode:
+- Tech pipeline directory plan:
 - Rejected alternatives:
 - Key risks:
 - Validation plan:
@@ -56,12 +59,14 @@ Required after dependency selection. Use ASCII or Mermaid and keep the boundary 
 
 ```text
 [First-party component]
-  -> [Third-party dependency: name@version, package/SDK/framework/service/CLI/submodule]
+  -> [Third-party dependency: name@version, adoption form]
       -> [Build/test/package step]
 ```
 
 - First-party components:
 - Third-party open-source components:
+- Adoption forms:
+- Tech pipeline directories:
 - Version lock locations:
 - License/security checkpoints:
 - Build/test verification:
@@ -76,27 +81,27 @@ Software Build Map: Desktop AI Coding Assistant
   path: apps/frontend/src/renderer
   consumes:
     -> [Third-party: react@19.x]
-       source: package dependency
+       adoption form: package dependency
        lock: apps/frontend/package-lock.json
     -> [Third-party: zustand@x.y]
-       source: package dependency
+       adoption form: package dependency
        lock: apps/frontend/package-lock.json
 
 [First-party: electron main]
   path: apps/frontend/src/main
   consumes:
     -> [Third-party: electron@40.x]
-       source: package dependency
+       adoption form: package dependency
        lock: apps/frontend/package-lock.json
     -> [Third-party: node-pty@x.y]
-       source: native package dependency
+       adoption form: native package dependency
        lock: apps/frontend/package-lock.json
 
 [First-party: runtime adapter]
   path: apps/frontend/src/main/runtime-adapter
   consumes:
     -> [Third-party/Open-source: engine submodule@commit]
-       source: git submodule or declared local reference
+       adoption form: git submodule or declared local reference
        lock: git submodule commit
 
 [Build chain]
@@ -125,3 +130,11 @@ Software Build Map: Desktop AI Coding Assistant
 | runtime adapter | task start request, engine config | translate request, invoke engine, normalize feedback | structured feedback/artifacts |
 | third-party dependency | declared package/submodule version | provide library/runtime capability | linked module, binary, service or API used by first-party code |
 | build chain | source tree, lockfile, config | install, typecheck, test, build, package | verified application artifact |
+
+### Deployment Integration Plan
+
+| Capability | Adoption form | Directory owner in tech pipeline | Config source | Build/install command contract | Verify signal | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+|  | service/API / package / SDK / CLI-binary / image / system-package / submodule / source-build / fork-patch / self-build | existing project scripts/tools/infra/ops/build/docker/artifacts/config path or confirmed new path |  |  |  |  |
+
+Do not default to `.aces/deploy` or copied script trees. Use the project's existing tech pipeline directories first; if none exist, propose a minimal directory plan and confirm it through Configuration Readiness Gate.

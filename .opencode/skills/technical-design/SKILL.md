@@ -40,6 +40,9 @@ description: 必须用于技术设计、架构影响面、技术方案、技术�
 需要技术选型、依赖选型、开源库/框架/仓库评估或候选 repo 对比
   -> Stage 3b Selection Evaluation: references/sop-03b-selection-evaluation.md
 
+需要第三方软件、CLI、SDK、服务、容器镜像、二进制、系统包或 source-build 的部署引入设计
+  -> Stage 3c Deployment Integration Design: references/sop-03c-deployment-integration.md
+
 需要接口、数据、状态、错误处理或权限设计
   -> Stage 4 Interface Data State: references/sop-04-interface-data-state.md
 
@@ -63,6 +66,7 @@ description: 必须用于技术设计、架构影响面、技术方案、技术�
 - 技术选型必须输出候选、推荐理由、拒绝理由、风险和验证动作；缺少候选时先用 `research` 的 Discovery Path 发现，不用猜测补齐。
 - 方案、架构、路线和依赖选型推进必须通过 `reasoning-map` 门禁：关键判断置信度 >=90% 才能进入下一设计环节、实现计划或 POC；未达标时保留为暂定方案并列出补证动作。
 - 开源库/框架/仓库选型默认以项目依赖方式引入，优先声明依赖、锁定版本、满足 license/security 边界并保障项目构建完整性；非必要不侵入修改第三方源码，不把候选仓库复制进项目后自研化，也不把选型评估误当作 research 样本冻结。
+- 第三方能力接入遵循 deployment-first：优先服务/API、包、SDK、CLI/binary、镜像、系统包或 pinned submodule；只有证据证明部署引入不足时才设计 source-build、fork/patch 或自研。目录规划必须统一到项目 tech 流水线，不默认复制 `.aces/deploy` 或历史脚本目录。
 - POC、implementation handoff、外部服务接入和构建/验证设计前必须通过 Configuration Readiness Gate；不要把路径、命令、env、凭据边界或服务配置留到实现过程中再问。
 - 长设计前先给低成本预览，避免遗漏影响面后继续放大到实现阶段。
 - 复杂影响面、真实脚本运行、构建验证或高成本实现前先用 `reasoning-map` 做推演预检。
@@ -76,6 +80,7 @@ description: 必须用于技术设计、架构影响面、技术方案、技术�
 - `references/sop-02-requirement-trace.md`: 需求到设计决策映射。
 - `references/sop-03-solution-options.md`: 方案选项与取舍。
 - `references/sop-03b-selection-evaluation.md`: 技术选型、依赖选型、开源库/框架/仓库评估和候选 repo 对比。
+- `references/sop-03c-deployment-integration.md`: 第三方能力 deployment-first 引入、镜像、CLI/binary、系统包、source-build fallback 和 tech 流水线目录规划。
 - `references/selection/evaluation-workflow.md`: 选型评估详细流程。
 - `references/sop-04-interface-data-state.md`: 接口、数据、状态、错误和权限设计。
 - `references/sop-05-change-boundary.md`: 模块边界、冻结区、兼容性和迁移。
