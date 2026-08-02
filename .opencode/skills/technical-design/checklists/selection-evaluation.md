@@ -14,6 +14,8 @@
 - [ ] 已评估功能覆盖、API 复杂度、集成成本和平台兼容性。
 - [ ] 已评估依赖引入方式、版本锁定、构建/测试完整性和回滚/替换路径。
 - [ ] 已明确默认以声明依赖方式接入；如建议 fork/patch/复制源码或自研替代，已说明不可替代原因、维护成本和用户确认点。
+- [ ] 已按 deployment-first adoption order 评估 service/API、package、SDK、CLI/binary、image、system package、submodule、source-build、fork/patch/self-build；选择低优先级方式时已说明为什么更高优先级方式不适用。
+- [ ] 目录规划已统一到项目 tech 流水线，优先使用既有 scripts/tools/infra/ops/build/docker/artifacts/config 规范；没有规范时已提出候选目录并通过 Configuration Readiness Gate 确认。
 - [ ] 依赖选型后已产出项目软件构建图，清晰区分 first-party 自研组件、third-party 开源组件、构建工具链和运行时边界。
 - [ ] 软件构建图已标注每个开源组件的引入方式、版本锁定位置、license/security 检查点和 build/test 验证动作。
 - [ ] 软件构建图后已用 Markdown table 补充组件交互逻辑和关键 IPO（输入、处理、输出），图本身未被过多文字污染。
