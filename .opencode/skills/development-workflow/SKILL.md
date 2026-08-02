@@ -64,7 +64,7 @@ Workflow Control
 
   Configuration Readiness Gate
     -> confirm required paths, commands, env/credential boundaries, external services, dependencies, validation signals, and write/network authorization before POC, implementation, build, packaging, verification, or external calls
-    -> auto-discover from project files first; ask the user once for missing required items, never piecemeal during execution
+    -> auto-discover from project files first; for missing required items, provide how to obtain the value and ask the user once, never piecemeal during execution
     -> follow references/configuration-readiness-gate.md
 
   Preview Gate
