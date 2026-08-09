@@ -16,5 +16,5 @@
 
 - 用户只要求一个 path 时，只执行该 path。
 - 多 path 请求按依赖顺序执行最小闭环。
-- 每个 path 完成后更新 `{research_root}/README.md` 的 completed_paths、artifacts、next_suggestions 和 risks。
+- 每个 path 完成后更新 `{research_root}/README.md`；轻量请求只记录本次 path、关键产物、下一步和未闭环风险，复杂研究再补 completed_paths、artifacts、frozen_decisions 等完整字段。
 - 不为轻量请求自动执行仓库研究、证据包或论文建模。

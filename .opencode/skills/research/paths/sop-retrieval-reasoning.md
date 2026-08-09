@@ -19,6 +19,13 @@
        no  -> [Final Evidence Set + Exit]
 ```
 
+## 检索预算
+
+- 轻量请求默认只执行 1 轮 Expand + 1 轮 Converge。
+- 标准研究默认最多 3 轮 Expand/Converge。
+- 只有存在阻塞结论的 RED 点时才继续扩展；不得为了覆盖面而泛化扩展。
+- 超出预算前，先说明当前缺口、继续检索收益和建议停止/继续决策。
+
 ## 执行步骤
 
 1. Intake：明确本轮研究问题、目标产物、时间窗口、语种、地域、来源类型、必须覆盖的主题和不需要覆盖的边界。
@@ -40,8 +47,8 @@
 
 ## 必须落盘
 
-- 在对应 path 产物中记录检索轮次、扩展范围、收敛依据、删除来源原因和未闭环 RED 点。
-- `sources/source-index.md` 必须区分 evidence、lead、background、rejected 四类来源。
+- 轻量请求只需在对应 path 产物或 README 中记录检索轮次、关键来源、收敛依据和未闭环 RED 点。
+- 标准研究、报告或证据包任务才需要完整记录扩展范围、删除来源原因，并在 `sources/source-index.md` 区分 evidence、lead、background、rejected 四类来源。
 - 生成报告或创新机会前，必须能追溯到已收敛证据集；未收敛材料只能作为假设或风险，不能写成结论。
 
 ## 常见 RED 点
