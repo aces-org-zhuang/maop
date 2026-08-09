@@ -12,6 +12,7 @@ This repository is initialized as a long-lived, LLM-maintainable codebase. Stabl
 | Stable documentation entry | `docs/README.md` |
 | Development notes and commands | `docs/02-development/README.md` |
 | OpenCode boundary | `.opencode/README.md` |
+| Delegation quality gate validation | `.opencode/skills/development-workflow/references/delegation-quality-gate-validation.md` |
 | Research workspace plan | `vendor/research/README.md` |
 | Submodule governance | `docs/02-development/submodules-index.md` |
 
