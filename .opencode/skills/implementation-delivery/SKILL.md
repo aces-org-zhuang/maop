@@ -12,17 +12,18 @@ description: 必须用于实现交付、按设计落地代码、bugfix、测试�
 1. 读取 `references/sop-00-intake.md`，确认输入是实现、bugfix、验证、代码审查、安全/CVE 还是交付说明。
 2. 若缺少产品需求或技术设计，回到 `product-definition` 或 `technical-design`；不要凭空补齐关键需求和架构决策。
 3. bug 根因、复杂时序、跨模块影响或安全问题不清时，先使用 `reasoning-map`。
-4. 大范围代码探索、根因假设收集、测试面发现、独立代码审查或验证证据整理可使用 subagent Task；使用前按 `development-workflow/references/subagent-context-budgeting.md` 定义边界和 return contract，生产修改、最终修复方案、完成声明和 verification 结论由主 agent 负责。
-5. 真实改代码、POC、脚本、构建、测试、外部服务调用、生成、打包或验证前，按 `development-workflow/references/configuration-readiness-gate.md` 统一确认必需路径、命令、依赖、环境变量/凭据边界、外部服务、写入/联网授权、验证信号和回滚方式；required 配置缺失时停止，不在执行中途零散索要。
-6. 编码前必须建立 Pre-Code Acceptance Contract：把用户目标、完成边界、验收命令/检查、不可触碰范围和中断续接标记写清楚；如果验收契约无法从需求、设计或代码上下文推出，先提 1 个短问题或输出阻塞项，不直接开写。
-7. 若发现任务是中断续接、半成品修复、失败重试或存在未提交/非本人变更，先执行 Interrupted Slice Guard：识别当前切片状态、已完成证据、未完成边界、冲突风险和下一步最小安全动作；不得覆盖用户或其他 agent 的进行中工作。
-8. 前端视觉、交互、原型或其他表达产物需要高质量设计时，转入 `expression-delivery`。
-9. 仓库外状态变更必须以当前环境真实可验证的结果为准；本技能可以生成交付材料，但不能假装完成未执行或无法验证的外部操作。
-10. 进入较大或高风险实现前，先执行 POC Gate，确认最小纵向切片、目标文件、验证信号和回滚风险。POC 可以是薄代码切片、交互原型、Mermaid/状态机验证、前端静态 preview、数据转换样例或算法小样。
-11. 当用户明确要求“先不要改代码 / 只输出 POC Plan”时，不做文件编辑，不扩大仓库探索；只输出 POC 计划、缺失输入和停止条件，形式可为 ASCII、Mermaid、表格或原型说明。
-12. 用户未提供项目专有系统名称、路径或运行时能力时，POC plan 必须保持跨项目中性；不要引入当前仓库的产品名、目录、运行时、网关或工具链。
-13. 不要把实现交付请求改派给角色型名称；在 maop 技能体系内，本技能就是实现、修复、验证和交付入口。
-14. 真实脚本、构建、生成和高成本实现前先使用 `reasoning-map` 做推演预检；交付前执行 Review Gate，review 分数必须 >=80；测试、构建、POC、review 或 verification 失败时按 `development-workflow/references/auto-remediation-gate-loop.md` 自动修复并重跑，硬阻断才询问用户。
+4. 跨阶段实现、代码交付或会产生证据记录时，按 `development-workflow/references/knowledge-handoff-gate.md` 执行 Knowledge & Handoff Gate：优先消费 Technical Handoff Packet，维护 Reuse Ledger，并在交付时产出 Delivery Evidence Packet。
+5. 大范围代码探索、根因假设收集、测试面发现、独立代码审查或验证证据整理可使用 subagent Task；使用前按 `development-workflow/references/subagent-context-budgeting.md` 定义边界和 return contract，生产修改、最终修复方案、完成声明和 verification 结论由主 agent 负责。
+6. 真实改代码、POC、脚本、构建、测试、外部服务调用、生成、打包或验证前，按 `development-workflow/references/configuration-readiness-gate.md` 统一确认必需路径、命令、依赖、环境变量/凭据边界、外部服务、写入/联网授权、验证信号和回滚方式；required 配置缺失时停止，不在执行中途零散索要。
+7. 编码前必须建立 Pre-Code Acceptance Contract：把用户目标、完成边界、验收命令/检查、不可触碰范围和中断续接标记写清楚；如果验收契约无法从需求、设计或代码上下文推出，先提 1 个短问题或输出阻塞项，不直接开写。
+8. 若发现任务是中断续接、半成品修复、失败重试或存在未提交/非本人变更，先执行 Interrupted Slice Guard：识别当前切片状态、已完成证据、未完成边界、冲突风险和下一步最小安全动作；不得覆盖用户或其他 agent 的进行中工作。
+9. 前端视觉、交互、原型或其他表达产物需要高质量设计时，转入 `expression-delivery`。
+10. 仓库外状态变更必须以当前环境真实可验证的结果为准；本技能可以生成交付材料，但不能假装完成未执行或无法验证的外部操作。
+11. 进入较大或高风险实现前，先执行 POC Gate，确认最小纵向切片、目标文件、验证信号和回滚风险。POC 可以是薄代码切片、交互原型、Mermaid/状态机验证、前端静态 preview、数据转换样例或算法小样。
+12. 当用户明确要求“先不要改代码 / 只输出 POC Plan”时，不做文件编辑，不扩大仓库探索；只输出 POC 计划、缺失输入和停止条件，形式可为 ASCII、Mermaid、表格或原型说明。
+13. 用户未提供项目专有系统名称、路径或运行时能力时，POC plan 必须保持跨项目中性；不要引入当前仓库的产品名、目录、运行时、网关或工具链。
+14. 不要把实现交付请求改派给角色型名称；在 maop 技能体系内，本技能就是实现、修复、验证和交付入口。
+15. 真实脚本、构建、生成和高成本实现前先使用 `reasoning-map` 做推演预检；交付前执行 Review Gate，review 分数必须 >=80；测试、构建、POC、review 或 verification 失败时按 `development-workflow/references/auto-remediation-gate-loop.md` 自动修复并重跑，硬阻断才询问用户。
 
 ## Stage Router
 
@@ -69,6 +70,7 @@ description: 必须用于实现交付、按设计落地代码、bugfix、测试�
 - 真实脚本、构建、生成和高成本实现前先 reasoning-map 推演，减少失败率。
 - POC、正式实现、构建、测试、外部调用、打包和验证前必须通过 Configuration Readiness Gate；能从项目文件自动解析的配置先解析，缺失 required 配置时停止并一次性列出，不边做边问。
 - subagent Task 只用于有边界的探索、审查或证据整理；主 agent 必须保留修改范围、最终补丁、验证结论和交付责任。
+- 实现阶段必须复用 Technical Handoff Packet 中的目录边界、实施切片和验证策略；除非源码事实或测试结果冲突，不重复技术设计阶段的完整研究。
 - 交付前必须 review，分数 >=80，且完成声明必须有 fresh verification evidence；不达标或验证失败时默认自动修复最多 7 轮，连续 2 轮无进展或遇到环境/权限/配置硬阻断时才停。
 - 旧项目交付守护经验、TDD、bugfix 和 CVE 处理经验只作为可迁移模式，不作为跨项目硬规则。
 
@@ -90,4 +92,4 @@ description: 必须用于实现交付、按设计落地代码、bugfix、测试�
 
 ## 交付标准
 
-交付时必须使用完成声明格式：完成范围、Fresh Verification、未验证/失败/跳过项、残余风险和后续建议。每个完成范围必须映射到本轮实际运行的命令、检查或人工验证证据；未执行、无法执行或失败的验证必须单独列出，不能混入完成声明。
+交付时必须使用完成声明格式：完成范围、Fresh Verification、未验证/失败/跳过项、残余风险和后续建议。每个完成范围必须映射到本轮实际运行的命令、检查或人工验证证据；未执行、无法执行或失败的验证必须单独列出，不能混入完成声明。交付摘要还必须说明变更文件、需求/设计映射、Delivery Evidence Packet、docs 归档/修订状态，以及需要用户确认的外部操作。
