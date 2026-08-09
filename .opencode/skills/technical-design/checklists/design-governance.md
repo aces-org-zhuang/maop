@@ -3,6 +3,8 @@
 用于技术设计事前推演门禁和定版评审。任一关键项未通过时，设计不得进入实现计划、高风险 POC 或 `implementation-delivery`。
 
 - [ ] 已在方案前使用 `reasoning-map` 推演技术栈、模块边界、依赖、状态、契约、运行时和验证链路。
+- [ ] 已执行 Delegation Quality Gate：must/may/do-not delegate 判定清楚，禁止委派的最终架构、primary 依赖、breaking change 和 ready 判断仍由主 agent 负责。
+- [ ] 前置防错主路径已建立：Source Map、Interface/State、Option/Risk 和 Verification lens 均有 return contract，fallback 只作为兜底。
 - [ ] 技术栈归一：系统尽可能使用既有开发语言、框架、运行时和构建工具；新增语言/运行时必须说明不可替代原因、维护成本和验证方式。
 - [ ] 源码目录结构已确认：设计基于真实源码目录、入口文件、测试目录、配置目录和生成物目录；新增或修改能力已映射到明确目录边界。
 - [ ] 特性模块唯一归属：同一特性、能力块或业务规则只能有一个主模块/主服务/主组件负责；不得在多个模块重复实现同一能力。
@@ -15,3 +17,4 @@
 - [ ] 可回滚和可迁移：高风险设计包含 feature flag、兼容层、迁移策略、回滚路径或最小 POC Gate。
 - [ ] 不重复造轮子：已有模块、平台抽象、工具链或依赖可满足需求时，优先复用；自研必须说明现有方案不适用的证据。
 - [ ] 设计输出包含 RED 点：未满足的治理项必须保留为 RED 风险和补证动作，不得在最终结论中隐去。
+- [ ] Lens 输出已字段级吸收到 Technical Handoff Packet、Implementation Handoff Mini-Spec 和 90% Confidence Evidence Map；未吸收的委派结果不得作为 ready 证据。

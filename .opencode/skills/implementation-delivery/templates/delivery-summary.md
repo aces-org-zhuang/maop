@@ -9,6 +9,16 @@
 
 ## Requirement Mapping
 
+## Delegation Quality Gate
+
+| Decision | Lens | Synthesis | Fallback |
+| --- | --- | --- | --- |
+
+## Worktree/Submodule Isolation
+
+| Area | Status | Evidence |
+| --- | --- | --- |
+
 ## Fresh Verification
 
 | Command or Check | Result | Evidence |

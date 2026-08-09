@@ -29,7 +29,11 @@ description: 项目代码仓初始化管理技能。用户要求初始化新项�
 - 开发规则只生成通用治理元规则，不复制某个项目的技术栈细则；本技能不引入 `profiles` 或 `overlays` 机制。
 - 不伪造未知技术栈命令；未知时写 `待补充`，并标明需要从技术栈配置或用户确认中补齐。
 - POC、正式初始化和写操作前必须一次性列出 required/optional/unknown 配置并确认；缺少 required 配置时停止，不在执行过程中临时索要。
-- 初始化完整性不达标时默认自动修复最多 7 轮；连续 2 轮无进展、覆盖风险、写入范围不清、submodule 配置/授权缺失或 required 配置缺失时才停。
+- Output Budget Rule：默认 compact 输出，只说明初始化模式、将执行的 SOP、写入边界、关键风险和下一步；完整初始化报告仅在完整初始化、用户明确要求或交付阶段输出。
+- Todo Planning Rule：初始化、审计、写入、submodule、验证前，先更新 todo；每个 SOP 阶段、写入动作、索引同步、submodule 操作和验证动作都应有对应 todo。单文件小修或纯问答可跳过。
+- Write Budget Rule：先审计，再写入；每轮写入只覆盖当前 SOP 的最小文件集。已存在文件只增量合并，不覆盖用户内容；覆盖风险、写入范围不清、required 配置缺失或 submodule 授权缺失时立即停止。
+- Submodule Budget Rule：研究区和 AI 引擎 submodule 必建规则只适用于完整新项目初始化；审计、轻量补齐或非普通宿主项目只报告 submodule 差距，不默认执行 add/update。submodule 写操作必须有用户授权、明确 URL/path/ref 和对应 todo；复杂 submodule 操作转入 `submodule-manager`。
+- Auto-remediation Rule：普通初始化补缺默认自动修复 1-2 轮；完整初始化或用户明确要求可按 auto-remediation gate 扩展。连续 1 轮无进展、覆盖风险、写入范围不清、submodule 配置/授权缺失或 required 配置缺失时立即停止。
 
 ## Stage Router
 

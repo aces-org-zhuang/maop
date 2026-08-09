@@ -14,7 +14,19 @@ description: 必须用于基于 research_root 沉淀的发现、资料搜索、�
 3. `research_root` 固定为 `{research_workspace}/topics/<research_slug>`。
 4. 研究材料只能写入 `{research_root}`；不要写入主仓 `docs/`、主仓 `research/` 或主仓其他目录。
 5. 研究参考开源项目必须以 Git submodule 形式加入 `{research_root}/repos/<repo_name>`；不得普通 clone 到主仓目录。
-6. 每次执行后更新 `{research_root}/README.md`：本次 path、产物、冻结点、下一步建议和未闭环风险。
+6. 每次执行后更新 `{research_root}/README.md`；轻量请求只记录本次 path、关键产物、下一步和未闭环风险，只有冻结决策、样本选择、论文选题或阶段交接时才更新冻结点。
+
+## Output Budget Rule
+
+- 默认 compact 输出：只说明本次 `research_root`、执行 path、关键证据、未闭环 RED 和下一步。
+- 不默认展开完整 source-index、evidence map、innovation report、paper packet 或额外 SOP。
+- 完整报告、证据包、矩阵、论文材料或视觉表达仅在用户明确要求或阶段交付时展开。
+
+## Retrieval Budget Rule
+
+- 轻量检索默认 1 轮扩展 + 1 轮收敛；只有核心 RED 点阻塞结论时才追加下一轮。
+- 标准研究默认最多 3 轮扩展/收敛；超过预算前先说明证据缺口、继续收益和建议停止/继续决策。
+- 自动补证最多遵循既有 auto-remediation 上限，但每轮必须围绕明确 RED 点，不做泛化扩展。
 
 ## Trigger Paths
 
@@ -49,12 +61,13 @@ mp.weixin.qq.com URL 阅读、总结、提取、证据化
 - 支持部分执行：用户只要求一个 path 时，只执行该 path 并停止。
 - 如果请求命中多个 path，按依赖顺序执行最小必要路径；不要默认展开全链路。
 - 如果缺少上游输入，只补齐当前 path 所需的最小输入。
+- 复杂研究、多 path、并行委派多个子代理执行、外部检索、repo/submodule、证据包或报告交付前，先更新 todo；每个检索批次、子代理委派、证据复核和产物写入都应有对应 todo。单次小检索或单链接摘要可跳过。
 - 复杂课题、影响面、证据链或创新路径选择前，先使用 `reasoning-map` 推演。
-- 大范围检索、候选扩展、来源抽取、仓库初筛、证据完整性检查可使用 subagent Task 隔离低价值探索上下文；使用前按 `development-workflow/references/subagent-context-budgeting.md` 定义边界和 return contract，主 agent 保留 research_root、reasoning-map、收敛和最终结论责任。
+- 大范围检索、候选扩展、来源抽取、仓库初筛、证据完整性检查可委派子代理执行；并行时明确“并行委派多个子代理执行”。使用前按 `development-workflow/references/subagent-context-budgeting.md` 定义边界和 return contract，主 agent 保留 research_root、reasoning-map、收敛、README 更新和最终结论责任。
 - 外部联网检索、微信/公众号搜索、GitHub/API 访问、下载、工具/skill 安装建议或浏览器提取前，按 `development-workflow/references/configuration-readiness-gate.md` 统一确认检索范围、平台、速率/安全边界、输出路径、凭据边界和用户授权；不要在抓取过程中临时索要配置。
 - 检索、搜索、文章提取、创新机会发现和创新报告素材整合必须遵循 `paths/sop-retrieval-reasoning.md`：先扩展检索，再收敛证据，再围绕 RED 点继续扩展，再收敛，直到满足退出条件；不要一次性关键词搜索后直接写结论。
 - 仓库研究、开源样本选择、源码洞察和横向对比前，必须先经过 `modules/repo-selection/SKILL.md` 的研究对象门禁；核心样本必须先证明 Level1 直接研究对象充足且 `topic_directness >= 0.90`，不得把 Level0 基础技术栈仓库直接当作主研究对象。
-- 检索证据不足、来源质量低、repo selection 不收敛或创新报告证据链不达标时，按 `development-workflow/references/auto-remediation-gate-loop.md` 自动扩展/收敛检索、补 source-index、补反例和复核证据，最多 7 轮；只有外部平台权限、微信/browser/session、required 配置或研究范围偏好阻塞时才询问用户。
+- 检索证据不足、来源质量低、repo selection 不收敛或创新报告证据链不达标时，按 `development-workflow/references/auto-remediation-gate-loop.md` 自动扩展/收敛检索、补 source-index、补反例和复核证据，最多 7 轮；普通资料查找不默认进入 7 轮补证，只有外部平台权限、微信/browser/session、required 配置或研究范围偏好阻塞时才询问用户。
 - 需要产品定义/PRD 时转入 `product-definition`。
 - 需要技术选型或设计决策时转入 `technical-design`。
 - 需要图表、slides、原型或视觉表达时转入 `expression-delivery`。

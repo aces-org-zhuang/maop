@@ -11,7 +11,19 @@
 | Existing Evidence | |
 | Unfinished Boundary | |
 | Conflict Risk | |
+| Worktree/Submodule Isolation | |
 | Next Minimal Safe Action | |
+
+## Delegation Quality Gate
+
+| Field | Value |
+| --- | --- |
+| Decision | must delegate / may delegate / do-not delegate |
+| Lens | Read-Only Code Exploration / Test Surface / Diff/Risk Review / Conflict Resolution / Evidence Extraction |
+| Isolation Packet | |
+| Return Contract | |
+| Synthesis Result | accepted / rejected / fallback |
+| Fallback Reason | |
 
 ## Pre-Code Acceptance Contract
 
@@ -21,6 +33,7 @@
 | Completion Boundary | |
 | Files/Areas Allowed | |
 | Files/Areas Not To Touch | |
+| Submodule Boundary | read-only / writable-with-authorization / not-involved |
 | Acceptance Checks | |
 | Stop Conditions | |
 

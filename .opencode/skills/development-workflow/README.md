@@ -29,6 +29,13 @@
 - `expression-delivery`: 执行前端 UI、原型、图表、HTML slides、图片和多模态表达产物；高成本生成前必须 Preview Gate，复杂视觉/交互/渲染前先 Reasoning Gate，交付前 Review Gate >=80 和 Verification Gate。
 - `research`: 执行基于 research_root 的外部资料、技术链接、微信文章、微信关键词搜索、学习资源、趋势发现、工具/skill 发现、创新机会、证据包和论文/仓库研究；支持只执行本次需要的 path。
 
+## Delegation Quality Gate
+
+- 统一入口: `references/delegation-quality-gate.md`。
+- 主路径: 委派前先判断是否该委派、隔离上下文、限定 worktree/submodule 边界、写清返回契约；委派后再做 Synthesis Gate。
+- Fallback: 任一前置条件不足、返回不完整、证据不足、超出授权、污染上下文或结论冲突时，由主 agent 收敛、补验或重新切片，不把错误继续传给下游。
+- 模板: `templates/delegation-decision.md`、`templates/context-isolation-packet.md`、`templates/subagent-return-contract.md`、`templates/synthesis-gate.md`、`templates/worktree-submodule-isolation.md`。
+
 ## 与 maop 既有技能的关系
 
 - 复杂推演、根因、影响面和时序问题使用 `reasoning-map`。
@@ -61,6 +68,7 @@
 
 - Reasoning Gate: 架构、跨模块、根因、异步时序、影响面、需求不确定、方案取舍、真实脚本运行、构建验证或高成本实现前必须使用 `reasoning-map` 做低成本推演预检；它能在真实运行前减少失败率，但不替代 Preview Gate 和 Verification Gate。
 - Knowledge & Handoff Gate: 跨阶段或产生稳定知识时，先读最小 `docs/` 和上游 packet，维护 Reuse Ledger，明确归档、修订和下游交接；按 `references/knowledge-handoff-gate.md` 执行。
+- Delegation Quality Gate: 委派 subagent 前先做决策、上下文隔离、返回契约和 worktree/submodule 边界控制；返回后做 Synthesis Gate；按 `references/delegation-quality-gate.md` 执行，不合格时 fallback 到主 agent。
 - Preview Gate: 高成本产物前先确认低成本预览，形式可以是 ASCII、Mermaid、wireframe、HTML preview、状态机图、数据流图或表格草案。
 - Review Gate: 需求定版、设计定版、复杂预览确认、高风险 POC 后和交付前必须 review，分数 >=80 才能进入下游或完成声明。
 - POC Gate: 高风险实现、未知依赖、复杂交互、多模态生成、性能/算法不确定时先做 POC 或等价薄切片验证。

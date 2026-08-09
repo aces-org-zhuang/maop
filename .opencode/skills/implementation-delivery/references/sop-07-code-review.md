@@ -6,8 +6,8 @@
 
 ## Steps
 
-1. 查看 diff、相关需求/设计和测试结果。
-2. 优先查找 bug、行为回归、安全风险、兼容性问题和缺失测试。
+1. 查看 diff、相关需求/设计、Pre-Code Acceptance Contract、Worktree/Submodule Isolation 和测试结果。
+2. 使用 Diff/Risk Review lens 优先查找 bug、行为回归、安全风险、兼容性问题、缺失测试和越界修改。
 3. 对每个发现给出文件/位置、影响和建议修复。
 4. 给出 review 分数；交付前必须 >=80，低于 80 必须修复并复审。
 5. 若没有发现问题，说明残余风险和未覆盖验证。
@@ -18,3 +18,4 @@
 - Findings 先于总结。
 - 每个严重问题有可复查证据。
 - 交付前 review 分数 >=80，并说明评分依据。
+- Review 明确检查 dirty-worktree 归属、submodule 指针/内容变化和 not-to-touch 边界。
