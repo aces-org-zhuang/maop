@@ -27,6 +27,8 @@
 - 新增顶层目录时，必须说明职责域、消费者和索引同步位置。
 - 真实凭据不得写入仓库、docs、evidence、日志或 `.opencode` 配置。
 - 开发规则只保留通用治理元规则；技术栈细则必须来自本项目真实配置、源码或用户确认。
+- 复杂任务、并行委派多个子代理执行、验证、提交/PR 或 submodule 操作前先更新 todo；简单单步任务可跳过。
+- 使用“委派子代理执行”时，必须真实调用对应 agent/tool；未实际委派时，只能表述为“分步骤分析”或“本轮复核”。
 
 ## 研发流水线引导
 
@@ -46,6 +48,13 @@
 - Verification Gate：声称完成前必须有本轮 fresh evidence，例如测试、构建、lint、类型检查、截图、手工流程或项目认可的验证信号。
 - Confidence Gate：用户要求 90%+ 置信度时，必须给出 eval、验证证据和未闭环风险；不能只口头声明置信度。
 - Stop Rule：Preview、reasoning-map、POC 或验证暴露阻塞时，先回到需求/设计/实现对应阶段修正，不要继续扩大错误。
+
+## 执行预算
+
+- Todo Budget：非平凡任务先给 3-7 项 todo，并随执行更新；简单问答或纯只读复核可省略。
+- Output Budget：默认输出结论、关键证据、变更点和验证结果；不要展开无关背景、长模板或重复规则。
+- 写入 Budget：只编辑任务必要文件和必要索引，不做顺手重构或扩大目录治理范围。
+- 验证 Budget：声明完成前必须给 fresh verification evidence；无法运行时说明原因、降级证据和残余风险。
 
 ## 文档规则
 
@@ -75,6 +84,7 @@
 - 主仓 PR 指向的 submodule commit 必须已推送到 submodule 远端，不能指向仅存在于本地的 commit。
 - 如果 submodule 远端已有新提交，先 fetch/rebase 或 merge，避免用 force push 覆盖他人工作。
 - 同一需求涉及主仓和 submodule 时，先完成 submodule PR，再更新主仓 submodule 指针并创建或更新主仓 PR。
+- Submodule Budget：只更新本任务必要 submodule 内容和指针，不做无关同步、批量升级或本地不可见指针提交。
 
 ## 项目结构
 
