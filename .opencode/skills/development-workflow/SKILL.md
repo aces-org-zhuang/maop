@@ -7,22 +7,29 @@ description: 必须用于判断研发请求应进入需求、设计、实现还�
 
 本技能是 maop 通用研发流水线总入口。它只负责判断阶段、安排控制点和交接，不生成完整 PRD、完整技术设计、生产代码或表达产物。
 
+## Output Budget Rule
+
+- 默认 compact 输出，只展开当前阶段必要字段；简单任务只给决策和下一步。
+- Full packet 仅用于跨阶段交接、高风险决策、提交/PR、用户明确要求或下游必须消费完整上下文时。
+- 不因触发 gate 自动输出完整表格、长文档或全量 packet；gate 只要求足够支持当前决策的证据。
+
 ## 触发后先做什么
 
 1. 判断用户请求处于哪个阶段：产品定义、技术设计、实现交付、表达产物，或跨阶段 POC。
-2. 若跨阶段执行，先安排质量门禁：Reasoning Gate、Configuration Readiness Gate、Preview Gate、Review Gate、POC Gate、Verification Gate、Confidence Gate 和 Auto-Remediation Gate Loop。
+2. 若跨阶段执行，先安排质量门禁：Todo Planning Gate、Reasoning Gate、Configuration Readiness Gate、Preview Gate、Review Gate、POC Gate、Verification Gate、Confidence Gate 和 Auto-Remediation Gate Loop。
 3. 明确每一段应转入的专门技能：`product-definition`、`technical-design`、`implementation-delivery`、`expression-delivery`、`research`。
 4. 跨阶段或会产生稳定知识的工作必须执行 Knowledge & Handoff Gate：按 `references/knowledge-handoff-gate.md` 读取最小 docs/上游 packet，记录 Reuse Ledger，明确 Archive Gate、Revision Gate 和下游 Handoff Packet。
 5. 遇到复杂根因、时序、影响面、不确定方案、高成本生成、真实脚本运行、构建验证或跨模块修改前，先使用 `reasoning-map` 做低成本推演预检，减少真实执行失败率。
-6. 委派 subagent 前必须执行 Delegation Quality Gate：按 `references/delegation-quality-gate.md` 先做前置防错决策、上下文隔离、返回契约和合成门禁；若条件不足或返回不合格，fallback 到主 agent 收敛处理。
-7. 大范围检索、代码/文档探索、候选扩展、证据抽取或独立评审可按 `references/subagent-context-budgeting.md` 使用 subagent Task；主 agent 保留 reasoning-map、收敛、评审和最终决策责任。
-8. 遇到深度研究、开源仓库对比或证据包时，转入 `research`。
-9. 遇到外部资料、技术链接、微信文章、微信关键词搜索、学习资源、趋势发现、工具/skill 查找、创新机会或研究沉淀时，转入 `research` 并先创建或续接 `research_root`。
-10. 用户只要求流程图、时序图、架构图、状态图、前端 UI、原型、HTML slides、图片或其他表达产物时，转入 `expression-delivery`，不要展开完整 technical-design 或 implementation-delivery 主流程。
-11. 用户要求 90%+ 置信度时，必须给出 eval、验证证据和未闭环风险；不能只口头声明置信度。
-12. 用户要求复杂 Mermaid、前端界面、幻灯片、多模态图像、长文档或其他高成本产物时，必须显式经过 Preview Gate；如果同时涉及复杂影响面、根因、时序或方案取舍，顺序是 Reasoning Gate -> Configuration Readiness Gate -> Preview Gate -> Review Gate -> Generation -> Verification Gate。
-13. 必要节点需要 Review Gate：需求定版、设计定版、复杂图/前端/多模态预览确认、高风险 POC 后、交付前 review 分数必须 >=80；低于 80 按 `references/auto-remediation-gate-loop.md` 自动修复并复审，不默认停下来等用户继续。
-14. 不要把本技能变成万能执行技能；路由完成后交给对应专门技能。
+6. 委派子代理执行前必须执行 Delegation Quality Gate：按 `references/delegation-quality-gate.md` 先做前置防错决策、上下文隔离、返回契约和合成门禁；若条件不足或返回不合格，fallback 到主 agent 收敛处理。
+7. 复杂任务、并行委派多个子代理执行、验证、提交/PR 或 submodule 操作前必须执行 Todo Planning Gate：先更新 todo；每个子代理委派、验证动作、提交/PR 动作和 submodule 操作都要有对应 todo；简单单步任务可跳过。
+8. 大范围检索、代码/文档探索、候选扩展、证据抽取或独立评审可按 `references/subagent-context-budgeting.md` 委派子代理执行；主 agent 保留 reasoning-map、收敛、评审和最终决策责任。
+9. 遇到深度研究、开源仓库对比或证据包时，转入 `research`。
+10. 遇到外部资料、技术链接、微信文章、微信关键词搜索、学习资源、趋势发现、工具/skill 查找、创新机会或研究沉淀时，转入 `research` 并先创建或续接 `research_root`。
+11. 用户只要求流程图、时序图、架构图、状态图、前端 UI、原型、HTML slides、图片或其他表达产物时，转入 `expression-delivery`，不要展开完整 technical-design 或 implementation-delivery 主流程。
+12. 用户要求 90%+ 置信度时，必须给出 eval、验证证据和未闭环风险；不能只口头声明置信度。
+13. 用户要求复杂 Mermaid、前端界面、幻灯片、多模态图像、长文档或其他高成本产物时，必须显式经过 Preview Gate；如果同时涉及复杂影响面、根因、时序或方案取舍，顺序是 Todo Planning Gate -> Reasoning Gate -> Configuration Readiness Gate -> Preview Gate -> Review Gate -> Generation -> Verification Gate。
+14. 必要节点需要 Review Gate：需求定版、设计定版、复杂图/前端/多模态预览确认、高风险 POC 后、交付前 review 分数必须 >=80；低于 80 按 `references/auto-remediation-gate-loop.md` 自动修复并复审，不默认停下来等用户继续。
+15. 不要把本技能变成万能执行技能；路由完成后交给对应专门技能。
 
 ## Stage Router
 
@@ -59,6 +66,11 @@ description: 必须用于判断研发请求应进入需求、设计、实现还�
 
 ```text
 Workflow Control
+  Todo Planning Gate
+    -> update todo before complex tasks, parallel delegation, verification, commit/PR, or submodule operations
+    -> 为每个子代理委派、验证动作、提交/PR 动作和 submodule 操作建立对应 todo
+    -> simple single-step tasks may skip this gate
+
   Reasoning Gate
     -> use reasoning-map for complex impact, root cause, async order, uncertainty, tradeoff, or high-cost execution preflight
     -> run before real scripts/builds/generation/implementation when failure cost is high
@@ -76,11 +88,11 @@ Workflow Control
     -> must be named explicitly even when Reasoning Gate runs first
 
   Review Gate
-    -> review necessary checkpoints before downstream work or completion
+    -> only final artifact quality: review necessary checkpoints before downstream work or completion
     -> score must be >=80; otherwise auto-remediate and review again
 
   Auto-Remediation Gate Loop
-    -> gate failure means repair and rerun, not stop by default
+    -> only post-failure repair/rerun: gate failure means repair and rerun, not stop by default
     -> max_auto_remediation_rounds = 7; stop early after 2 consecutive no-progress rounds
     -> stop only on hard blockers: missing required config, missing authorization, unavailable external boundary, user tradeoff, scope change, exhausted rounds
     -> follow references/auto-remediation-gate-loop.md
@@ -89,27 +101,26 @@ Workflow Control
     -> validate high-risk implementation with a thin vertical slice or equivalent proof
 
   Verification Gate
-    -> require fresh evidence before claiming completion
+    -> only fresh evidence: require current-run verification before claiming completion
 
   Confidence Gate
     -> require eval, verification evidence, and residual risk notes for 90%+ confidence claims
     -> name the gate explicitly when the user asks for 90%+ confidence
 
   Knowledge & Handoff Gate
-    -> read minimum stable context and upstream packets before broad exploration
-    -> archive stable knowledge to docs/, stage notes to guides/, and research materials to research_root
-    -> revise stale docs or record Docs stale before downstream handoff
+    -> only cross-stage knowledge handoff: read minimum stable context and upstream packets before broad exploration
+    -> archive or revise only stable knowledge needed by downstream handoff
     -> produce Product Handoff Packet, Technical Handoff Packet, or Delivery Evidence Packet
     -> maintain Reuse Ledger to avoid repeated upstream work and repeated research
     -> follow references/knowledge-handoff-gate.md
 
   Subagent Context Gate
-    -> use bounded subagent Task for retrieval, exploration, candidate expansion, extraction, or independent review
+    -> 对检索、探索、候选扩展、抽取或独立评审，可有边界地委派子代理执行
     -> main agent keeps final reasoning-map, synthesis, convergence, and decision ownership
     -> follow references/subagent-context-budgeting.md
 
   Delegation Quality Gate
-    -> prefer preventing bad delegation before dispatch: decide, isolate context, define return contract, and protect worktree/submodule boundaries
+    -> only delegation quality: prevent bad delegation before dispatch by deciding, isolating context, defining return contract, and protecting worktree/submodule boundaries
     -> after return, run Synthesis Gate before accepting findings, edits, or decisions
     -> fallback to main agent when delegation is unsafe, stale, incomplete, conflicting, or outside contract
     -> follow references/delegation-quality-gate.md
@@ -127,6 +138,8 @@ Workflow Control
 - 高成本产物前先做 Preview Gate；预览形式不固定为 ASCII，应按产物选择。
 - 必要节点必须做 Review Gate，分数 >=80 才能进入下游或完成声明；低于 80 先自动修复和复审。
 - 跨阶段交接必须做 Knowledge & Handoff Gate：先读上游 packet 和最小 docs，不重复上游完整研究；稳定知识归档到 `docs/`，阶段记录入 `guides/`，研究材料入 `research_root`。
-- 委派 subagent 必须先做 Delegation Quality Gate；默认用前置防错减少错派、串上下文、越权写入和错误合成，失败时由主 agent fallback 兜底。
+- 复杂任务、并行委派多个子代理执行、验证、提交/PR 或 submodule 操作前必须更新 todo；每个子代理委派、验证动作、提交/PR 动作和 submodule 操作都要有对应 todo；简单单步任务可跳过。
+- 委派子代理执行必须先做 Delegation Quality Gate；默认用前置防错减少错派、串上下文、越权写入和错误合成，失败时由主 agent fallback 兜底。
+- 对外统一使用“委派子代理执行”；并行时使用“并行委派多个子代理执行”；主路径避免暴露内部工具名。
 - 仓库外状态变更必须以当前环境真实可验证结果为准，不能用文字交付伪装完成。
 - 项目已有流程优先；没有流程时使用三个专门技能的模板和 checklists。

@@ -7,19 +7,26 @@ description: 必须用于产品定义、PRD、MVP、角色、Use Case、用户�
 
 本技能用于把原始想法、问题描述或业务目标沉淀为可验证、可交付、可追踪的产品定义。`SKILL.md` 只做路由；具体步骤按需读取 `references/sop-*.md`、模板和检查清单。
 
+## Output Budget Rule
+
+- 默认 compact 输出，只展开当前产品定义阶段必要字段；简单任务只给产品决策和下一步。
+- Full PRD、Product Handoff Packet 或完整竞品/需求包仅用于跨阶段、高风险、提交/PR、用户明确要求或下游必须消费完整上下文时。
+- Preview Gate、Review Gate 或 Knowledge & Handoff Gate 不自动要求长文档；只输出支撑当前决策所需的最小证据和字段。
+
 ## 触发后先做什么
 
 1. 读取 `references/sop-00-intake.md`，判断本次是完整产品定义、PRD 生成、需求修订、轻量竞品分析，还是只补齐验收标准。
 2. 若问题边界、用户、目标、约束或成功标准存在复杂不确定性，先使用 `reasoning-map` 推演影响面。
 3. 根据 Stage Router 只读取当前需要的 SOP。不要把所有 SOP 一次性载入。
-4. 任何 subagent、background task、并行探索、轻量外部扫描或独立评审前，必须按 `references/delegation-quality-gate.md` 接入 `development-workflow/references/delegation-quality-gate.md`：先判定 `must-delegate` / `may-delegate` / `do-not-delegate`，再做产品域委派决策、上下文隔离、返回契约和 Synthesis Gate；fallback 只能兜底，不能替代前置防错主路径。
-5. 跨阶段需求、PRD、MVP 或会沉淀稳定产品知识时，按 `development-workflow/references/knowledge-handoff-gate.md` 执行 Knowledge & Handoff Gate：读取最小 docs/既有材料，维护 Reuse Ledger，并在交给 `technical-design` 前产出 Product Handoff Packet。
-6. PRD、MVP 或需求范围定版前必须先建立角色 -> Use Case -> 验收信号主轴；功能列表只能挂到明确角色和用例下，不能以离散 feature 清单替代产品中心。
-7. 若需要深度外部证据、开源仓对比、论文级证据包或长期课题沉淀，转入 `research`；普通 PRD 竞品扫描不自动进入研究工作区。
-8. 若需要真实前端界面、原型、图表、slides 或其他表达产物，转入 `expression-delivery`；本技能只负责产品定义和 prototype brief。
-9. 生成完整 PRD、产品定义文档或长需求清单前，先执行 Preview Gate；除非用户明确要求确认、关键产品目标/用户/成功标准无法推断，或继续会改变已确认范围，否则记录假设并继续。预览可用 ASCII Product Sketch、需求地图、验收表格、Mermaid 流程或低保真线框，按产物选择。
-10. 不要把产品定义请求改派给角色型名称；在 maop 技能体系内，本技能就是 PRD/需求/轻量竞品分析入口。
-11. 需求定版、PRD 定版或进入 `technical-design` 前执行 Review Gate，review 分数必须 >=80；低于 80 按 `development-workflow/references/auto-remediation-gate-loop.md` 自动补齐角色、Use Case、范围、场景、验收、风险和假设并复审，硬阻断才询问用户。
+4. 复杂产品定义、并行委派多个子代理执行、验证需求结论或进入提交/PR/submodule 操作前，先更新 todo；每个子代理委派、验证动作、提交/PR 动作和 submodule 操作都要有对应 todo；简单单步任务可跳过。
+5. 任何委派子代理执行、并行探索、轻量外部扫描或独立评审前，必须按 `references/delegation-quality-gate.md` 接入 `development-workflow/references/delegation-quality-gate.md`：先判定 `must-delegate` / `may-delegate` / `do-not-delegate`，再做产品域委派决策、上下文隔离、返回契约和 Synthesis Gate；fallback 只能兜底，不能替代前置防错主路径。
+6. 跨阶段需求、PRD、MVP 或会沉淀稳定产品知识时，按 `development-workflow/references/knowledge-handoff-gate.md` 执行 Knowledge & Handoff Gate：读取最小 docs/既有材料，维护 Reuse Ledger，并在交给 `technical-design` 前产出 Product Handoff Packet。
+7. PRD、MVP 或需求范围定版前必须先建立角色 -> Use Case -> 验收信号主轴；功能列表只能挂到明确角色和用例下，不能以离散 feature 清单替代产品中心。
+8. 若需要深度外部证据、开源仓对比、论文级证据包或长期课题沉淀，转入 `research`；普通 PRD 竞品扫描不自动进入研究工作区。
+9. 若需要真实前端界面、原型、图表、slides 或其他表达产物，转入 `expression-delivery`；本技能只负责产品定义和 prototype brief。
+10. 生成完整 PRD、产品定义文档或长需求清单前，先执行 Preview Gate；除非用户明确要求确认、关键产品目标/用户/成功标准无法推断，或继续会改变已确认范围，否则记录假设并继续。预览可用 ASCII Product Sketch、需求地图、验收表格、Mermaid 流程或低保真线框，按产物选择。
+11. 不要把产品定义请求改派给角色型名称；在 maop 技能体系内，本技能就是 PRD/需求/轻量竞品分析入口。
+12. 需求定版、PRD 定版或进入 `technical-design` 前执行 Review Gate，review 分数必须 >=80；低于 80 按 `development-workflow/references/auto-remediation-gate-loop.md` 自动补齐角色、Use Case、范围、场景、验收、风险和假设并复审，硬阻断才询问用户。
 
 ## Stage Router
 
@@ -55,10 +62,13 @@ description: 必须用于产品定义、PRD、MVP、角色、Use Case、用户�
 - Product Handoff Packet 只能字段级吸收已验证的委派结果；缺证据、越范围或冲突的内容必须保留为 assumption、risk 或 rejected item。
 - 验收标准必须可观察、可测试，避免抽象口号。
 - 验收标准不得把未验证的第三方服务、外部平台、外部数据源或人工流程作为唯一成功前提；若依赖外部能力，必须同时写明可控降级、替代验证信号或前置验证任务。
+- 复杂任务、并行委派多个子代理执行、验证、提交/PR 或 submodule 操作前必须更新 todo；每个子代理委派、验证动作、提交/PR 动作和 submodule 操作都要有对应 todo；简单单步任务可跳过。
+- 对外统一使用“委派子代理执行”；并行时使用“并行委派多个子代理执行”；主路径避免暴露内部工具名。
 - 产品定版交给技术设计前必须说明已读材料、复用结论、拒绝重复研究路径、归档动作、修订动作和开放 RED 点。
 - 长产物前先给低成本预览，避免错误需求滚动传递到设计和实现阶段。
 - PRD 修订必须同步标注“已具备 / 待补齐 / 范围外”，避免需求文档描述与当前实现、依赖或验收状态过期。
 - 需求定版前必须 review，分数 >=80 才进入设计阶段；不达标时默认自动修复最多 7 轮，连续 2 轮无进展或需要用户关键偏好时才停。
+- Gate 职责不外扩：Delegation Quality Gate 只管委派质量；Knowledge & Handoff Gate 只管跨阶段知识交接；Review Gate 只管最终产品产物质量；Verification Gate 只管 fresh evidence；Auto-remediation 只管失败后的修复/重跑。
 - 若项目已有 PRD 或需求模板，优先遵循项目模板；没有模板时再使用本技能模板。
 - 旧项目探索/评审经验只作为可迁移 pattern，不作为跨项目硬规则。
 
