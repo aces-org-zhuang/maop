@@ -33,6 +33,33 @@ description: 必须用于实现交付、按设计落地代码、bugfix、测试�
 16. 不要把实现交付请求改派给角色型名称；在 maop 技能体系内，本技能就是实现、修复、验证和交付入口。
 17. 真实脚本、构建、生成和高成本实现前先使用 `reasoning-map` 做推演预检；交付前执行 Review Gate，review 分数必须 >=80；测试、构建、POC、review 或 verification 失败时按 `development-workflow/references/auto-remediation-gate-loop.md` 自动修复并重跑，硬阻断才询问用户。
 
+## Change Scope × Delegation Benefit Gate
+
+编码前必须按修改范围和委派收益做 compact 判断，并在工作上下文中记录结论。主 agent 仍负责生产修改、最终 diff、verification 结论和交付声明。
+
+Change Scope：
+
+- `XS`: 单文件小改，通常少于约 30 行，无 API、状态、测试契约或文档索引变化。
+- `S`: 1-2 个文件，局部 bugfix 或小行为调整，测试入口明确。
+- `M`: 3-5 个文件，涉及服务间调用、API、状态字段、测试或 docs 同步。
+- `L`: 6+ 个文件，或跨模块、API、状态机、异步、外部服务、兼容性边界。
+- `XL`: 架构重构、多服务/多包、submodule、数据迁移、外部生产状态或不可逆操作。
+
+Delegation Benefit：
+
+- `Low`: 委派只会重复主 agent 已有上下文，不能显著降低风险。
+- `Medium`: 委派可补测试面、边界条件、兼容性或证据覆盖。
+- `High`: 委派可独立降低跨模块、状态机、异步、安全、权限、外部集成或迁移风险。
+
+决策规则：
+
+- `XS/S + Low`: 可跳过委派，但必须记录一句话理由。
+- `S + Medium`: 低成本时建议委派只读 review 或 test-surface scan。
+- `M + Medium/High`: 编码前或最终验证前必须至少委派 1 个只读任务。
+- `L/XL`: 编码前或最终验证前必须至少委派 2 个有边界的只读任务，常见组合是 Test Surface 和 Diff/Risk Review；涉及外部服务时增加 Evidence/Verification 任务。
+- 生产代码修改、最终补丁接受、verification 结论、commit/PR、submodule 写入和不可逆外部操作仍由主 agent 负责。
+- 若 `M/L/XL` 因上下文、权限或隔离问题无法委派，必须记录 blocker，并在最终交付前补一次主 agent 的显式 Diff/Risk Review。
+
 ## Stage Router
 
 ```text
@@ -103,6 +130,32 @@ description: 必须用于实现交付、按设计落地代码、bugfix、测试�
 - `templates/`: 可选实现和交付模板。
 - `templates/poc-slice-plan.md`: 高风险实现前的 POC Gate 模板；ASCII 只是默认形式之一。
 - `checklists/`: 验证与审查清单。
+
+## Main Agent Delivery Synthesis Gate
+
+最终交付前，主 agent 必须综合本轮实现结果；该职责不能委派给子代理。默认 compact 输出，复杂或高风险实现再展开 Evidence Map。
+
+必需 synthesis：
+
+- `Changelog`: 汇总实际行为、API、状态、测试、文档、脚本和配置变更。
+- `Fresh Verification`: 列出本轮实际运行的命令、检查或人工验证及结果。
+- `Confidence`: 分别说明已完成本地范围和未验证外部/人工范围的置信度。
+- `Residual Risk`: 列出验证后仍存在的风险和边界。
+- `Ready/Blocked Decision`: 明确本切片是 complete、partial 还是 blocked。
+
+Reasoning-map 要求：
+
+- `XS/S`: 默认可省略；若涉及根因不明、状态、异步、安全或外部依赖则使用。
+- `M`: 触碰 API、状态模型、持久化、兼容性、异步或外部服务边界时必须使用。
+- `L/XL`: 最终交付前必须使用，且优先在编码前或 final review 前使用。
+
+Confidence 语义：
+
+- `High`: fresh automated verification 覆盖已修改的本地行为，外部/人工范围已验证或明确不在完成范围内。
+- `Medium`: 主要本地路径已验证，但重要外部、人工或极端边界仍未验证。
+- `Low`: 实现仅部分完成，核心验证失败/跳过，或关键假设未证明。
+
+`L/XL` 最终交付必须包含 compact evidence map，把主要完成声明绑定到测试、命令、文档或明确缺口。
 
 ## 交付标准
 
