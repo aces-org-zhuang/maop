@@ -18,6 +18,11 @@ description: 项目代码仓初始化管理技能。用户要求初始化新项�
 
 ## 总原则
 
+- 初始化过程默认按供需式协作处理：用户提供目标、授权和验收，Agent 负责审计、规划、写入、验证和归档。
+- 初始化中不得把完整 SOP、目录治理细则、submodule 细节或长方案一次性抛给用户要求理解；除非用户明确要求完整方案。
+- 需要用户确认时，每次只提出一个会影响写入边界、付费、凭据、外部授权或不可逆操作的决策。
+- 对用户只输出当前最小动作、关键风险和完成后反馈信号；完整执行细节由 Agent 内部按 SOP、质量门禁和验证规则消化。
+- 供需式协作不降低 Reasoning、Preview、POC、Review、Verification、Confidence 和 Stop Rule 等质量门禁；它只约束门禁结果的对用户呈现方式。
 - `SKILL.md` 是路由层，不承载完整初始化细节。
 - 目录设计先按职责域，再按技术栈映射具体目录名。
 - 研究区必建，并锁定为 `vendor/research/aces-research` -> `https://github.com/aces-org-zhuang/aces-research.git` submodule，与主仓默认项目知识库隔离。
