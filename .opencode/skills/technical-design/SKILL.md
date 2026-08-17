@@ -21,17 +21,18 @@ description: 必须用于技术设计、架构影响面、技术方案、技术�
 4. 涉及复杂影响面、跨模块关系、异步时序、兼容性、架构、路线或根因不明的设计取舍时，先使用 `reasoning-map`，并对照 `checklists/design-governance.md` 执行事前推演门禁；进入下一设计环节前，关键结论置信度必须 >=90%，低于 90% 时只能输出假设、风险和验证动作，不能定版或推进实现。
 5. 代码/文档探索、候选扩展、依赖初筛、方案局部评审可委派子代理执行；使用前按 `development-workflow/references/subagent-context-budgeting.md` 和 Delegation Quality Gate 定义边界、lens、return contract 和证据字段，最终架构、技术路线、primary 依赖和 Review Gate 由主 agent 决定。
 6. 跨阶段设计、架构定版或 implementation handoff 必须按 `development-workflow/references/knowledge-handoff-gate.md` 执行 Knowledge & Handoff Gate：优先消费 Product Handoff Packet，维护 Reuse Ledger，并在交给 `implementation-delivery` 前产出 Technical Handoff Packet。
-7. 只要设计面向既有代码仓、模块接入、重构、能力扩展或 implementation handoff，必须先确认源码目录结构和相关入口文件；技术方案必须映射到现有目录/模块 owner，并说明新增、修改、禁止触碰的目录边界。无法确认源码结构时，不得定版架构或实施切片，只能输出待补证设计。
-8. 进入 POC、implementation handoff、真实构建/验证设计或外部服务接入前，按 `development-workflow/references/configuration-readiness-gate.md` 统一确认必需路径、命令、依赖、版本锁、环境变量/凭据边界、外部服务、验证信号和授权；缺失 required 配置时只输出补证/降级方案，不推进下游。
-9. 需要图表、原型或其他表达产物时转入 `expression-delivery`；本技能决定是否需要表达产物，`expression-delivery` 决定形式和质量。
-10. 需要技术选型、依赖选型、开源库/框架/仓库评估或 GitHub repo 候选对比时，使用本技能的 Selection Evaluation 子阶段；缺候选时先转入 `research` 的 Discovery Path 发现候选，深度开源实现洞察或证据包也转入 `research`。本技能的开源选型面向解决方案依赖引入，不等同于 research 的论文/样本仓库选择。
-11. 如果项目缺少基础治理、目录规则或 `.opencode` 桥接，转入 `project-init-manager`，不要在本技能中重建初始化规则。
-12. 生成完整技术设计或实施切片前，先执行 Preview Gate；除非用户明确要求确认、required 配置/授权缺失、关键 tradeoff 需要用户偏好，或继续会改变已确认架构方向，否则记录假设并继续。预览可用 ASCII/Mermaid 架构图、时序图、状态机图、DFD、接口草案或低保真交互草图。
-13. 当用户明确要求“先只输出草图 / 不要完整设计 / 不要写代码”时，不做仓库探索、不读取大量文档；只基于已给输入生成预览和待确认假设。
-14. 用户未提供项目专有系统名称、路径或运行时能力时，草图必须保持跨项目中性；不要引入当前仓库的产品名、目录、运行时、网关或工具链。
-15. 不要把技术设计请求改派给角色型名称；在 maop 技能体系内，本技能就是需求确认后的设计入口。
-16. 设计定版、进入实现或高风险 POC 前执行 Review Gate，review 分数必须 >=80，`checklists/design-governance.md` 关键项必须通过，Delegation Quality Gate 和 Configuration Readiness Gate 必须通过，且关键架构/路线/选型结论置信度必须 >=90%；低于门槛按 `development-workflow/references/auto-remediation-gate-loop.md` 自动补 reasoning-map、选型矩阵、governance、build map、风险和验证策略并复审，硬阻断才询问用户。
-17. 设计准备进入 `implementation-delivery` 前，必须输出 Implementation Handoff Mini-Spec 和 90% Confidence Evidence Map；交接至少覆盖 Source Map、Interface/State、Option/Risk、Verification lens、状态/API/模块/测试/验证/外部未知。任一关键架构、接口、状态、模块边界或验证入口低于 90% 置信度时，不得声明 ready for implementation，只能输出缺口、补证动作和 fallback。
+7. 新系统、新 POC、外部平台接入、部署/资源/账号/网络边界不清，或将进入接口、数据、状态、实施切片、implementation handoff 前，必须先执行 `references/sop-02b-architecture-confirmation.md`：输出或复用 Context Diagram、System Component Diagram、Deployment Diagram、Data/State Boundary、Integration Boundary、IT Resource List 和 Open RED Points。架构确认包未完成时，不得定版 API、数据表、状态机或实施切片。
+8. 只要设计面向既有代码仓、模块接入、重构、能力扩展或 implementation handoff，必须先确认源码目录结构和相关入口文件；技术方案必须映射到现有目录/模块 owner，并说明新增、修改、禁止触碰的目录边界。无法确认源码结构时，不得定版架构或实施切片，只能输出待补证设计。
+9. 进入 POC、implementation handoff、真实构建/验证设计或外部服务接入前，按 `development-workflow/references/configuration-readiness-gate.md` 统一确认必需路径、命令、依赖、版本锁、环境变量/凭据边界、外部服务、验证信号和授权；缺失 required 配置时只输出补证/降级方案，不推进下游。
+10. 需要图表、原型或其他表达产物时转入 `expression-delivery`；本技能决定是否需要表达产物，`expression-delivery` 决定形式和质量。
+11. 需要技术选型、依赖选型、开源库/框架/仓库评估或 GitHub repo 候选对比时，使用本技能的 Selection Evaluation 子阶段；缺候选时先转入 `research` 的 Discovery Path 发现候选，深度开源实现洞察或证据包也转入 `research`。本技能的开源选型面向解决方案依赖引入，不等同于 research 的论文/样本仓库选择。
+12. 如果项目缺少基础治理、目录规则或 `.opencode` 桥接，转入 `project-init-manager`，不要在本技能中重建初始化规则。
+13. 生成完整技术设计或实施切片前，先执行 Preview Gate；除非用户明确要求确认、required 配置/授权缺失、关键 tradeoff 需要用户偏好，或继续会改变已确认架构方向，否则记录假设并继续。预览可用 ASCII/Mermaid 架构图、时序图、状态机图、DFD、接口草案或低保真交互草图。
+14. 当用户明确要求“先只输出草图 / 不要完整设计 / 不要写代码”时，不做仓库探索、不读取大量文档；只基于已给输入生成预览和待确认假设。
+15. 用户未提供项目专有系统名称、路径或运行时能力时，草图必须保持跨项目中性；不要引入当前仓库的产品名、目录、运行时、网关或工具链。
+16. 不要把技术设计请求改派给角色型名称；在 maop 技能体系内，本技能就是需求确认后的设计入口。
+17. 设计定版、进入实现或高风险 POC 前执行 Review Gate，review 分数必须 >=80，`checklists/design-governance.md` 关键项必须通过，Architecture Confirmation Gate、Delegation Quality Gate 和 Configuration Readiness Gate 必须通过，且关键架构/路线/选型结论置信度必须 >=90%；低于门槛按 `development-workflow/references/auto-remediation-gate-loop.md` 自动补 architecture confirmation、reasoning-map、选型矩阵、governance、build map、风险和验证策略并复审，硬阻断才询问用户。
+18. 设计准备进入 `implementation-delivery` 前，必须输出 Implementation Handoff Mini-Spec 和 90% Confidence Evidence Map；交接至少覆盖 Source Map、Interface/State、Option/Risk、Verification lens、状态/API/模块/测试/验证/外部未知。任一关键架构、接口、状态、模块边界或验证入口低于 90% 置信度时，不得声明 ready for implementation，只能输出缺口、补证动作和 fallback。
 
 ## Delegation Quality Gate
 
@@ -57,6 +58,9 @@ description: 必须用于技术设计、架构影响面、技术方案、技术�
 
 需要把需求映射到设计决策
   -> Stage 2 Requirement Trace: references/sop-02-requirement-trace.md
+
+新系统/POC/外部平台接入，或接口/状态/部署/实施切片前架构边界未确认
+  -> Stage 2b Architecture Confirmation: references/sop-02b-architecture-confirmation.md
 
 需要比较方案、架构或技术路线
   -> Stage 3 Solution Options: references/sop-03-solution-options.md
@@ -91,6 +95,7 @@ description: 必须用于技术设计、架构影响面、技术方案、技术�
 - 设计必须能追溯到需求，不用个人偏好替代约束。
 - 设计阶段不写生产代码；若用户要求实现，转入 `implementation-delivery`。
 - 既有代码仓的技术设计必须先建立源码目录图谱；目录结构是架构约束，不是实现细节。设计输出必须把能力、模块 owner、接口、状态、配置、测试和实施切片落到明确目录或文件类别。
+- 新系统、新 POC 或外部平台接入的技术设计必须先确认系统上下文、组件图、部署图、数据/状态边界、集成边界和 IT 资源清单；这些是架构约束，不是表达产物装饰。
 - 技术设计必须复用 Product Handoff Packet 中已确认的角色、Use Case、范围和验收；除非源码事实或用户反馈冲突，不重复产品定义阶段的完整研究。
 - 明确变更边界、兼容性、迁移风险和验证方式。
 - 设计应优先保持技术栈归一、特性模块唯一归属、依赖唯一性、契约 owner 清晰、数据/状态单一来源、运行时边界可维护和构建复杂度受控。
@@ -115,6 +120,7 @@ description: 必须用于技术设计、架构影响面、技术方案、技术�
 - `references/sop-00-intake.md`: 设计范围、输入和上下文判定。
 - `references/sop-01-context-discovery.md`: 项目、文档和代码上下文发现。
 - `references/sop-02-requirement-trace.md`: 需求到设计决策映射。
+- `references/sop-02b-architecture-confirmation.md`: 架构确认门禁，定义上下文图、系统组件图、部署图、数据/状态边界、集成边界、IT 资源清单和开放 RED 点。
 - `references/sop-03-solution-options.md`: 方案选项与取舍。
 - `references/sop-03b-selection-evaluation.md`: 技术选型、依赖选型、开源库/框架/仓库评估和候选 repo 对比。
 - `references/sop-03c-deployment-integration.md`: 第三方能力 deployment-first 引入、镜像、CLI/binary、系统包、source-build fallback 和 tech 流水线目录规划。
