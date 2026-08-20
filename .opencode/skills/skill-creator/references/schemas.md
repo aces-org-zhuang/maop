@@ -6,7 +6,7 @@ This document defines the JSON schemas used by skill-creator.
 
 ## evals.json
 
-Defines the evals for a skill. Located at `evals/evals.json` within the skill directory.
+Defines eval prompts for the target skill being created or improved. The runtime file is located at `evals/evals.json` inside that target skill directory or its authorized eval workspace; it is not a required bundled resource of `skill-creator` itself.
 
 ```json
 {

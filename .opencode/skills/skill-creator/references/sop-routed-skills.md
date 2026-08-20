@@ -14,20 +14,20 @@ This avoids skills becoming confusing all-in-one documents and makes the executi
 skill-name/
   SKILL.md
   references/
-    sop-00-intake.md
-    sop-01-<stage>.md
-    sop-02-<stage>.md
-    sop-03-validation.md
-  templates/
+    sop-00-intake-and-routing.md
+    sop-01-<feature>.md
+    sop-02-<feature>.md
+    sop-03-validation-and-handoff.md
+  templates/              # optional; include only when a real SOP reads it
     <artifact>.md.template
-  checklists/
+  checklists/             # optional; include only when validation reads it
     <readiness>.md
     <completeness>.md
-  evals/
+  evals/                  # target skill runtime test data; do not imply this skill must bundle evals
     evals.json
 ```
 
-Use names that make the execution order obvious. For ordered workflows, prefer `sop-00-*`, `sop-01-*`, and so on.
+Use names that make the execution order obvious. For ordered workflows, prefer `sop-NN-<feature>.md`, such as `sop-00-intake-and-routing.md` and `sop-05-validation-and-handoff.md`.
 
 ## SKILL.md Responsibilities
 
@@ -38,7 +38,7 @@ Use names that make the execution order obvious. For ordered workflows, prefer `
 - A short “triggered first steps” section.
 - A Stage Router that maps user situations to SOP files.
 - A recommended full execution order for complete workflows.
-- A resource index listing references, templates, and checklists.
+- A resource index listing only real bundled references, templates, checklists, scripts, agents, assets, and runtime-output locations that are clearly marked as runtime rather than bundled.
 - Delivery standards and validation expectations.
 
 `SKILL.md` should not contain:
@@ -67,8 +67,8 @@ Keep each SOP independently useful. A model should be able to read `SKILL.md`, s
 - Read the intake or planning SOP next.
 - Read only the SOPs needed for the current user request.
 - After finishing a phase, return to the Stage Router to decide the next SOP.
-- Load templates and checklists only when a SOP calls for them.
-- Use validation SOPs or completeness checklists before final delivery.
+- Load templates and checklists only when a SOP calls for real files that exist in the target skill.
+- Use validation SOPs or real completeness checklists before final delivery.
 
 ## When To Use This Pattern
 
@@ -80,21 +80,21 @@ Use SOP-routed structure when the skill:
 - Needs staged validation or rollback.
 - Would exceed roughly 300-500 lines if implemented only in `SKILL.md`.
 
-For tiny skills with one narrow behavior, a single concise `SKILL.md` may still be enough.
+For generated skills, use SOP-routed structure by default. Do not collapse the generated skill into a single concise `SKILL.md`.
 
 ## Anti-Patterns
 
 - Putting all rules, SOPs, templates, and examples into one large `SKILL.md`.
 - A Stage Router that lists SOPs but does not say when to read each one.
 - SOP files that repeat the full skill overview instead of owning a concrete phase.
-- Templates embedded directly in `SKILL.md` when they can live under `templates/`.
-- Checklists that are mentioned but not used during validation.
+- Templates embedded directly in `SKILL.md` when they can live under an existing `templates/` file referenced by a SOP.
+- Checklists that are mentioned but not present, indexed, and used during validation.
 
 ## Example Stage Router
 
 ```text
 Any request
-  -> Stage 0 Intake: references/sop-00-intake.md
+  -> Stage 0 Intake: references/sop-00-intake-and-routing.md
 
 Need repository foundation
   -> Stage 1 Repo Foundation: references/sop-01-repo-foundation.md
@@ -103,7 +103,7 @@ Need OpenCode configuration
   -> Stage 2 OpenCode Config: references/sop-02-opencode-config.md
 
 After writing files
-  -> Stage 3 Validation: references/sop-03-validation.md
+  -> Stage 3 Validation: references/sop-03-validation-and-handoff.md
 ```
 
 The router is a decision map, not a table of contents. It should tell the model where to go next.
