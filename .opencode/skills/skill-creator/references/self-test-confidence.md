@@ -33,7 +33,7 @@ Use `opencode run` to verify real triggering behavior. Keep prompts small and st
 Target signals:
 
 - Output includes `Skill "<skill-name>"`, or clearly states it is using the target skill.
-- For SOP-routed skills, output reads or names the expected `references/sop-*.md` file.
+- For SOP-routed skills, output reads or names the expected `references/sop-NN-<feature>.md` file.
 - For negative prompts, output should not include the target skill signal.
 
 Example:
@@ -61,7 +61,7 @@ For each should-trigger workflow prompt, inspect whether the run completed the i
 
 - Did it read the right SOP/reference file after `SKILL.md`?
 - Did it follow the staged order instead of jumping directly to an answer?
-- Did it use templates/checklists only when needed?
+- Did it use real templates/checklists only when the target skill has those resources and a SOP references them?
 - Did it perform validation before final output?
 - Did it report unresolved blockers or RED points?
 
@@ -78,7 +78,7 @@ For each run, assign one of these scores:
 
 Use the normal skill-creator benchmark loop for output quality when outputs are substantial:
 
-- Create `evals/evals.json` prompts.
+- Create target-skill runtime `evals/evals.json` prompts when authorized, or keep them in an explicit workspace eval file.
 - Run with-skill and baseline/old-skill comparisons.
 - Grade assertions with `agents/grader.md`.
 - Aggregate with `scripts.aggregate_benchmark`.
