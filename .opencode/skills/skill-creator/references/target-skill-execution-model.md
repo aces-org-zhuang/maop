@@ -29,6 +29,7 @@ Generated skills must choose one or more of these base models according to the u
 - The generated skill must tell the main LLM to dispatch bounded agents for SOP execution only under explicit node conditions such as parallel subviews, isolated evidence gathering, or adversarial comparison.
 - The generated skill must tell the main LLM to update `todo/status` before and after actual execution.
 - The generated skill must preserve goal continuity so no task is lost across rounds, loops, or merges.
+- The generated skill should include 1..n short reasoning-map gate clauses from `sop-01-draft-and-structure.md`, chosen by scenario; these clauses should retain the phrase `委派代理执行` in the target `SKILL.md`, but do not expand them into detailed reasoning-map instructions.
 
 ## ASCII example
 

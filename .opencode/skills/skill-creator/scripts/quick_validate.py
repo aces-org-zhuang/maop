@@ -132,6 +132,10 @@ def validate_skill(skill_path):
             return False, "Missing explicit agent-dispatch instruction in SKILL.md"
         if "按需派发代理执行" in content:
             return False, "Avoid vague delegation wording; use explicit conditions or explicit delegation nodes"
+        if "reasoning-map" in content and "委派代理执行" not in content:
+            return False, "Reasoning-map gate clauses must explicitly use 委派代理执行"
+        if "reasoning-map" in content and not any(token in content for token in ["置信度达到 90% 以上", "收敛候选路径", "补齐关键信息", "排除低收益路径", "检查时序边界"]):
+            return False, "Reasoning-map mention should be a short gate clause, not a vague reference"
         if "sop-0" not in content:
             return False, "Missing explicit SOP node references in SKILL.md execution model"
         if not re.search(r"sop-0\d-", content):

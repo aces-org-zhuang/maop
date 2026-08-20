@@ -25,6 +25,66 @@ Inputs：`sop-00` intake、用户确认的目标/触发/输出/测试意愿、�
 9. 解释 why，优先祈使句，避免无意义的强制大写；描述聚焦用户意图而非实现。
 10. 不写恶意、误导、越权、数据外泄或未经授权的外部副作用。
 
+### reasoning-map 点状注入库
+
+创建目标 skill 时，按命中场景从下列短句中挑选 1..n 条注入到目标 skill 的执行模型或核心契约中，不展开解释；注入句必须保留“委派代理执行”字样，让目标 skill 的执行模型显式出现可委派语义。
+
+#### diagnosis
+
+- `遇到 bug、异常、回归或未知根因时，委派代理执行 reasoning-map 定位，再进入复现。`
+- `当症状与根因不一致时，委派代理执行 reasoning-map 区分直接症状和根本原因。`
+- `若存在上游生成物或状态交接，委派代理执行 reasoning-map 检查生产者、提交点和消费者。`
+- `当时序可能影响结果时，委派代理执行 reasoning-map 识别竞态、延迟和就绪信号。`
+- `定位未收敛前，不直接进入大范围 POC。`
+
+#### design
+
+- `当存在多个方案时，委派代理执行 reasoning-map 比较可行性、风险和置信度。`
+- `在方案选择前，委派代理执行 reasoning-map 排除明显不成立的路径。`
+- `若方案依赖多个阶段，委派代理执行 reasoning-map 画出依赖链后再实施。`
+- `当方案置信度不足时，委派代理执行 reasoning-map 调整到高置信路径，再进入实现。`
+- `reasoning-map 负责缩小方案空间，POC 负责验证已收敛假设；必要时委派代理执行 reasoning-map 补充边界。`
+
+#### verification
+
+- `必要时委派代理执行 reasoning-map 验证，直到置信度达到 90% 以上。`
+- `在进入 POC、实现或最终交付前，委派代理执行 reasoning-map 收敛候选路径。`
+- `若问题仍存在证据缺口，委派代理执行 reasoning-map 补齐关键信息，再继续执行。`
+- `若验证结果冲突，委派代理执行 reasoning-map 更新候选和证据。`
+- `reasoning-map 用于提升置信度与缩小验证范围，不替代目标 skill 的主功能；必要时委派代理执行 reasoning-map 做复核。`
+
+#### handoff
+
+- `交付前委派代理执行 reasoning-map 检查是否仍有未闭环 RED 节点。`
+- `若仍有高风险不确定性，委派代理执行 reasoning-map 边界化后再继续交付。`
+- `最终输出前，委派代理执行 reasoning-map 给出最小行动路径。`
+- `若结论置信度不足，委派代理执行 reasoning-map 再输出最终结论。`
+- `交付结果必须能回溯到 reasoning-map 的关键判断点，必要时委派代理执行 reasoning-map 补证。`
+
+#### poc-gate
+
+- `进入 POC 前，必要时委派代理执行 reasoning-map 验证假设是否足够收敛。`
+- `若 POC 成本高，委派代理执行 reasoning-map 降低试错范围。`
+- `当验证门槛未达成时，不进入最终交付。`
+- `必要时委派代理执行 reasoning-map 反复迭代，直到达到约定置信门槛。`
+- `POC 的职责是验证已收敛假设，reasoning-map 的职责是减少验证前的不确定性；必要时委派代理执行 reasoning-map 先做收敛。`
+
+#### timing
+
+- `当状态流转会影响结果时，委派代理执行 reasoning-map 检查时序边界。`
+- `若存在异步交接，委派代理执行 reasoning-map 建模生产者、就绪信号和消费者。`
+- `当执行顺序可能影响正确性时，委派代理执行 reasoning-map 收敛时序风险，再进入实施。`
+- `若结果依赖持久化或提交点，委派代理执行 reasoning-map 验证状态是否已就绪。`
+- `reasoning-map 应优先暴露时序风险，而不是等 POC 失败后再发现；必要时委派代理执行 reasoning-map 提前暴露风险。`
+
+#### confidence
+
+- `若目标是比较两个技能方案，委派代理执行 reasoning-map 做选择前收敛。`
+- `若用户关注置信度与试错成本，委派代理执行 reasoning-map 评估再进入验证。`
+- `若任务可能走错方向，委派代理执行 reasoning-map 排除低收益路径。`
+- `当候选很多时，委派代理执行 reasoning-map 把问题缩成少数高置信分支。`
+- `reasoning-map 只作为门禁与收敛工具，不改变目标 skill 的核心职责；必要时委派代理执行 reasoning-map 做复核。`
+
 ## Creation flow
 
 ```text
