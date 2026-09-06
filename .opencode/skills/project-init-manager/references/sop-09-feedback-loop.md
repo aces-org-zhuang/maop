@@ -33,6 +33,11 @@ AI 引擎能力、engine-side skills/agents/commands
   -> maop 源仓模式：本仓 .opencode/ 和 maop 仓库规则
   -> 普通宿主项目：vendor/ai/maop/ submodule
   -> 普通宿主项目主仓只记录消费关系、pinned commit 和验证方式
+
+真实脚本/CLI/构建/测试/部署/外部工具操作
+  -> 检查是否存在可迁移作业经验
+  -> 脱敏、去项目化、单行化、去重
+  -> docs/07-llm/operational-experiences.md
 ```
 
 ## 执行规则
@@ -43,6 +48,9 @@ AI 引擎能力、engine-side skills/agents/commands
 4. 行动后再用 `reasoning-map` 复核是否覆盖原 RED 点。
 5. 验证事实优先使用真实命令、测试、日志、Workbench feedback 或源码路径，不只靠口头描述。
 6. 技术栈细则只在目标项目出现真实配置、源码、测试或用户确认后写入；不要通过 profiles 或 overlays 预置多套规则。
+7. 只影响当前项目业务或架构的内容进入项目 docs；可迁移到多个项目或环境的处理方式进入作业经验。
+8. 没有真实验证证据的一次性处理不沉淀为作业经验。
+9. 作业经验必须保持单行格式 `[触发条件] -> [动作] -> [验证信号]`，同义经验更新原条目而不是重复追加。
 
 ## 长期维护信号
 
@@ -59,3 +67,5 @@ AI 引擎能力、engine-side skills/agents/commands
 - 研究成果直接污染主仓 docs。
 - 失效模式、调试记录、证据文件没有同步索引。
 - 规则变更只改根 AGENTS，未同步 docs 局部规则。
+- 真实作业经验只在最终回复中出现，没有沉淀到经验文件。
+- 项目规则、业务事实或长篇复盘误写入作业经验文件。

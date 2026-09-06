@@ -12,6 +12,7 @@
 | 修改运行、启动或生命周期 | `03-runtime/README.md` |
 | 修改验证、部署或发布流程 | `04-operations/README.md` |
 | 修改 docs 体系或 LLM 规则 | `07-llm/doc-update-rules.md`、`docs/AGENTS.md` |
+| 执行相似环境的 CLI、Shell、编码或权限作业 | `07-llm/operational-experiences.md` |
 | 复杂问题定位、架构调整或影响面分析 | 先触发 `reasoning-map`，再按推演结果读取相关 docs |
 | 修复代码问题或运行失败 | `failure-modes/index.md`，再读取相关失效模式记录 |
 | 记录复杂调试过程 | `debugs/index.md` |

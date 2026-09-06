@@ -10,13 +10,14 @@
 2. 检查根 `README.md`、`AGENTS.md`、`docs/README.md`、`docs/AGENTS.md` 是否存在或是否按审计结果标记缺失。
 3. 检查根 `AGENTS.md` 的项目结构是否覆盖所有已创建顶层目录；不能只列 `src/`。
 4. 检查 docs 索引目录和 `failure-modes`、`debugs`、`evidences` index。
-5. 检查 `.opencode/README.md` 和本地组件目录。
-6. 检查研究区 `vendor/research/aces-research/index.md` 或锁定 submodule 计划。
-7. 检查 AI 引擎 `vendor/ai/maop` submodule 或锁定 submodule 计划。maop 源仓模式下检查是否明确排除自嵌套。
-8. 检查项目仓 `.opencode` 与 `vendor/ai/maop/.opencode` 的边界说明；maop 源仓模式下检查本仓 `.opencode` 是否被标记为能力源码目录。
-9. 检查 `.gitmodules` 与实际 submodule 状态；如果涉及真实 submodule，读取 `checklists/submodule-safety.md`。
-10. 检查技术栈或能力开发命令是否来自真实配置；未知命令必须保留 `待补充`。
-11. 输出 pass/fail、未闭环 RED 点和下一步。
+5. 检查 `docs/07-llm/operational-experiences.md` 是否由经验模板生成、按需索引且每条经验只有一行。
+6. 检查 `.opencode/README.md` 和本地组件目录。
+7. 检查研究区 `vendor/research/aces-research/index.md` 或锁定 submodule 计划。
+8. 检查 AI 引擎 `vendor/ai/maop` submodule 或锁定 submodule 计划。maop 源仓模式下检查是否明确排除自嵌套。
+9. 检查项目仓 `.opencode` 与 `vendor/ai/maop/.opencode` 的边界说明；maop 源仓模式下检查本仓 `.opencode` 是否被标记为能力源码目录。
+10. 检查 `.gitmodules` 与实际 submodule 状态；如果涉及真实 submodule，读取 `checklists/submodule-safety.md`。
+11. 检查技术栈或能力开发命令是否来自真实配置；未知命令必须保留 `待补充`。
+12. 输出 pass/fail、未闭环 RED 点和下一步。
 
 ## 推荐验证命令
 

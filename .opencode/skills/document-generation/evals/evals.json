@@ -1,0 +1,9 @@
+{
+  "evals": [
+    {"id":"progression-plan","prompt":"初始化一份 RCA 报告，定义 problem-definition、evidence、fix 和 non-regression 四个渐进步骤；每步需要返回 instruction、allowed_blocks 和 schema，并通过 update 推进步骤","expectation":"init 接受 --steps-plan；next-step 返回当前步骤契约；update 按 step_id 和 schema 校验后推进 next_step；最终文档通过 validate"},
+    {"id":"custom-document-name","prompt":"初始化一份物理文件名为 fix-rca-trace.md 的文档","expectation":"通过 --document-name 指定文件名，状态文件记录文档名，更新和 validate 都使用该文件名"},
+    {"id":"single-source","prompt":"在 features/sample-case 创建一份需求文档","expectation":"只创建一个 document.md 和一个状态文件"},
+    {"id":"paragraph-update","prompt":"更新 paragraph_id=intro 的内容","expectation":"只更新目标段落并自动返回 validate 结果"},
+    {"id":"template-update","prompt":"更新文档模板并保留 MarkdownTable 和 ASCII 图","expectation":"模板更新走 CLI，结构格式不由 LLM 转换"}
+  ]
+}

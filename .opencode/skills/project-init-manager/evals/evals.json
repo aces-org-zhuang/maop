@@ -19,5 +19,12 @@
       "expected_output": "应将研究区视为必建并锁定 aces-research，技术栈未知时按职责域设计目录，不伪造具体构建或测试命令，同时规划 maop AI 引擎 submodule。",
       "files": []
     }
+    ,
+    {
+      "id": 4,
+      "prompt": "真实执行 OpenCode 文档生成时，PowerShell 直接传 JSON 导致引号被破坏，随后改用 UTF-8 无 BOM JSON 文件输入并通过 CLI validate；请沉淀这条可迁移经验。",
+      "expected_output": "应把经验写入 docs/07-llm/operational-experiences.md 的单行条目，格式包含触发条件、动作和验证信号；不得改写项目规则、业务文档或生成长篇复盘。",
+      "files": []
+    }
   ]
 }

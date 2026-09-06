@@ -86,6 +86,14 @@
 - 研究过程、论文、开源仓库对比和证据包放在 `vendor/research/aces-research/`。
 - 新增、重命名或删除索引型文件时，必须同步对应 README 或 index。
 
+## 作业经验沉淀
+
+- 完成真实脚本、CLI、构建、测试、部署或外部工具操作后，识别可迁移的环境/组织作业经验。
+- 作业经验不写入项目规则，统一追加到 `docs/07-llm/operational-experiences.md`。
+- 每条作业经验只能占一行，必须包含触发条件、推荐动作和验证信号。
+- 经验必须去除项目名称、业务字段、私密路径和凭据，不把一次性项目细节泛化成组织规则。
+- 发现已有同义经验时更新原条目，不重复追加。
+
 ## 研究区规则
 
 - 研究区是必建部分：`vendor/research/aces-research/` -> `https://github.com/aces-org-zhuang/aces-research.git`。

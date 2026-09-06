@@ -8,6 +8,7 @@
 - `docs/README.md` 存在，并保持短入口。
 - `docs/AGENTS.md` 存在，并只约束 docs 写作和演进。
 - `docs/07-llm/llm-reading-order.md` 存在或已记录暂缓原因。
+- `docs/07-llm/operational-experiences.md` 存在或已记录暂缓原因，且每条经验只占一行。
 - `docs/failure-modes/index.md` 存在。
 - `docs/debugs/index.md` 存在。
 - `docs/evidences/index.md` 存在。

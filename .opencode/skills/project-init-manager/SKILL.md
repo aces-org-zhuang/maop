@@ -5,16 +5,36 @@ description: 项目代码仓初始化管理技能。用户要求初始化新项�
 
 # Project Init Manager
 
-本技能用于把一个新项目目录初始化为可持续开发、可归档、可被 LLM 协作维护的代码仓。`SKILL.md` 只做路由、阶段选择和交付约束；具体执行步骤必须读取 `references/sop-*.md`。
+本技能用于把一个新项目目录初始化为可持续开发、可归档、可被 LLM 协作维护的代码仓。SKILL.md 只做路由、阶段选择和交付约束；具体执行步骤必须读取 references 下的 SOP 文件。
+
+## 执行模型
+
+选择的基础模型：任务依赖树 + round + loop + dialectical。主 LLM 按条件派发代理执行只读探索、独立审查或证据整理；纯路由、写入决策、最终验证和交付由主流程完成。
+
+```text
+intake -> round: 审计/候选边界 -> sop-01..07 执行
+      -> loop: validation/feedback 修复 -> sop-08 -> sop-09
+      -> dialectical: 仅在多个初始化方案冲突时派发独立审查并由主流程裁决
+```
+
+每个阶段执行前后更新 todo/status；代理只在满足并行探索、独立评分或多视角审查条件时派发，并返回可定位证据，不替代最终决策。
+
+## 核心契约
+
+- 初始化必须先读取 sop-00，再按 Stage Router 渐进读取后续 SOP。
+- 写入前确认边界，写入后执行 sop-08 验证，并由 sop-09 处理可迁移作业经验。
+- 作业经验与项目规则分离，经验只通过 docs/07-llm/operational-experiences.md 单行沉淀。
+- 复杂初始化影响面、submodule、docs 体系或作业经验边界不清时，委派代理执行 reasoning-map 收敛候选路径后再写入。
+
 
 ## 触发后先做什么
 
 1. 先使用 `reasoning-map` 推演本次初始化范围、现有文件风险、目录职责域、研究区、docs、`.opencode` 和 submodule 影响面。
 2. 读取 `references/sop-00-intake.md`，完成项目路径、现状和初始化模式判定。
-3. 执行任何初始化写入、submodule 添加、`.opencode` 生成或 docs/research 目录落盘前，先按 `development-workflow/references/configuration-readiness-gate.md` 统一确认项目路径、初始化模式、允许写入范围、submodule URL/path/ref、研究区策略、`.opencode` 桥接、验证命令和用户授权；不要在执行中途零散索要配置。
+3. 执行任何初始化写入、submodule 添加、`.opencode` 生成或 docs/research 目录落盘前，先按 development-workflow 的 configuration-readiness-gate 统一确认项目路径、初始化模式、允许写入范围、submodule URL/path/ref、研究区策略、`.opencode` 桥接、验证命令和用户授权；不要在执行中途零散索要配置。
 4. 根据 Stage Router 读取后续 SOP。不要提前读取所有 SOP，也不要把所有规则复制到主上下文。
 5. 执行写操作前，确认不会覆盖用户已有文件；遇到已存在文件时先读取并增量合并。
-6. 完成后读取 `references/sop-08-validation.md` 和 `references/sop-09-feedback-loop.md`，做完整性检查和反哺规则落地；完整性检查不达标时按 `development-workflow/references/auto-remediation-gate-loop.md` 自动补缺失结构、索引、桥接、验证记录和反哺规则，硬阻断才询问用户。
+6. 完成后读取 `references/sop-08-validation.md` 和 `references/sop-09-feedback-loop.md`，做完整性检查和反哺规则落地；完整性检查不达标时按 development-workflow 的 auto-remediation-gate-loop 自动补缺失结构、索引、桥接、验证记录和反哺规则，硬阻断才询问用户。
 
 ## 总原则
 
@@ -97,7 +117,7 @@ sop-00-intake
 - `references/sop-01-repo-foundation.md`: Git、README、ignore、基础仓库文件。
 - `references/sop-02-directory-governance.md`: 目录职责域、技术栈映射、目录新增规则。
 - `references/sop-03-docs-system.md`: docs 分层、索引机制、反哺机制、token 控制。
-- `references/sop-04-agents-rules.md`: 根 `AGENTS.md` 和 `docs/AGENTS.md` 生成规则。
+- `references/sop-04-agents-rules.md`: 根 AGENTS 和 docs/AGENTS 生成规则。
 - `references/sop-05-opencode-config.md`: `.opencode` 目录、skills、agents、commands 和配置策略。
 - `references/sop-06-research-workspace.md`: 必建研究区、课题结构、研究资料隔离。
 - `references/sop-07-submodule-governance.md`: `.gitmodules`、vendor 路径、锁定 submodule、研究参考仓 submodule 规则。

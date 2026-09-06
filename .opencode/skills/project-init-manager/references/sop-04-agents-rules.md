@@ -82,6 +82,7 @@
 
 - `templates/AGENTS.md.template`
 - `templates/docs-AGENTS.md.template`
+- `templates/operational-experiences.md.template` 由 docs system 生成到目标项目的 `docs/07-llm/operational-experiences.md`
 
 ## 常见 RED 点
 
