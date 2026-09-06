@@ -35,6 +35,12 @@ __pycache__/
 .pytest_cache/
 .venv/
 venv/
+*.egg-info/
+*.backup
+
+# Nested task/workflow state copied with staged skills
+.opencode/skills/**/.aces/
+.opencode/skills/**/.aet/
 
 # Editor state
 .vscode/
