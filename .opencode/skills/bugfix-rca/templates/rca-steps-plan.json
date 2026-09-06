@@ -1,0 +1,93 @@
+[
+  {
+    "step_id": "problem-definition",
+    "instruction": "记录问题定义、环境和稳定复现条件",
+    "next_step": "evidence",
+    "allowed_blocks": ["heading", "paragraph", "table"],
+    "schema": {
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "type": {"enum": ["heading", "paragraph", "table"]}
+      }
+    }
+  },
+  {
+    "step_id": "evidence",
+    "instruction": "记录日志、堆栈、状态快照和时间线证据",
+    "next_step": "reasoning-slice",
+    "allowed_blocks": ["paragraph", "table", "ascii"],
+    "schema": {
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "type": {"enum": ["paragraph", "table", "ascii"]}
+      }
+    }
+  },
+  {
+    "step_id": "reasoning-slice",
+    "instruction": "记录 reasoning-map 最小故障窗口、因果链和排除项",
+    "next_step": "root-cause",
+    "allowed_blocks": ["paragraph", "ascii", "table"],
+    "schema": {
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "type": {"enum": ["paragraph", "ascii", "table"]}
+      }
+    }
+  },
+  {
+    "step_id": "root-cause",
+    "instruction": "记录最小复现、对比测试和根因确认结论",
+    "next_step": "fix",
+    "allowed_blocks": ["paragraph", "table"],
+    "schema": {
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "type": {"enum": ["paragraph", "table"]}
+      }
+    }
+  },
+  {
+    "step_id": "fix",
+    "instruction": "记录临时修复、永久修复和流程改进",
+    "next_step": "non-regression",
+    "allowed_blocks": ["paragraph", "table"],
+    "schema": {
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "type": {"enum": ["paragraph", "table"]}
+      }
+    }
+  },
+  {
+    "step_id": "non-regression",
+    "instruction": "记录 build、API、WebUI、回归和原始复现验证结果",
+    "next_step": "handoff",
+    "allowed_blocks": ["paragraph", "table"],
+    "schema": {
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "type": {"enum": ["paragraph", "table"]}
+      }
+    }
+  },
+  {
+    "step_id": "handoff",
+    "instruction": "记录 RCA 结论、残余风险和后续动作",
+    "next_step": "complete",
+    "allowed_blocks": ["paragraph", "table"],
+    "schema": {
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "type": {"enum": ["paragraph", "table"]}
+      }
+    }
+  }
+]
