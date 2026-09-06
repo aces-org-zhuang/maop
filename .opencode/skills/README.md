@@ -10,5 +10,6 @@ Add each skill as `.opencode/skills/<skill-name>/SKILL.md` inside the maop repos
 - Reasoning and research discovery: `reasoning-map`, `research`.
 - General development workflow: `development-workflow`, `product-definition`, `technical-design`, `implementation-delivery`, `expression-delivery`.
 - Bugfix RCA and non-regression verification: `bugfix-rca`.
+- Planned or imported skills awaiting governance review: `待规划技能/`.
 
 See `development-workflow/README.md` for the recommended product -> design -> implementation routing.

@@ -1,0 +1,7 @@
+include README.md
+include LICENSE
+recursive-include ticket_management *.py
+recursive-include tests *.py
+recursive-include assets *
+recursive-include references *
+recursive-include ticket_management *.md

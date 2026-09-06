@@ -1,0 +1,9 @@
+[
+  {
+    "skill_id": 1,
+    "skill_name": "skill-trigger-tester",
+    "test_type": "edge",
+    "trigger_phrase": "测试技能skill-trigger-tester 的触发质量",
+    "expected_trigger": "yes"
+  }
+]

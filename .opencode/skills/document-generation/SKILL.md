@@ -34,6 +34,10 @@ LLM 只产生 CLI 所需的结构化 JSON、读取 CLI 返回的下一步提示�
 - **Document management**：文档工作目录必须唯一且可复用，目录约束由调用方或场景层定义；`.doc-state.json` 维持同一文档状态。模板文件放在目标工作目录约定的位置。
 - **CLI first**：必须调用 `python scripts/doc_cli.py <sub_command> ...`。初始化时可通过 `--steps-plan <json-or-file>` 定义渐进步骤；每步可声明 `step_id`、`instruction`、`next_step`、`allowed_blocks` 和 JSON `schema`。优先使用 `next-step` 获取当前步骤的提交契约；`update` 按当前步骤校验 `step_id`、块类型和 schema 后再推进状态。
 
+## 跨 skill 集成
+
+其他 skill 需要落盘、渐进生成或修订结构化文档时，应先读取 `docs/07-llm/skill-document-generation-integration.md`，将领域步骤计划、字段契约和完成条件交给调用方定义，并复用本技能作为唯一文档引擎，避免在领域 skill 内重复实现状态、渲染、段落更新和校验。
+
 ## 资源索引
 
 - `references/sop-00-intake-and-routing.md`

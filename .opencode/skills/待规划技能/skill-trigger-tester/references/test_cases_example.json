@@ -1,0 +1,23 @@
+[
+  {
+    "skill_id": 1,
+    "skill_name": "docx",
+    "test_type": "positive",
+    "trigger_phrase": "Help me edit this Word document",
+    "expected_trigger": "yes"
+  },
+  {
+    "skill_id": 2,
+    "skill_name": "docx",
+    "test_type": "negative",
+    "trigger_phrase": "How do I format text in HTML?",
+    "expected_trigger": "no"
+  },
+  {
+    "skill_id": 3,
+    "skill_name": "docx",
+    "test_type": "edge",
+    "trigger_phrase": "I need to create a new docx file",
+    "expected_trigger": "yes"
+  }
+]
