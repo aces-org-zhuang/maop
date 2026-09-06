@@ -1,0 +1,15 @@
+services:
+  graphiti-mcp:
+    build: .
+    stdin_open: true
+    tty: false
+    environment:
+      GRAPHITI_MCP_TRANSPORT: ${GRAPHITI_MCP_TRANSPORT:-stdio}
+      GRAPHITI_MCP_STORAGE: ${GRAPHITI_MCP_STORAGE:-memory}
+      GRAPHITI_MCP_PROVIDER: ${GRAPHITI_MCP_PROVIDER:-memory}
+      GRAPHITI_MCP_LOG_LEVEL: ${GRAPHITI_MCP_LOG_LEVEL:-INFO}
+    healthcheck:
+      test: ["CMD", "python", "/app/scripts/healthcheck.py"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

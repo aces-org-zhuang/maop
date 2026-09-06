@@ -9,6 +9,7 @@ Add each skill as `.opencode/skills/<skill-name>/SKILL.md` inside the maop repos
 - Core governance: `skill-creator`, `project-init-manager`, `submodule-manager`.
 - Reasoning and research discovery: `reasoning-map`, `research`.
 - General development workflow: `development-workflow`, `product-definition`, `technical-design`, `implementation-delivery`, `expression-delivery`.
+- Frontend management operations: `frontend-management-ops` for UI plus CLI CRUD, import/export, and doctor workflows.
 - Bugfix RCA and non-regression verification: `bugfix-rca`.
 
 See `development-workflow/README.md` for the recommended product -> design -> implementation routing.

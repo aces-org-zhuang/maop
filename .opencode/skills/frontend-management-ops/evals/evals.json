@@ -1,0 +1,30 @@
+[
+  {
+    "name": "crud-cli-five-entities",
+    "prompt": "为当前前端补项目、习惯、成员、交付、团队的 CRUD，并让安装后的 CLI 可以操作这些数据。",
+    "should_trigger": true,
+    "expected": [
+      "routes through domain contract discovery before implementation",
+      "covers UI plus CLI shared contracts",
+      "requires installed/package CLI verification"
+    ]
+  },
+  {
+    "name": "import-export-doctor",
+    "prompt": "给管理数据增加导入导出和 doctor 诊断，导入必须先 dry-run，不能覆盖用户数据。",
+    "should_trigger": true,
+    "expected": [
+      "uses import/export/doctor SOP",
+      "requires schemaVersion, conflict policy, backup or dry-run",
+      "doctor is read-only by default"
+    ]
+  },
+  {
+    "name": "pure-ui-style-near-miss",
+    "prompt": "把团队页面改得更好看一些，不涉及数据操作或 CLI。",
+    "should_trigger": false,
+    "expected": [
+      "should prefer expression-delivery or frontend UI workflow, not this skill"
+    ]
+  }
+]

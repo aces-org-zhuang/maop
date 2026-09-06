@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "graphiti-mcp"
+version = "0.1.0"
+description = "Standalone Graphiti MCP deployment boundary for maop"
+requires-python = ">=3.10"
+dependencies = [
+  "mcp>=1.26,<2",
+  "pydantic>=2.11,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8,<9",
+]
+
+[project.scripts]
+graphiti-mcp = "graphiti_mcp.__main__:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
