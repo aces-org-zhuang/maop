@@ -8,6 +8,7 @@
 
 - 代码变更影响架构、运行时、契约、验证流程或 LLM 工作流时，评估是否更新 `docs/`。
 - 新增 docs 文件时，必须放入正确目录并同步 README 或 index。
+- 新增或修改需要落盘文档的 skill 时，优先复用 `document-generation` 作为唯一文档引擎，并把集成经验写入 `docs/07-llm/skill-document-generation-integration.md`。
 - 研究过程、论文、候选材料和开源仓库对比不得写入主仓 `docs/`。
 - 非研究阶段记录默认放入 `guides/`。
 - 常读入口保持短，不放长推演或历史过程。
@@ -29,6 +30,7 @@
 - 新增需求到实现证据更新 `docs/evidences/index.md`。
 - 新增可复用失效模式更新 `docs/failure-modes/index.md`。
 - 新增复杂调试记录更新 `docs/debugs/index.md`。
+- 新增 skill 文档生成集成经验更新 `docs/07-llm/skill-document-generation-integration.md`。
 - 交付摘要需说明 `Docs updated`、`Docs stale` 或 `Docs not updated` 的原因。
 
 ## 行动前

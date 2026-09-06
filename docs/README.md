@@ -14,6 +14,7 @@
 | 修改 API、协议或跨边界契约 | `05-contracts/README.md` |
 | 记录架构决策 | `06-decisions/README.md` |
 | 让 LLM 按需读取上下文 | `07-llm/llm-reading-order.md` |
+| 让其他 skill 集成文档生成能力 | `07-llm/skill-document-generation-integration.md` |
 | 查看已知风险 | `08-roadmap/README.md` |
 | 查看失效模式 | `failure-modes/index.md` |
 | 查看调试记录 | `debugs/index.md` |
@@ -29,7 +30,7 @@
 - `04-operations/`: 验证、部署、发布和排障流程。
 - `05-contracts/`: API、协议、数据模型和跨边界契约。
 - `06-decisions/`: ADR。
-- `07-llm/`: LLM 读取顺序、文档更新规则和上下文控制。
+- `07-llm/`: LLM 读取顺序、文档更新规则、skill 文档生成集成和上下文控制。
 - `08-roadmap/`: 风险、技术债和未来能力。
 - `failure-modes/`: 可复用失效模式。
 - `debugs/`: 复杂调试过程。
