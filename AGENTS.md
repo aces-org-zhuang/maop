@@ -20,6 +20,17 @@ This repository is the maop AI engine and OpenCode capability surface for ACES p
 
 Use `reasoning-map` before complex problem diagnosis, architecture changes, docs system changes, research workspace changes, submodule changes, or `.opencode` boundary changes.
 
+## Architecture Modeling Rules
+
+`architecture-design` owns architecture-as-code modeling with LikeC4. Its syntax is verified against a pinned LikeC4 version, not the latest official docs.
+
+- LikeC4 is a **version-sensitive** tool. DSL features differ across releases. Before writing `.c4`, confirm the target version and read `architecture-design/references/03-dynamic-views.md` for the verified feature table.
+- **Never write unverified syntax.** Features described in official docs may be unavailable in the pinned version; writing them makes `likec4 validate` fail.
+- After any `.c4` change, run `likec4 validate`. Do not report completion on a non-zero exit code.
+- When validation cannot run, report the reason, degraded evidence, and residual risk instead of claiming success.
+- Pin the LikeC4 version exactly (no `^` ranges). Cross-version DSL behavior changes make CI non-reproducible.
+- Host projects using `architecture-design` must configure the LikeC4 MCP server so agents can query the model instead of reading raw `.c4` text.
+
 ## Documentation Rules
 
 - `docs/` stores stable project knowledge only.
@@ -46,6 +57,8 @@ Use `reasoning-map` before complex problem diagnosis, architecture changes, docs
 | Install OpenCode capability dependencies | `npm install --prefix .opencode` |
 | Validate project OpenCode JSON | `node -e "JSON.parse(require('fs').readFileSync('.opencode/opencode.json','utf8')); console.log('ok')"` |
 | List skills | `Get-ChildItem -Recurse -Filter SKILL.md .opencode/skills` |
+| Validate LikeC4 models | `likec4 validate` (requires Node per pinned version) |
+| Check LikeC4 formatting | `likec4 format --check` |
 | Run automated tests | `待补充` |
 
 ## OpenCode Boundary

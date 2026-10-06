@@ -1,0 +1,141 @@
+{
+  "skill_name": "architecture-design",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮这个项目画一下系统上下文图和容器图，架构用代码管理。",
+      "expected_output": "触发 architecture-design；先执行图类型路由 SOP；产出 specification 与 model 后建立 view 与 view of <system>；写入后运行 likec4 validate。",
+      "files": [],
+      "expectations": [
+        "读取 references/00-diagram-routing.md 完成图类型路由",
+        "使用 LikeC4 的 view 与 view of <element> 语法，而不是 Mermaid",
+        "运行 likec4 validate 并报告结果"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "下单流程帮我画个时序图，带库存不足的异常分支。",
+      "expected_output": "触发 architecture-design；先用 dynamic view + variant sequence 画时序流程；说明 1.58.0 不支持 try/catch 与 alt/when/else，异常分支改走 Mermaid flowchart 或建议升级版本。",
+      "files": [],
+      "expectations": [
+        "使用 dynamic view 与 variant sequence 表达时序流程",
+        "未直接写入 opt/loop/alt/try 等当前版本不支持的块",
+        "明确告知异常分支需改走 Mermaid 或升级 LikeC4",
+        "确认 sequence 变体只连接叶子元素"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "把咱们所有项目的架构设计都放到一个设计仓里吧，这样统一管理。",
+      "expected_output": "触发 architecture-design；执行设计仓分层 SOP；说明 gitlink 指针抖动问题与 sparse-checkout 不能解决；建议项目层每仓独立加全局聚合层。",
+      "files": [],
+      "expectations": [
+        "说明单一大设计仓会造成 submodule 指针抖动",
+        "说明 sparse-checkout 不解决指针问题且破坏 LikeC4 构建",
+        "提出项目层与全局层分离的方案",
+        "指出需与代码同 PR 的内容不应放设计仓"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "帮我画一下领域模型的类图，带继承关系。",
+      "expected_output": "触发 architecture-design 但在路由阶段即识别类图属 LikeC4 不支持范围；说明能力边界；改走轨道二 Mermaid 或轨道三 PlantUML，不伪造 LikeC4 写法。",
+      "files": [],
+      "expectations": [
+        "明确指出 LikeC4 不支持类图与继承体系",
+        "未用 element 嵌套硬凑继承关系",
+        "改用 Mermaid classDiagram 或 PlantUML 并说明原因"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "架构图画完了，怎么让 CI 能在代码改了以后提醒我架构没同步更新？",
+      "expected_output": "触发 architecture-design；进入项目集成 SOP；给出 validate 与 format:check 门禁、Node 版本下限、依赖锁版本与 submodules recursive 说明。",
+      "files": [],
+      "expectations": [
+        "给出 likec4 validate 与 format:check 的 CI 门禁",
+        "强调 setup-node 需满足锁定版本 engines 下限（1.58.x 为 22.22.3）",
+        "要求 likec4 依赖锁精确版本",
+        "说明 submodule 场景需开 submodules: recursive",
+        "建议 PNG 导出不放主 CI"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "让 opencode 能直接查我们项目的架构依赖关系。",
+      "expected_output": "触发 architecture-design；配置 @likec4/mcp 或 likec4 mcp；说明 MCP 暴露结构化图查询能力，优于读 Mermaid 文本；提醒重启 opencode。",
+      "files": [],
+      "expectations": [
+        "给出 likec4 MCP 配置并设置 LIKEC4_WORKSPACE",
+        "说明 MCP 可做结构化架构查询",
+        "提醒配置变更后需重启 opencode"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "帮我补几张状态机图，展示订单的生命周期。",
+      "expected_output": "触发 architecture-design；识别状态机图属 LikeC4 不支持范围；改走轨道二 Mermaid stateDiagram，不伪造。",
+      "files": [],
+      "expectations": [
+        "明确指出 LikeC4 不支持状态机图",
+        "改用 Mermaid stateDiagram-v2",
+        "未用 dynamic view 冒充状态机并宣称等价"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "我们模型文件拆了好几个，views 里引用 model 的元素报错了。",
+      "expected_output": "触发 architecture-design；进入多文件与 FQN SOP；诊断为跨文件 short name 不继承容器作用域；改为 FQN 后重跑 validate。",
+      "files": [],
+      "expectations": [
+        "识别根因为跨文件 short name 不继承容器作用域",
+        "将容器内引用改为完整限定名",
+        "修正后运行 likec4 validate"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "帮我画一下生产环境的部署图，包含应用层和数据层两个可用区。",
+      "expected_output": "触发 architecture-design；使用 deploymentNode 声明节点类型、instanceOf 映射实例、deployment view 渲染；不使用 instance of 写法。",
+      "files": [],
+      "expectations": [
+        "在 specification 中用 deploymentNode 声明节点类型",
+        "使用 instanceOf 而非 instance of",
+        "用 deployment view 与 include prod.** 渲染",
+        "运行 likec4 validate 验证"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "把架构图按用例、时序、部署分几个文件放，用文件夹分组方便看。",
+      "expected_output": "触发 architecture-design；说明 1.58.0 不支持视图文件夹分组，改用按用途拆分文件；视图名需全局唯一。",
+      "files": [],
+      "expectations": [
+        "指出 views 'Label' 文件夹分组在当前版本不可用",
+        "改用按用途拆分文件的方案",
+        "提醒视图名必须全局唯一"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "先别写代码，帮我确认下这个新系统的架构边界和服务划分对不对。",
+      "expected_output": "不触发 architecture-design 主流程；应转向 technical-design 的 sop-02b-architecture-confirmation；如需产出 LikeC4 图则转入本技能作为表达落地。",
+      "files": [],
+      "expectations": [
+        "不直接进入架构建模流程",
+        "转向 technical-design 的架构确认 Gate",
+        "说明架构确认包可由 LikeC4 落地而非手画 Mermaid"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "这个平台的界面原型你直接用 likec4 画一下界面吧。",
+      "expected_output": "不触发 architecture-design；界面草图属 expression-delivery 的表达产物，架构建模不覆盖 UI 表达。",
+      "files": [],
+      "expectations": [
+        "识别界面原型属表达产物而非架构图",
+        "转向 expression-delivery"
+      ]
+    }
+  ]
+}
