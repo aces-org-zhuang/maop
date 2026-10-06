@@ -107,13 +107,47 @@
     },
     {
       "id": 12,
-      "prompt": "把架构图按用例、时序、部署分几个文件放，用文件夹分组方便看。",
+      "prompt": "把架构图分几个文件放，用文件夹分组方便看。",
       "expected_output": "触发 architecture-design；说明 1.58.0 不支持视图文件夹分组，改用按用途拆分文件；视图名需全局唯一。",
       "files": [],
       "expectations": [
         "指出 views 'Label' 文件夹分组在当前版本不可用",
         "改用按用途拆分文件的方案",
         "提醒视图名必须全局唯一"
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "我这边还没装 likec4，Node 也有点旧。你先帮我把架构模型搭起来，等下我自己装环境。",
+      "expected_output": "触发 architecture-design；读取 04b 环境自适配；说明 MCP 自带内核零安装可用，优先走 MCP 查询；CLI 可用 npx；仍不可用时照常交付模型文件并标注未校验风险，不应停止交付或要求用户先装环境。",
+      "files": [],
+      "expectations": [
+        "未因环境缺 likec4 而停止交付",
+        "说明 MCP 零安装可用并优先使用",
+        "提供 npx 按需校验作为次选",
+        "无法校验时照常交付并标注未校验风险"
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "我改完架构模型了，怎么确认改动生效？想在浏览器里看到。",
+      "expected_output": "触发 architecture-design；说明 MCP watch 热重载（改模型不需重启）与 likec4 serve 热更新两种同步方式；区分改 opencode.json 需重启、改模型文件不需要。",
+      "files": [],
+      "expectations": [
+        "说明 MCP 默认 watch，改模型无需重启",
+        "给出 likec4 serve 作为可视化热预览方式",
+        "区分配置文件需重启而模型文件不需要"
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "CI 上 likec4 报 ERR_MODULE_NOT_FOUND，是不是我模型写错了？",
+      "expected_output": "触发 architecture-design；区分环境故障与模型缺陷：MODULE_NOT_FOUND 是 npx 缓存或依赖损坏的环境问题，改用本地 npm install 锁定版本；模型语法错误表现为 Invalid 并带行号。",
+      "files": [],
+      "expectations": [
+        "指出 MODULE_NOT_FOUND 属环境问题而非模型问题",
+        "给出本地安装锁定版本的修复方式",
+        "说明模型语法错误的典型表现是 Invalid 加行号"
       ]
     },
     {

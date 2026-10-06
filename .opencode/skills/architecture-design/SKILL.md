@@ -25,16 +25,20 @@ intake -> 图类型路由 -> sop-01..05 执行 -> validate -> 交付
 - **跨文件必须用 FQN**。short name 不跨文件继承容器作用域，跨文件引用一律使用完整限定名，否则 `validate` 必然失败。
 - **设计资产分层存放**。单服务设计放项目层设计仓并由主仓 submodule 引用；跨项目视图放全局聚合层，禁止把多个项目的设计塞进同一个被 submodule 引用的仓（会造成 gitlink 指针抖动）。
 - **依赖必须锁版本**。LikeC4 跨版本 DSL 行为差异大，`package.json` 用精确版本号而非 `^`。
+- **环境问题不是阻塞理由，先降级再上报**。MCP 自带 LikeC4 内核，零安装即可查询模型；本地无 CLI 时走 npx，再不行就只读降级交付。详见 `references/04b-environment-and-sync.md`。
+- **不把环境故障误报为模型缺陷**。`EBADENGINE` / `MODULE_NOT_FOUND` / 网络错误是环境问题；`Invalid` + 行号是模型问题。
+- **改完要能同步看到效果**。优先用 MCP 查询确认；需要可视化时用 `serve` 热更新。
 
 ## 触发后先做什么
 
 1. 先读取 `references/00-diagram-routing.md`，确认目标图类型及其对应工具轨道。
-2. 读取 `references/01-likec4-basics.md`，确认 specification、命名、样式和目录约定。
-3. 涉及多文件、跨项目引用或导入既有模型时，读取 `references/02-multifile-and-fqn.md`。
-4. 涉及序列流程、并行、循环、条件或异常分支时，读取 `references/03-dynamic-views.md`。
-5. 需要落地项目、配置构建、接入 MCP 或接入 CI 时，按 `references/04-project-integration.md` 执行。
-6. 写入前确认目标位置：先读 `references/05-design-repo-layout.md` 判断设计资产归属层级。
-7. 完成后执行 `references/04-project-integration.md` 的校验步骤，并按 `checklists/model-quality.md` 自检。
+2. **先定验证路径**：读取 `references/04b-environment-and-sync.md`，判断走 MCP 还是 CLI。不要因环境缺 likec4 而停止交付。
+3. 读取 `references/01-likec4-basics.md`，确认 specification、命名、样式和目录约定。
+4. 涉及多文件、跨项目引用或导入既有模型时，读取 `references/02-multifile-and-fqn.md`。
+5. 涉及序列流程、并发或步骤下钻时，读取 `references/03-dynamic-views.md`。
+6. 需要落地项目、配置构建、接入 MCP 或接入 CI 时，按 `references/04-project-integration.md` 执行。
+7. 写入前确认目标位置：先读 `references/05-design-repo-layout.md` 判断设计资产归属层级。
+8. 完成后执行校验，并按 `checklists/model-quality.md` 自检。
 
 ## 图类型路由（速查，likec4 1.58.0 实测）
 
@@ -68,6 +72,9 @@ intake -> 图类型路由 -> sop-01..05 执行 -> validate -> 交付
 需要项目落地、构建脚本、MCP、CI 或漂移检测
   -> Stage 4 项目集成: references/04-project-integration.md
 
+环境未安装 likec4、或需要同步查看改动效果
+  -> Stage 4b 环境自适配与同步: references/04b-environment-and-sync.md
+
 需要决定设计资产放项目层还是全局层
   -> Stage 5 设计仓分层: references/05-design-repo-layout.md
 ```
@@ -93,6 +100,7 @@ intake -> 图类型路由 -> sop-01..05 执行 -> validate -> 交付
 - `references/02-multifile-and-fqn.md`: 多文件组织、`import`/`extend`、跨文件 FQN 规则和常见校验失败。
 - `references/03-dynamic-views.md`: 动态视图语法、sequence 变体、并发块、限制，以及 1.58.0 实测可用/不可用特性表。
 - `references/04-project-integration.md`: 项目结构、构建脚本、CLI 校验、MCP 接入、CI 漂移检测。
+- `references/04b-environment-and-sync.md`: 零依赖回退链（不装 likec4 也能查询模型）、MCP watch 热重载、同步查看方式、故障降级规则。
 - `references/05-design-repo-layout.md`: 设计资产分层、仓边界、submodule 引用与指针抖动规避。
 - `checklists/model-quality.md`: 模型质量自检清单。
 - `templates/`: 可落盘模板。
@@ -105,10 +113,10 @@ intake -> 图类型路由 -> sop-01..05 执行 -> validate -> 交付
 - 不伪造未知技术栈命令；未确认的命令标为 `待补充`。
 - 不把 Mermaid/PlantUML 图倒推成 LikeC4 模型并声称是模型真源。
 - **不写入未经当前版本验证的语法**。官方文档中的部分特性（1.58.0 下的 `opt` `loop` `break` `alt` `try`、视图文件夹分组）在当前锁定版本不可用，写入会导致 `validate` 失败。
-- LikeC4 1.58.x 要求 Node >= 22.22.3；环境不满足时先报告阻塞，不降级为其他工具假装完成。
-- 写入 `.c4` 后必须运行 `likec4 validate`；无法运行时说明原因、降级证据和残余风险。
+- **环境缺 likec4 不是停止交付的理由**。MCP 自带内核可零安装查询模型；CLI 可用 npx；仍不可用时照常交付模型文件并标注未校验风险。
+- 写入 `.c4` 后应运行 `likec4 validate`；无法运行时必须说明原因、降级证据和残余风险，**不得声称已校验**。
 - 升级 LikeC4 版本后，必须重新验证本技能模板与 references 中的示例，并更新实测表。
 
 ## 交付标准
 
-交付时说明：目标图类型与所用轨道、LikeC4 版本、模型或视图文件位置、`likec4 validate` 结果、跨文件引用是否已用 FQN、设计资产归属层级（项目层或全局层）、以及 LikeC4 无法表达而改走轨道二/三的部分及其原因。
+交付时说明：目标图类型与所用轨道、验证路径（MCP / CLI / npx / 只读降级）、模型或视图文件位置、`likec4 validate` 结果或未校验原因、跨文件引用是否已用 FQN、设计资产归属层级（项目层或全局层）、以及 LikeC4 无法表达而改走轨道二/三的部分及其原因。

@@ -8,17 +8,31 @@
 
 需要把模型落盘为可构建项目、让 opencode 通过 MCP 读取架构、或在 CI 中防止架构漂移时。
 
-## 前置：Node.js 版本
+## 前置：Node.js 版本（只影响 CLI，不影响 MCP）
 
-LikeC4 **1.58.x 要求 Node >= 22.22.3**。实测在 22.22.2 下 npm 报 `EBADENGINE`，且运行时会因缺失依赖崩溃（`ERR_MODULE_NOT_FOUND: @rolldown/pluginutils`）。
+LikeC4 **CLI** 有 Node 版本要求；**MCP 不受影响**（自带内核，npx 自行解析）。因此环境缺 Node 或版本过低时，AI 查询模型的能力仍然可用，只损失 `validate` / `build` / `export` / `serve`。
 
-官方文档写「Node.js 20+」是宽松表述，实际以锁定版本的 `engines` 字段为准：
+| 能力 | Node 要求 |
+| --- | --- |
+| MCP 查询模型 | 无（npx 自带内核） |
+| `validate` / `format` / `build` / `serve` | 需满足锁定版本的 `engines` |
+| `export png` | 额外需 Playwright |
+
+实测：
+
+```text
+likec4 1.56.0（MCP 内置）  随 npx 解析，通常无障碍
+likec4 1.58.0             实测 22.22.2 可运行（npm 会 warn EBADENGINE）
+likec4 1.59.x             硬性 >= 22.22.3，低于直接崩溃
+```
+
+查锁定版本的实际要求：
 
 ```bash
 node -e "console.log(require('likec4/package.json').engines)"
 ```
 
-不满足时先升级 Node，不要降级工具后假装完成。
+不满足时先按 `references/04b-environment-and-sync.md` 的回退链降级，不要直接停止交付。
 
 ## 最小项目结构
 
@@ -58,6 +72,12 @@ node -e "console.log(require('likec4/package.json').engines)"
 
 ## MCP 接入（让 AI 读取架构）
 
+### 关键前提：MCP 不需要预装 likec4
+
+实测 `npx -y @likec4/mcp` 自带完整 LikeC4 内核，在没有任何 `node_modules`、没有本地 likec4 的目录中可直接工作（内置内核版本 1.56.0）。**不需要 `npm install`，也不受宿主机 Node 版本限制。**
+
+因此 MCP 配置是「零安装」能力，应优先配置。只有 `validate` / `build` / `export` / `serve` 才需要本地 CLI。
+
 ### 方式一：@likec4/mcp 包（推荐用于 opencode）
 
 在主仓 `.opencode/opencode.json` 增加：
@@ -81,6 +101,8 @@ node -e "console.log(require('likec4/package.json').engines)"
 
 ### 方式二：本地 CLI
 
+若已安装 likec4，也可直接用：
+
 ```bash
 likec4 mcp --stdio                 # stdio 传输
 likec4 mcp --http -p 33335         # http 传输
@@ -88,18 +110,46 @@ likec4 mcp --http -p 33335         # http 传输
 
 VS Code 装 likec4 扩展后会自动注册 MCP。
 
-### MCP 能做什么
+### 可用工具（实测 17 个）
 
-暴露模型的自然语言查询能力，例如：
+MCP 暴露的查询能力按用途分组：
 
-- 「列出 backend api 的所有入向关系」
-- 「Backend 的哪些嵌套元素与 legacy api 有关系」
-- 「列出所有打了 legacy 标签、且属于 team1 项目的元素」
-- 「导出 Backend 到 SQS 的关系为 CSV」
+| 用途 | 工具 |
+| --- | --- |
+| 项目定位 | `list-projects`、`read-project-summary`、`search-element` |
+| 元素详情 | `read-element`、`batch-read-elements`、`subgraph-summary`、`element-diff` |
+| 关系查询 | `query-graph`、`find-relationships`、`find-relationship-paths` |
+| 影响面分析 | `query-incomers-graph`、`query-outgoers-graph`（递归上下游，比逐次调用高效） |
+| 标签与元数据 | `query-by-tags`、`query-by-tag-pattern`、`query-by-metadata` |
+| 视图 | `read-view` |
 
-**这是 LikeC4 相对 Mermaid 的核心优势**：AI 拿到的是结构化图查询结果，而不是一堆文本。Mermaid 图 AI 只能读注释。
+典型查询：
 
-配置变更后需重启 opencode 生效。
+- 「列出 backend api 的所有入向关系」-> `query-graph` / `query-incomers-graph`
+- 「这次改动影响哪些下游」-> `query-outgoers-graph`
+- 「Backend 的哪些嵌套元素与 legacy api 有关系」-> `subgraph-summary` + `query-graph`
+- 「列出打了 legacy 标签且属于 team1 的元素」-> `query-by-tags`
+- 「导出 Backend 到 SQS 的关系为 CSV」-> `find-relationships`（结果可转 CSV）
+
+**这是 LikeC4 相对 Mermaid 的核心优势**：AI 拿到的是结构化图查询结果，而不是一堆文本。
+
+### watch 热重载（实测）
+
+MCP 默认 `watch: true`。启动后新增或修改 `.c4` 文件会被自动重新解析，**无需重启 MCP**。日志会出现新的 `found N source files`。
+
+配置变更（`opencode.json` 本身）后仍需重启 opencode；模型文件变更不需要。
+
+### 使用顺序建议
+
+```text
+1. search-element        定位元素与所在 project
+2. read-project-summary  了解全局结构、可用 kind 与 metadata key
+3. query-incomers/outgoers-graph  做影响面分析
+4. read-element / read-view     取详情
+5. batch-read-elements   批量取多个元素，减少往返
+```
+
+需要可视化预览时用 `likec4 serve`（需本地 CLI），改文件后浏览器自动热更新。环境降级链见 `references/04b-environment-and-sync.md`。
 
 ## 导出能力
 

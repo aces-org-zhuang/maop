@@ -45,12 +45,14 @@
 
 ## 工程集成
 
-- [ ] Node 版本满足锁定版本的 engines 下限（1.58.x 为 >= 22.22.3）
+- [ ] 已确认验证路径（MCP / CLI / npx / 只读降级），未因环境缺 likec4 而停止交付
+- [ ] Node 版本满足锁定版本的 engines 下限（仅影响 CLI，不影响 MCP）
 - [ ] `package.json` 中 likec4 使用精确版本号而非 `^`
 - [ ] CI 中 `actions/setup-node` 显式指定满足要求的版本
 - [ ] submodule 场景下 CI 已开 `submodules: recursive`
 - [ ] PNG/JPG 导出未放入主 CI 路径（依赖 Playwright）
 - [ ] MCP 配置已就绪，且已提醒用户重启 opencode
+- [ ] 已确认改动后同步可见（serve 热更新，或 MCP 查询确认）
 
 ## 资产归属
 
@@ -63,5 +65,7 @@
 ## 诚实性
 
 - [ ] 无法运行的校验已说明原因、降级证据和残余风险
+- [ ] 只读降级交付时已明确标注「未经 `likec4 validate` 校验」
+- [ ] 环境故障（EBADENGINE / MODULE_NOT_FOUND / 网络）未被误报为模型语法错误
 - [ ] LikeC4 不支持的图类型已如实说明，未伪造交付
 - [ ] 升级版本的建议已给出（若用户需要当前版本不支持的特性）

@@ -86,7 +86,13 @@ design-<project>/
 
 **依赖必须锁精确版本**（如 `"likec4": "1.58.0"`，不用 `^`）。LikeC4 跨版本 DSL 行为差异大，锁版本才能保证 `validate` 可复现。
 
-**Node 版本要求**：LikeC4 1.58.x 要求 Node >= 22.22.3；以锁定版本的 `engines` 字段为准。初始化时把该约束写入设计仓 README 或主仓 docs 工具链说明。
+**Node 版本要求**：LikeC4 CLI 有 Node 下限（1.58.x 实测 22.22.2 可用，1.59.x 硬性 >= 22.22.3）。但**MCP 自带内核不受此限制**，因此环境不满足时 AI 仍能查询模型，只损失 `validate` 与 `build`。初始化时把约束写入设计仓 README 或主仓 docs 工具链说明，不要因 Node 版本阻断初始化。
+
+**零安装校验**：无需 `npm install` 即可自查语法：
+
+```bash
+npx -y likec4@1.58.0 validate
+```
 
 ### 3. 以 submodule 引入主仓
 
@@ -120,7 +126,9 @@ git submodule status --recursive
 
 MCP 让 AI 查询结构化架构关系（例如「列出某 API 的所有入向依赖」），而不是读一堆 `.c4` 文本。这是设计仓相对于 Mermaid 图的核心价值，不可省略。
 
-`LIKEC4_WORKSPACE` 路径必须与 submodule path 一致。配置变更后提醒用户重启 OpenCode。
+**MCP 不需要预装 likec4**：`@likec4/mcp` 自带内核，npx 即可运行，也不受宿主机 Node 版本限制。因此 MCP 配置是零安装能力，即使设计仓尚未 `npm install` 也能工作。
+
+`LIKEC4_WORKSPACE` 路径必须与 submodule path 一致。修改 `opencode.json` 后提醒用户重启 OpenCode；修改模型文件不需要重启（MCP 默认 watch 热重载）。
 
 ### 5. 登记主仓索引
 

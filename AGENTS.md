@@ -26,10 +26,20 @@ Use `reasoning-map` before complex problem diagnosis, architecture changes, docs
 
 - LikeC4 is a **version-sensitive** tool. DSL features differ across releases. Before writing `.c4`, confirm the target version and read `architecture-design/references/03-dynamic-views.md` for the verified feature table.
 - **Never write unverified syntax.** Features described in official docs may be unavailable in the pinned version; writing them makes `likec4 validate` fail.
-- After any `.c4` change, run `likec4 validate`. Do not report completion on a non-zero exit code.
+- After any `.c4` change, run `likec4 validate` when a CLI is available. Do not report completion on a non-zero exit code.
 - When validation cannot run, report the reason, degraded evidence, and residual risk instead of claiming success.
-- Pin the LikeC4 version exactly (no `^` ranges). Cross-version DSL behavior changes make CI non-reproducible.
+- Pin the LikeC4 version exactly (no `^` ranges) **when a CLI is used**. Cross-version DSL behavior changes make CI non-reproducible.
 - Host projects using `architecture-design` must configure the LikeC4 MCP server so agents can query the model instead of reading raw `.c4` text.
+
+## Environment Adaptation Rules
+
+`architecture-design/references/04b-environment-and-sync.md` governs capability probing and degradation. The core rule: **a missing local likec4 install is never a reason to stop delivery.**
+
+- `@likec4/mcp` bundles its own LikeC4 kernel and runs via `npx` with zero installation and no host Node version constraint. Model queries, dependency lookups, and impact analysis therefore work in any environment.
+- Only `validate`, `build`, `serve`, and `export` need a local CLI. Probe in order: MCP -> local CLI -> `npx` on demand -> read-only degradation.
+- In read-only degradation, still deliver the model files. State plainly that `likec4 validate` did not run, why, and what unvalidated syntax risk remains. Never fabricate a passing validation.
+- **Distinguish environment failures from model defects.** `EBADENGINE`, `ERR_MODULE_NOT_FOUND`, and network errors are environment problems; `Invalid` with a line number is a model problem. Never report one as the other.
+- For synchronized review: MCP watch reloads model changes without a restart, and `likec4 serve` gives a hot-reloading browser preview. Changing `opencode.json` still requires restarting opencode; changing model files does not.
 
 ## Design Repo Rules
 
