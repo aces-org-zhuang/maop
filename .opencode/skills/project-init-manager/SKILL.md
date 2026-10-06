@@ -13,6 +13,7 @@ description: 项目代码仓初始化管理技能。用户要求初始化新项�
 
 ```text
 intake -> round: 审计/候选边界 -> sop-01..07 执行
+      -> sop-10 设计仓（条件触发）
       -> loop: validation/feedback 修复 -> sop-08 -> sop-09
       -> dialectical: 仅在多个初始化方案冲突时派发独立审查并由主流程裁决
 ```
@@ -31,7 +32,7 @@ intake -> round: 审计/候选边界 -> sop-01..07 执行
 
 1. 先使用 `reasoning-map` 推演本次初始化范围、现有文件风险、目录职责域、研究区、docs、`.opencode` 和 submodule 影响面。
 2. 读取 `references/sop-00-intake.md`，完成项目路径、现状和初始化模式判定。
-3. 执行任何初始化写入、submodule 添加、`.opencode` 生成或 docs/research 目录落盘前，先按 development-workflow 的 configuration-readiness-gate 统一确认项目路径、初始化模式、允许写入范围、submodule URL/path/ref、研究区策略、`.opencode` 桥接、验证命令和用户授权；不要在执行中途零散索要配置。
+3. 执行任何初始化写入、submodule 添加、`.opencode` 生成或 docs/research 目录落盘前，先按 development-workflow 的 configuration-readiness-gate 统一确认项目路径、初始化模式、允许写入范围、submodule URL/path/ref、研究区策略、设计仓是否建设及远端 URL、`.opencode` 桥接、LikeC4 MCP、验证命令和用户授权；不要在执行中途零散索要配置。
 4. 根据 Stage Router 读取后续 SOP。不要提前读取所有 SOP，也不要把所有规则复制到主上下文。
 5. 执行写操作前，确认不会覆盖用户已有文件；遇到已存在文件时先读取并增量合并。
 6. 完成后读取 `references/sop-08-validation.md` 和 `references/sop-09-feedback-loop.md`，做完整性检查和反哺规则落地；完整性检查不达标时按 development-workflow 的 auto-remediation-gate-loop 自动补缺失结构、索引、桥接、验证记录和反哺规则，硬阻断才询问用户。
@@ -51,6 +52,9 @@ intake -> round: 审计/候选边界 -> sop-01..07 执行
 - 新增、重命名或删除索引型文件时，同步更新对应 README 或 index。
 - `.opencode/opencode.json` 在普通项目初始化时作为桥接配置生成，至少引用 `vendor/ai/maop/.opencode/skills`，并登记 `maop-opencode` reference；项目本地组件目录只在项目确有本地覆盖时创建。maop 源仓模式下，`.opencode/skills` 是一等源码目录，`maop-opencode` reference 指向本仓 `.opencode`，不创建嵌套 AI engine submodule。
 - 外部参考仓和研究参考仓优先使用 Git submodule，不普通 clone 到主仓。
+- 架构即代码通过设计仓机制落地，具体编排见 `references/sop-10-design-workspace.md`；DSL 与图类型边界由 `architecture-design` 技能负责，本技能不重复。
+- 设计仓按变化频率和耦合度分两层：项目层一仓一项目并被本项目 submodule 引用；全局层做跨项目聚合发布，不被任何项目 submodule 引用。禁止把多个项目的设计放进同一个被 submodule 引用的仓。
+- 需与代码同一个 PR 的设计内容留在主仓 `docs/`，不进入设计仓。设计仓承载跨 PR 生命周期的架构资产。
 - 开发规则只生成通用治理元规则，不复制某个项目的技术栈细则；本技能不引入 `profiles` 或 `overlays` 机制。
 - 不伪造未知技术栈命令；未知时写 `待补充`，并标明需要从技术栈配置或用户确认中补齐。
 - POC、正式初始化和写操作前必须一次性列出 required/optional/unknown 配置并确认；缺少 required 配置时停止，不在执行过程中临时索要。
@@ -58,6 +62,7 @@ intake -> round: 审计/候选边界 -> sop-01..07 执行
 - Todo Planning Rule：初始化、审计、写入、submodule、验证前，先更新 todo；每个 SOP 阶段、写入动作、索引同步、submodule 操作和验证动作都应有对应 todo。单文件小修或纯问答可跳过。
 - Write Budget Rule：先审计，再写入；每轮写入只覆盖当前 SOP 的最小文件集。已存在文件只增量合并，不覆盖用户内容；覆盖风险、写入范围不清、required 配置缺失或 submodule 授权缺失时立即停止。
 - Submodule Budget Rule：研究区和 AI 引擎 submodule 必建规则只适用于完整新项目初始化；审计、轻量补齐或非普通宿主项目只报告 submodule 差距，不默认执行 add/update。submodule 写操作必须有用户授权、明确 URL/path/ref 和对应 todo；复杂 submodule 操作转入 `submodule-manager`。
+- Design Workspace Budget Rule：设计仓机制是条件必建，不是无条件必建；必建条件与跳过条件见 `references/sop-10-design-workspace.md`。新建远端设计仓属于外部写操作，必须先获得用户明确授权，不得默认创建 GitHub 仓库。设计仓 submodule 写操作同样适用 Submodule Budget Rule。
 - Auto-remediation Rule：普通初始化补缺默认自动修复 1-2 轮；完整初始化或用户明确要求可按 auto-remediation gate 扩展。连续 1 轮无进展、覆盖风险、写入范围不清、submodule 配置/授权缺失或 required 配置缺失时立即停止。
 
 ## Stage Router
@@ -87,6 +92,9 @@ intake -> round: 审计/候选边界 -> sop-01..07 执行
 需要引入、规划或审计外部仓库
   -> Stage 7 Submodule Governance: references/sop-07-submodule-governance.md
 
+项目存在外部系统交互、部署形态或多模块协作，且需架构即代码
+  -> Stage 10 Design Workspace: references/sop-10-design-workspace.md
+
 落盘完成或审计完成
   -> Stage 8 Validation: references/sop-08-validation.md
 
@@ -105,11 +113,27 @@ sop-00-intake
   -> sop-05-opencode-config
   -> sop-06-research-workspace
   -> sop-07-submodule-governance
+  -> sop-10-design-workspace    # 条件触发：评估后确定建设计仓则执行
   -> sop-08-validation
   -> sop-09-feedback-loop
 ```
 
 如果用户只要求审计既有仓库，仍先执行 `sop-00-intake`，再跳到相关 SOP 和 `sop-08-validation`，不要强行重建已有结构。
+
+## 设计仓机制（条件必建）
+
+架构即代码能力由 `architecture-design` 技能承载；初始化期的落地编排由 `references/sop-10-design-workspace.md` 负责。
+
+- **必建条件**：完整新项目初始化，且存在外部系统交互、部署形态或多模块协作。
+- **不建条件**：单模块脚本、一次性工具、无部署边界的实验。此时在 `docs/` 记录架构决策即可。
+- **只报告差距**：审计既有仓或已有设计仓时，不默认执行 submodule 写操作。
+- **两层结构**：项目层 `design-<project>`（本项目主仓 submodule 引用）+ 全局层 `aces-architecture`（聚合发布，**不被任何项目 submodule 引用**）。
+- **禁止单一设计仓被多项目引用**：gitlink 记录子仓 HEAD commit，会导致每次设计提交都在所有项目仓产生无关 PR；`sparse-checkout` 不解决此问题且会破坏 LikeC4 构建。
+- **主仓不构建设计仓**：索引中 `build_entry` 写 `none`，构建由设计仓自身 CI 负责。
+- **需与代码同 PR 的内容留在主仓 `docs/`**：设计仓是跨 PR 生命周期的资产，把代码附属设计放进去会导致设计滞后于代码。
+- 必须配置 LikeC4 MCP，让 AI 查询结构化架构模型，而不是读 `.c4` 原文。
+
+跳过设计仓时必须在最终输出写明「已评估设计仓机制，本项目暂不建立，原因是 X」，不能静默跳过。
 
 ## 资源索引
 
@@ -123,6 +147,7 @@ sop-00-intake
 - `references/sop-07-submodule-governance.md`: `.gitmodules`、vendor 路径、锁定 submodule、研究参考仓 submodule 规则。
 - `references/sop-08-validation.md`: 初始化完整性检查和验收输出。
 - `references/sop-09-feedback-loop.md`: 后续开发、调试、研究、证据的反哺规则。
+- `references/sop-10-design-workspace.md`: 设计仓机制，架构即代码落地编排，两层仓结构、submodule 引入、MCP 配置与资产归属。
 - `references/pattern-workflow-workspace.md`: 可选 AI 研发工作区模式；仅在项目明确需要长期保存需求、设计、实现、验证和评审产物时读取，不作为默认初始化规则。
 - `templates/`: 可落盘模板，按 SOP 指引读取。
 - `checklists/`: 执行前、执行后和 submodule 安全检查。
@@ -138,4 +163,6 @@ sop-00-intake
 - 普通宿主项目：AI 引擎 submodule 路径、sparse-checkout 状态和 `.opencode` 桥接边界。
 - maop 源仓模式：本仓 `.opencode/skills` 能力源码边界、`.opencode/opencode.json` 本仓引用方式，以及已排除 `vendor/ai/maop` 自嵌套。
 - `.opencode/opencode.json` 是否按当前模式正确登记 `maop-opencode` reference。
+- 设计仓机制评估结论：已建立（项目层仓路径、submodule 状态、MCP 配置、`submodules-index.md` 登记项）或暂不建立及原因。
+- 需与代码同 PR 的设计内容是否已明确留在主仓 `docs/`，未误放入设计仓。
 - 验证结果和未闭环 RED 点。

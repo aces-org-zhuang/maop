@@ -16,8 +16,10 @@
 8. 检查 AI 引擎 `vendor/ai/maop` submodule 或锁定 submodule 计划。maop 源仓模式下检查是否明确排除自嵌套。
 9. 检查项目仓 `.opencode` 与 `vendor/ai/maop/.opencode` 的边界说明；maop 源仓模式下检查本仓 `.opencode` 是否被标记为能力源码目录。
 10. 检查 `.gitmodules` 与实际 submodule 状态；如果涉及真实 submodule，读取 `checklists/submodule-safety.md`。
-11. 检查技术栈或能力开发命令是否来自真实配置；未知命令必须保留 `待补充`。
-12. 输出 pass/fail、未闭环 RED 点和下一步。
+11. 检查设计仓机制评估结论是否明确：已建立时检查 submodule path、`submodules-index.md` 登记项（含 `build_entry: none`）和 LikeC4 MCP 配置；判定为不建时检查是否记录了原因。
+12. 检查需与代码同 PR 的设计内容是否留在主仓 `docs/`，未被误放入设计仓。
+13. 检查技术栈或能力开发命令是否来自真实配置；未知命令必须保留 `待补充`。
+14. 输出 pass/fail、未闭环 RED 点和下一步。
 
 ## 推荐验证命令
 
@@ -39,6 +41,7 @@ git submodule status --recursive
 - 保留未覆盖的已有文件。
 - 研究区路径。
 - AI 引擎 submodule 路径。
+- 设计仓机制结论：已建立（路径、submodule 状态、MCP 配置、索引登记）或暂不建立及原因。
 - `.opencode/opencode.json` 处理结果。
 - 验证命令和结果。
 - 未闭环 RED 点。
@@ -53,3 +56,7 @@ git submodule status --recursive
 - 创建了多个顶层目录，但 `AGENTS.md` 项目结构没有完整列出。
 - 写了 OpenCode 配置但没有 schema 或重启提醒。
 - maop 源仓模式没有排除 `vendor/ai/maop` 自嵌套，或没有说明 `.opencode/skills` 是能力源码。
+- 未判定设计仓机制就宣布初始化完成，导致设计仓被静默遗漏。
+- 建立了设计仓但未登记 `submodules-index.md`，形成无人知道如何构建验证的孤岛目录。
+- 建立了设计仓但未配 LikeC4 MCP，AI 仍只能读 `.c4` 原文。
+- 主仓 CI 里构建设计仓，职责越界。

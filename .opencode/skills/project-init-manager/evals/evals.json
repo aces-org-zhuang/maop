@@ -25,6 +25,51 @@
       "prompt": "真实执行 OpenCode 文档生成时，PowerShell 直接传 JSON 导致引号被破坏，随后改用 UTF-8 无 BOM JSON 文件输入并通过 CLI validate；请沉淀这条可迁移经验。",
       "expected_output": "应把经验写入 docs/07-llm/operational-experiences.md 的单行条目，格式包含触发条件、动作和验证信号；不得改写项目规则、业务文档或生成长篇复盘。",
       "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "初始化一个新项目，这个系统要跟第三方支付网关交互，还有多模块和两套部署环境，帮我把项目搭起来。",
+      "expected_output": "应判定 design_workspace_mode 为 required，读取 sop-10-design-workspace，规划项目层设计仓 vendor/design/aces-design，配置 LikeC4 MCP，并在 submodules-index 登记 build_entry 为 none；不得自行创建远端仓。",
+      "files": [],
+      "expectations": [
+        "判定 design_workspace_mode 为 required 并说明依据",
+        "规划 vendor/design/aces-design submodule 且不启用 sparse-checkout",
+        "配置 LikeC4 MCP 并设置 LIKEC4_WORKSPACE",
+        "submodules-index 登记 build_entry 为 none",
+        "新建远端仓前先请求用户确认 URL 与授权"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "写个一次性的小脚本处理 CSV，帮我初始化成标准项目仓。",
+      "expected_output": "应判定设计仓机制不适用（design_workspace_mode 为 skipped），在输出中写明暂不建立及原因，并把架构决策改记入 docs/，不执行设计仓 submodule 写操作。",
+      "files": [],
+      "expectations": [
+        "判定 design_workspace_mode 为 skipped",
+        "在最终输出写明暂不建设计仓及原因",
+        "未执行设计仓 submodule 写操作"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "我想让所有项目的架构图都放一个设计仓里，这样统一管理，主仓用 submodule 引过来。",
+      "expected_output": "应拒绝该方案，说明 gitlink 记录子仓 HEAD commit 会导致每次设计提交在所有项目仓产生无关 PR，且 sparse-checkout 不解决此问题并会破坏 LikeC4 构建；改为项目层一仓一项目加全局聚合层。",
+      "files": [],
+      "expectations": [
+        "说明单一设计仓被多项目引用的指针抖动问题",
+        "说明 sparse-checkout 不解决指针问题且会破坏 LikeC4 构建",
+        "提出项目层加全局聚合层的两层结构"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "接口定义改了，需要接口文档和代码一起提交。设计仓已经建好了，要不要把接口契约也放进去？",
+      "expected_output": "应说明需与代码同一 PR 的内容留在主仓 docs/，不进入设计仓；设计仓承载跨 PR 生命周期的架构资产。",
+      "files": [],
+      "expectations": [
+        "明确接口契约应留在主仓 docs/",
+        "解释设计仓是跨 PR 生命周期资产而非代码附属"
+      ]
     }
   ]
 }

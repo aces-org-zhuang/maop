@@ -1,5 +1,23 @@
 # {{PROJECT_NAME}} Agent Rules
 
+> 模板说明：`{{DESIGN_RULES}}` 按 `references/sop-10-design-workspace.md` 的判定结果填二选一，不要保留占位符。
+>
+> **建立了设计仓时**，填：
+> ```
+> - 设计仓是必建 submodule：`vendor/design/aces-design/` -> `{{DESIGN_REPO_URL}}`。
+> - 设计仓承载架构即代码：模型、视图、时序图、部署视图和 ADR。
+> - 设计仓不启用 sparse-checkout；主仓不构建它，主仓索引 `build_entry` 为 `none`。
+> - 项目 `.opencode/opencode.json` 配置 LikeC4 MCP，`LIKEC4_WORKSPACE` 指向 `vendor/design/aces-design`。
+> - 依赖关系或部署形态变更时，架构模型必须在同一个 PR 内同步更新。
+> - 需与代码同一个 PR 的设计内容（模块划分、接口草案、实现级契约）留在 `docs/`，不进入设计仓。
+> - 一个设计仓只服务一个项目；禁止多项目共用同一设计仓 submodule。
+> ```
+>
+> **未建设计仓时**，填：
+> ```
+> - 本项目暂不建设计仓，原因：{{REASON}}。架构决策记录在 `docs/06-decisions/`。
+> ```
+
 ## 语言规则
 
 本项目默认采用中文友好的交互和文档风格。必要时保留英文技术术语、代码标识、API 名称、命令和路径。
@@ -106,6 +124,10 @@
 - `vendor/ai/maop/` 使用 sparse-checkout，只检出 `.opencode` 和 `README.md`。
 - 项目仓 `.opencode/opencode.json` 作为桥接配置，必须引用 `vendor/ai/maop/.opencode/skills` 和 `maop-opencode` reference。
 - `vendor/ai/maop/.opencode/` 属于 maop 仓库，由 maop 独立演进；项目仓不复制或覆盖 maop 的 `.opencode`。
+
+## 设计仓规则
+
+{{DESIGN_RULES}}
 
 ## Submodule 提交与 PR 规则
 
