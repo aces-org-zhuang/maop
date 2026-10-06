@@ -30,6 +30,18 @@
       "prompt": "我有一个 Gitee SSH 仓库 git@gitee.com:my-org/my-tool.git，想作为 submodule 加进来。帮我先生成计划。",
       "expected_output": "应识别 SSH URL、host=gitee.com、platform_hint=gitee、owner=my-org、repo=my-tool；提示认证依赖本地 SSH key/agent/known_hosts，使用 git ls-remote 和 git submodule add 计划，不应要求用户粘贴私钥或 token。",
       "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "项目要做架构即代码，我建了 https://github.com/aces-org-zhuang/design-beauty.git，按规范帮我生成引入计划。另外能不能像 maop 那样用 sparse-checkout 只检出需要的目录，这样省磁盘。",
+      "expected_output": "应把 proposed_path 生成为 vendor/design/aces-design，并应用设计仓特殊规则：不启用 sparse-checkout，说明 LikeC4 需要完整工作区才能 validate 和 build；索引 build_entry 写 none，主仓不构建；确认是一仓一项目，不多项目共用；更新策略需显式声明。",
+      "files": [],
+      "expectations": [
+        "proposed_path 为 vendor/design/aces-design",
+        "明确拒绝 sparse-checkout 并说明 LikeC4 构建依赖完整工作区",
+        "索引 build_entry 为 none 并说明主仓不构建",
+        "提示一仓一项目，禁止多项目共用同一设计仓"
+      ]
     }
   ]
 }

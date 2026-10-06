@@ -21,5 +21,11 @@
 - maop 源仓模式：已明确排除 `vendor/ai/maop` 自嵌套，并说明本仓 `.opencode/skills` 是能力源码。
 - 项目 `.opencode` 与 maop 能力面的边界已记录。
 - 如果使用 submodule，`.gitmodules` 与实际路径一致。
+- 设计仓机制评估结论已明确：已建立、已存在接入，或暂不建立及原因。
+- 已建立设计仓时：`vendor/design/aces-design` submodule 存在或已规划写操作，且未启用 sparse-checkout。
+- 已建立设计仓时：`docs/02-development/submodules-index.md` 已登记 path、url、pinned ref、boundary、consumer、`build_entry: none`、validation entry 和 update policy。
+- 已建立设计仓时：项目 `.opencode/opencode.json` 已配置 LikeC4 MCP，`LIKEC4_WORKSPACE` 指向设计仓路径，且已提醒重启 OpenCode。
+- 已建立设计仓时：根 `AGENTS.md` 包含设计仓规则，明确需与代码同 PR 的内容留在 `docs/`。
+- 需与代码同 PR 的设计内容未被放入设计仓。
 - 常用命令来自真实配置；未知命令标记为 `待补充`。
 - 未闭环 RED 点已写入最终输出或对应 roadmap/debug 记录。

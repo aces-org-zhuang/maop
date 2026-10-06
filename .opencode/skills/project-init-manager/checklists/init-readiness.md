@@ -15,3 +15,8 @@
 - 已判断是否为 maop 源仓模式。
 - 普通宿主项目：AI 引擎锁定为 `vendor/ai/maop` -> `https://github.com/aces-org-zhuang/maop.git`。
 - maop 源仓模式：不得添加 `vendor/ai/maop`，本仓 `.opencode/skills` 是能力源码目录。
+- 已判定 `design_workspace_mode`（`required` / `skipped` / `existing` / `audit_only`）。
+- 判定为 `required` 时，`design_repo_url` 已由用户确认；未确认时不得自行推断或创建远端仓。
+- 判定为 `skipped` 时，跳过原因已记录，且架构决策改记入 `docs/`。
+- 判定为 `existing` 时，确认已有设计仓路径，不重复创建。
+- 已确认设计仓不会被 sparse-checkout 裁剪，主仓 CI 不构建它。

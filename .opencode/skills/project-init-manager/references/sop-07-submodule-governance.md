@@ -24,11 +24,24 @@ vendor/research/aces-research                        锁定研究工作区 submo
 vendor/research/aces-research/topics/<slug>/repos/<repo_name>
                                                      课题内研究参考仓 submodule
 vendor/ai/maop                                       锁定 AI 引擎 submodule；maop 源仓模式除外
+vendor/design/aces-design                            项目层设计仓 submodule；见 sop-10
 vendor/runtime/<repo_name>                           运行时或打包资源仓
 vendor/assets/<repo_name>                            资源型外部仓
 vendor/harness/<repo_name>                           agent、MCP、verifier、workflow harness
 vendor/external/<repo_name>                          无法归类但长期保留的外部仓
 ```
+
+## 设计仓 submodule 说明
+
+设计仓的适用判定、仓结构、引入方式、MCP 配置与资产归属由 `sop-10-design-workspace.md` 定义。本 SOP 只补充 submodule 层面的规则：
+
+- 设计仓是**条件必建**，不是无条件必建；判定在 `sop-00-intake.md` 完成。
+- 路径固定为 `vendor/design/aces-design`；如项目已有设计仓，沿用其既有路径并在索引中说明。
+- **不对设计仓启用 sparse-checkout**。LikeC4 CLI 需要完整工作区才能 `validate` 与 `build`；只检出会导致跨文件 `include` 目标缺失而构建失败。
+- 索引中 `build_entry` 写 `none`：主仓不构建设计仓，构建在设计仓自身 CI。
+- 主仓 CI 若需感知设计模型，只做只读检出（`submodules: recursive`），不执行 `likec4 validate` 或 `build`。
+- **一仓一项目**。禁止把多个项目的设计放进同一个被多个项目引用的设计仓——gitlink 记录子仓 HEAD commit，会导致每次设计提交都在所有项目仓产生无关 PR。
+- 全局层设计仓（`aces-architecture`）不由主仓引用，独立建设与发布。
 
 ## 执行步骤
 
@@ -88,3 +101,7 @@ git -C vendor/ai/maop sparse-checkout list
 - maop 没有 sparse-checkout，或项目 `.opencode/opencode.json` 没有桥接 maop skills，导致项目开发时丢失 AI 引擎能力。
 - maop `.opencode` 与项目仓 `.opencode` 双源维护，导致能力版本无法通过 submodule commit 固定。
 - 目标仓库本身就是 maop 源仓时仍添加 `vendor/ai/maop`，导致仓库自嵌套。
+- 对设计仓启用 sparse-checkout，导致 LikeC4 构建失败。
+- 在主仓 CI 构建设计仓，职责越界且构建复杂度不可控。
+- 多个项目共用同一个设计仓 submodule，造成指针抖动。
+- 新建远端设计仓未经用户授权，或 `design_repo_url` 未确认就自行推断。

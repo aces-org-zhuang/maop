@@ -16,6 +16,7 @@
 - 文档域：长期稳定项目知识。
 - 过程记录域：非研究工程记录、调试、失效模式、实现证据。
 - 研究域：研究过程、论文、开源项目对比、证据包。
+- 架构设计域：架构模型、视图、时序图、部署视图、架构决策记录。由独立设计仓承载，与代码资产分离。
 - AI 引擎域：独立演进的 AI engine、agent runtime、engine-side `.opencode`、skills/agents/commands 和相关能力代码。
 - 外部依赖域：vendor 源码、参考仓、submodule。
 - 资源域：静态资源、运行资源、样例数据。
@@ -37,6 +38,7 @@
 - `vendor/research/aces-research/`: 锁定研究工作区 submodule。
 - `.opencode/`: OpenCode 配置说明；maop 源仓模式下还是 AI 能力源码目录。
 - `vendor/ai/maop/`: 普通宿主项目的锁定 AI 引擎 submodule；maop 源仓模式除外。
+- `vendor/design/aces-design/`: 项目层设计仓 submodule，架构即代码的载体；仅在设计仓机制判定为必建或已存在时创建，见 `sop-10-design-workspace.md`。
 - `scripts/`: 可重复执行的安装、验证、生成、迁移、发布、诊断脚本。
 - `.opencode/skills/`、`.opencode/agents/`、`.opencode/commands/`: 普通宿主项目仅在确有本地覆盖时创建；maop 源仓模式下属于能力开发面。
 - `resources/` 或 `assets/`: 运行资源或静态资源，按项目语义选择。
@@ -61,5 +63,7 @@
 - 把研究资料放入 `docs/`。
 - 把外部参考仓普通 clone 到主仓。
 - 把 maop 的 `.opencode` 内容复制到项目仓 `.opencode`，导致职责混淆。
+- 把需与代码同 PR 的设计内容放进设计仓，导致设计滞后于代码；这类内容应留在主仓 `docs/`。
+- 对无部署边界的项目强行建设计仓，属于过度工程。
 - 把构建产物、缓存或下载包纳入源码目录。
 - 初始化时创建了多个顶层目录，但 `AGENTS.md` 的项目结构只记录部分目录，导致后续 LLM 无法索引治理边界。

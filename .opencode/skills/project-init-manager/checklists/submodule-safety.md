@@ -15,3 +15,6 @@
 - 普通宿主项目：AI 引擎锁定路径和 URL 为 `vendor/ai/maop` -> `https://github.com/aces-org-zhuang/maop.git`。
 - maop 源仓模式：不得执行 `vendor/ai/maop` submodule 写操作。
 - 研究参考仓路径为 `vendor/research/aces-research/topics/<research_slug>/repos/<repo_name>`。
+- 设计仓路径为 `vendor/design/aces-design`，且已确认远端 URL（未确认时不得执行写操作）。
+- 设计仓不启用 sparse-checkout；主仓 CI 不构建它，索引 `build_entry` 为 `none`。
+- 新建远端设计仓已获得用户明确授权。

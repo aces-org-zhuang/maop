@@ -31,6 +31,17 @@ Use `reasoning-map` before complex problem diagnosis, architecture changes, docs
 - Pin the LikeC4 version exactly (no `^` ranges). Cross-version DSL behavior changes make CI non-reproducible.
 - Host projects using `architecture-design` must configure the LikeC4 MCP server so agents can query the model instead of reading raw `.c4` text.
 
+## Design Repo Rules
+
+Host project initialization provisions architecture-as-code through a design repo, coordinated by `project-init-manager/references/sop-10-design-workspace.md`.
+
+- Design repo is **conditionally required**, not unconditional. Required when the project has external system integrations, deployment topology, or multiple collaborating modules. Skipped for single-module scripts and one-off tools.
+- **One repo per project.** Never let multiple projects reference the same design repo: the gitlink records the sub-repo HEAD commit, so every design commit forces an unrelated PR in every referencing repo.
+- **Do not sparse-checkout a design repo.** Unlike `vendor/ai/maop`, a design repo needs a full working tree for `likec4 validate` and `build`; partial checkout breaks cross-file `include` resolution.
+- `build_entry` is `none`. The host repo never builds the design repo; that runs in the design repo's own CI.
+- Content that must land in the same PR as code stays in the host repo `docs/`. A design repo carries architecture assets that outlive any single PR.
+- A global aggregation repo may publish cross-project views, but no host repo references it via submodule.
+
 ## Documentation Rules
 
 - `docs/` stores stable project knowledge only.

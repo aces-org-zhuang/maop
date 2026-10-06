@@ -135,6 +135,7 @@ file:// 或本地路径 -> local
 vendor/runtime/<repo_name>    运行时、打包、二进制或外部可执行资源
 vendor/assets/<repo_name>     图像、字体、模板等资源型子仓
 vendor/harness/<repo_name>    MCP、Workbench、commands、verifier、agent harness 或协议/任务编排相关子仓
+vendor/design/aces-design     项目层设计仓（架构即代码，LikeC4 模型）；一仓一项目，不得多项目共用
 vendor/research/aces-research   研究工作区 submodule 根；课题内参考仓必须放在 `topics/<slug>/repos/<repo_name>` 下，不得放在该根目录
 vendor/guides/<repo_name>     阶段性验证、一次性调研或临时方案材料
 vendor/external/<repo_name>   无法归类但确认需长期保留的外部仓；必须写明原因
@@ -173,6 +174,19 @@ vendor/external/<repo_name>   无法归类但确认需长期保留的外部仓�
 - 即将执行写操作，例如 `git submodule add`、checkout 新 ref、删除 submodule、修改 `.gitmodules`。
 
 不要询问这些可自动解析的信息：repo 名称、host 类型、默认目录名、是否存在 `.gitmodules`、当前 submodule status、当前 pinned commit、远端 HEAD、远端 tag 列表。
+
+## 设计仓 submodule 的特殊规则
+
+设计仓（架构即代码）除遵循通用规则外，还必须满足：
+
+- **一仓一项目**。禁止把多个项目的设计放进同一个被多个项目引用的设计仓。gitlink 记录的是子仓 HEAD commit，与实际使用哪个子目录无关；一个设计仓被 N 个项目引用后，任意提交都会迫使 N 个项目仓各开一个 PR。
+- **不得对设计仓启用 sparse-checkout**。LikeC4 CLI 需要完整工作区才能 `validate` 与 `build`；只检出会导致跨文件 `include` 目标缺失而构建失败。这一点与 maop submodule 相反——maop 需要 sparse-checkout，设计仓不能。
+- **`build_entry` 写 `none`**。主仓不构建设计仓，构建在设计仓自身 CI。主仓 CI 若需感知设计模型，只做只读检出（`submodules: recursive`），不执行 `likec4 validate` 或 `build`。
+- **资产边界**。需与代码同一个 PR 的设计内容（模块划分、接口草案、实现级契约）留在主仓 `docs/`，不进入设计仓。设计仓承载跨 PR 生命周期的架构资产。
+- **更新策略需显式声明**。设计仓发版后由主仓开 PR 更新指针，因为 gitlink 不会自动跟随。
+- 全局层聚合仓（如 `aces-architecture`）**不由主仓引用**，独立建设与发布；它反向聚合各项目设计仓，方向与 submodule 依赖相反，无循环依赖。
+
+设计仓的适用判定、仓结构与 MCP 配置见 `project-init-manager/references/sop-10-design-workspace.md`；架构建模细节见 `architecture-design` 技能。
 
 ## 新增 submodule
 
