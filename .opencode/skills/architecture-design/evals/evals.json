@@ -233,6 +233,51 @@
         "涉及新接口时建议先经 technical-design 补齐契约",
         "同步提醒设计仓发版与主仓指针更新"
       ]
+    },
+    {
+      "id": 21,
+      "prompt": "我要给服务加一个新的支付回调模块，先帮我确认架构上该怎么放。",
+      "expected_output": "触发条件命中（新增组件），应先转入 architecture-design 建模并产出交接规格，再由 technical-design 复用该规格补齐接口与数据，而不是直接开始接口设计。",
+      "files": [],
+      "expectations": [
+        "识别为新增组件，命中架构节点触发条件",
+        "先转入 architecture-design 而非直接进技术设计",
+        "说明交接规格落在 vendor/design/<repo>/handoff/current.md",
+        "由 technical-design 复用规格而非重新推导组件边界"
+      ]
+    },
+    {
+      "id": 22,
+      "prompt": "技术设计时发现 vendor/design/aces-design/handoff/current.md 里的模型版本和 submodule 指针不一致。",
+      "expected_output": "命中 technical-design 的 Architecture Handoff Reuse Gate：规格视为过期，要求先更新 submodule 指针或明确告知用户规格过期，不得混用旧规格推导新架构。",
+      "files": [],
+      "expectations": [
+        "识别规格已过期",
+        "要求先更新 submodule 指针，不基于旧规格继续设计",
+        "不把过期规格的结论直接采纳为设计依据"
+      ]
+    },
+    {
+      "id": 23,
+      "prompt": "代码实现时发现现有实现和架构交接规格描述的依赖方向不一致，按哪个改？",
+      "expected_output": "命中 implementation-delivery 的规格约束：以规格为准，停下报告不一致，不就地改代码去迁就代码现状；规格本身有误时回报由 architecture-design 重新产出。",
+      "files": [],
+      "expectations": [
+        "以架构规格为约束，不以现有代码为准",
+        "停下并报告不一致，而非直接改代码",
+        "不自行修改规格文件"
+      ]
+    },
+    {
+      "id": 24,
+      "prompt": "架构交接规格应该放设计仓还是主仓 docs？",
+      "expected_output": "放设计仓 handoff/current.md，与模型同 commit；主仓 docs 只放规则与索引。理由是规格是模型派生物，分开放会出现规格说 A、模型是 B 的错配。",
+      "files": [],
+      "expectations": [
+        "回答放设计仓 handoff/ 目录",
+        "说明必须与模型同 commit 的理由",
+        "指出主仓 docs 承载规则而非设计产物"
+      ]
     }
   ]
 }

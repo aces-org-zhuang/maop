@@ -4,6 +4,19 @@
 > 字段命名与 `technical-design/templates/implementation-handoff-mini-spec.md` 对齐,便于下游直接合并。
 > 接口契约、数据结构、业务规则由 `technical-design` 补齐,本文件不提供。
 
+## 消费方约定
+
+本文件落盘在设计仓的 `handoff/current.md`,**下游技能只读不改**。
+
+| 项 | 约定 |
+| --- | --- |
+| 落盘路径 | `vendor/design/<design-repo-name>/handoff/current.md` |
+| 历史版本 | `handoff/history/<模型 commit>.md` |
+| 下游读者 | `technical-design`（补齐接口与数据）、`implementation-delivery`（消费完整包） |
+| 过期判定 | 下方「模型版本」与主仓 pinned 的 gitlink 不一致即视为过期 |
+| 缺失处理 | 文件不存在表示尚未产出，下游按默认路径工作，不阻塞 |
+| 修改方式 | 需要修正架构时回到 `architecture-design` 重新产出，不在下游手改 |
+
 ## 元信息
 
 - 架构模型位置：
