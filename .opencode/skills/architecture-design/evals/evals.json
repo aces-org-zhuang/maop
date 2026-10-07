@@ -94,6 +94,27 @@
       ]
     },
     {
+      "id": 9,
+      "prompt": "先别写代码，帮我确认下这个新系统的架构边界和服务划分对不对。",
+      "expected_output": "不触发 architecture-design 主流程；应转向 technical-design 的 sop-02b-architecture-confirmation；如需产出 LikeC4 图则转入本技能作为表达落地。",
+      "files": [],
+      "expectations": [
+        "不直接进入架构建模流程",
+        "转向 technical-design 的架构确认 Gate",
+        "说明架构确认包可由 LikeC4 落地而非手画 Mermaid"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "这个平台的界面原型你直接用 likec4 画一下界面吧。",
+      "expected_output": "不触发 architecture-design；界面草图属 expression-delivery 的表达产物，架构建模不覆盖 UI 表达。",
+      "files": [],
+      "expectations": [
+        "识别界面原型属表达产物而非架构图",
+        "转向 expression-delivery"
+      ]
+    },
+    {
       "id": 11,
       "prompt": "帮我画一下生产环境的部署图，包含应用层和数据层两个可用区。",
       "expected_output": "触发 architecture-design；使用 deploymentNode 声明节点类型、instanceOf 映射实例、deployment view 渲染；不使用 instance of 写法。",
@@ -151,24 +172,28 @@
       ]
     },
     {
-      "id": 9,
-      "prompt": "先别写代码，帮我确认下这个新系统的架构边界和服务划分对不对。",
-      "expected_output": "不触发 architecture-design 主流程；应转向 technical-design 的 sop-02b-architecture-confirmation；如需产出 LikeC4 图则转入本技能作为表达落地。",
+      "id": 16,
+      "prompt": "给这个新项目搭一套架构图出来。",
+      "expected_output": "触发 architecture-design；产出的元素显示名、视图标题、描述与关系标签全部为中文；标识符保持英文；技术专有名词保留原文。",
       "files": [],
       "expectations": [
-        "不直接进入架构建模流程",
-        "转向 technical-design 的架构确认 Gate",
-        "说明架构确认包可由 LikeC4 落地而非手画 Mermaid"
+        "元素显示名为中文，不是 System Context 或 Checkout Flow",
+        "视图标题为中文",
+        "关系标签为中文",
+        "标识符保持英文 short name",
+        "RAGFlow / LLM Wiki 等专有名词保留原文"
       ]
     },
     {
-      "id": 10,
-      "prompt": "这个平台的界面原型你直接用 likec4 画一下界面吧。",
-      "expected_output": "不触发 architecture-design；界面草图属 expression-delivery 的表达产物，架构建模不覆盖 UI 表达。",
+      "id": 17,
+      "prompt": "把架构图里这些英文标题都翻译成中文。",
+      "expected_output": "触发 architecture-design；按语言契约汉化面向人文本；不得改动标识符（元素 id、视图 id），因为它们决定导出文件名与分享 URL；不得翻译技术专有名词。",
       "files": [],
       "expectations": [
-        "识别界面原型属表达产物而非架构图",
-        "转向 expression-delivery"
+        "汉化 title、description、关系标签",
+        "未改动元素 id 与视图 id",
+        "保留 RAGFlow、Node.js、HTTP 等专有名词",
+        "完成后用 grep 自检无遗漏英文"
       ]
     },
     {
