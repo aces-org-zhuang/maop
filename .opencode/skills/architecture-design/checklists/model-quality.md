@@ -2,6 +2,20 @@
 
 交付前逐项确认。任何一项为否时，先修复再交付；无法修复时必须向用户说明残余风险。
 
+## 语言友好
+
+- [ ] 元素显示名、视图标题、描述、关系标签、部署节点名均为中文
+- [ ] 标识符（元素 id、视图 id）为英文，未因汉化改动
+- [ ] 技术专有名词保留原文（RAGFlow、LLM Wiki、Node.js、HTTP、JSON、API、文件路径、端口）
+- [ ] 已用 grep 自检无遗漏英文：
+
+```bash
+grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
+  | grep -E "[A-Za-z]{4,}" | grep -vE "RAGFlow|LLM|Node|HTTP|HTTPS|JSON|API|src/|localhost"
+```
+
+  有输出即逐条处理；技术专有名词误报时加入排除列表再确认。
+
 ## 图类型路由
 
 - [ ] 已执行 `references/00-diagram-routing.md`，确定目标图类型与轨道

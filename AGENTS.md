@@ -31,6 +31,15 @@ Use `reasoning-map` before complex problem diagnosis, architecture changes, docs
 - Pin the LikeC4 version exactly (no `^` ranges) **when a CLI is used**. Cross-version DSL behavior changes make CI non-reproducible.
 - Host projects using `architecture-design` must configure the LikeC4 MCP server so agents can query the model instead of reading raw `.c4` text.
 
+## Architecture Language Rules
+
+Architecture diagrams are read by people doing review, not by compilers. **Default to Chinese for all human-facing text.**
+
+- Chinese: element display names, view titles, `description`, relationship labels, deployment node names.
+- English: identifiers only (element id, view id). These become export filenames and share URL paths, so renaming them breaks existing links.
+- Keep as-is: technical proper nouns such as `RAGFlow`, `LLM Wiki`, `Node.js`, `HTTP`, `JSON`, `API`, file paths, and ports. Translating them lowers readability.
+- A project-level design repo needs **no** `likec4.config.ts`; LikeC4 scans `src/` directly. Only aggregation layers need one, to scope sources explicitly and avoid merging multiple projects' specification kinds and top-level element names.
+
 ## Environment Adaptation Rules
 
 `architecture-design/references/04b-environment-and-sync.md` governs capability probing and degradation. The core rule: **a missing local likec4 install is never a reason to stop delivery.**
