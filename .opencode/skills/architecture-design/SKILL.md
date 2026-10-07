@@ -1,6 +1,6 @@
 ---
 name: architecture-design
-description: 必须用于用 LikeC4 DSL 编写架构即代码、维护架构模型、补充架构视图，或用户要上下文图、容器图、组件图、部署图、场景流程图、时序图、架构漂移检测、架构评审、跨项目架构视图时。用户说“画架构图”“建模”“写 c4 文件”“架构即代码”“likec4”“部署图怎么看”“时序图用 LikeC4 怎么画”“架构和代码不一致”“架构漂移”“跨项目架构全景”时优先使用本技能；不要用于产品用例定义、代码实现、纯视觉表达产物或类图与状态机等 LikeC4 不支持的图类型。
+description: 必须用于用 LikeC4 DSL 编写架构即代码、维护架构模型、补充架构视图、产出架构交接规格，或用户要上下文图、容器图、组件图、部署图、场景流程图、时序图、架构漂移检测、架构评审、跨项目架构视图、架构影响面、架构约束交给实现时。用户说“画架构图”“建模”“写 c4 文件”“架构即代码”“likec4”“部署图怎么看”“时序图用 LikeC4 怎么画”“架构和代码不一致”“架构漂移”“跨项目架构全景”“架构定版后交给开发”“实现阶段要架构边界”时优先使用本技能；不要用于产品用例定义、代码实现、接口契约与数据结构设计、纯视觉表达产物或类图与状态机等 LikeC4 不支持的图类型。
 ---
 
 # Architecture Design
@@ -28,6 +28,8 @@ intake -> 图类型路由 -> sop-01..05 执行 -> validate -> 交付
 - **环境问题不是阻塞理由，先降级再上报**。MCP 自带 LikeC4 内核，零安装即可查询模型；本地无 CLI 时走 npx，再不行就只读降级交付。详见 `references/04b-environment-and-sync.md`。
 - **不把环境故障误报为模型缺陷**。`EBADENGINE` / `MODULE_NOT_FOUND` / 网络错误是环境问题；`Invalid` + 行号是模型问题。
 - **改完要能同步看到效果**。优先用 MCP 查询确认；需要可视化时用 `serve` 热更新。
+- **架构不推导出代码**。模型回答「有什么、在哪里、怎么连」，代码实现回答「怎么做、对不对」。业务规则、边界条件、接口签名无法从拓扑推导，因此本技能**不产出可执行代码**，也不声称「架构即开发」。
+- **消除重复而非消除实现**。本技能的交接价值在于：实现阶段不必重新分析架构组件、依赖方向与部署约束。交接按 `references/06-architecture-handoff.md` 执行，产出 `technical-design` 交接包的架构子集。
 
 ## 触发后先做什么
 
@@ -38,7 +40,8 @@ intake -> 图类型路由 -> sop-01..05 执行 -> validate -> 交付
 5. 涉及序列流程、并发或步骤下钻时，读取 `references/03-dynamic-views.md`。
 6. 需要落地项目、配置构建、接入 MCP 或接入 CI 时，按 `references/04-project-integration.md` 执行。
 7. 写入前确认目标位置：先读 `references/05-design-repo-layout.md` 判断设计资产归属层级。
-8. 完成后执行校验，并按 `checklists/model-quality.md` 自检。
+8. **建模完成并准备进入实现时，读 `references/06-architecture-handoff.md` 产出架构交接规格。**
+9. 完成后执行校验，并按 `checklists/model-quality.md` 自检。
 
 ## 图类型路由（速查，likec4 1.58.0 实测）
 
@@ -77,12 +80,16 @@ intake -> 图类型路由 -> sop-01..05 执行 -> validate -> 交付
 
 需要决定设计资产放项目层还是全局层
   -> Stage 5 设计仓分层: references/05-design-repo-layout.md
+
+建模完成，准备进入实现或需要交接给实现方
+  -> Stage 6 Architecture Handoff: references/06-architecture-handoff.md
 ```
 
 推荐执行顺序：
 
 ```text
 00 -> 01 -> 02 -> 03 -> 04 -> 05
+                        └-> 06（进入实现前）
 ```
 
 ## 工具轨道规则
@@ -102,9 +109,11 @@ intake -> 图类型路由 -> sop-01..05 执行 -> validate -> 交付
 - `references/04-project-integration.md`: 项目结构、构建脚本、CLI 校验、MCP 接入、CI 漂移检测。
 - `references/04b-environment-and-sync.md`: 零依赖回退链（不装 likec4 也能查询模型）、MCP watch 热重载、同步查看方式、故障降级规则。
 - `references/05-design-repo-layout.md`: 设计资产分层、仓边界、submodule 引用与指针抖动规避。
+- `references/06-architecture-handoff.md`: 架构交接规格，组件边界、依赖约束、流程锚点、部署要求与验收锚点，供实现阶段直接消费。
 - `checklists/model-quality.md`: 模型质量自检清单。
 - `templates/`: 可落盘模板。
-- `templates/c4-project-skeleton.md`: 新设计仓的最小文件骨架模板。
+- `templates/c4-project-skeleton.md`: 新设计仓的最小文件骨架模板（已实机验证）。
+- `templates/architecture-handoff-spec.md`: 架构交接规格模板，字段与 `technical-design` 的 Handoff Mini-Spec 对齐。
 - `evals/evals.json`: 触发与路由评测用例。
 
 ## 边界
@@ -119,4 +128,6 @@ intake -> 图类型路由 -> sop-01..05 执行 -> validate -> 交付
 
 ## 交付标准
 
-交付时说明：目标图类型与所用轨道、验证路径（MCP / CLI / npx / 只读降级）、模型或视图文件位置、`likec4 validate` 结果或未校验原因、跨文件引用是否已用 FQN、设计资产归属层级（项目层或全局层）、以及 LikeC4 无法表达而改走轨道二/三的部分及其原因。
+默认交付模型与视图位置、验证路径（MCP / CLI / npx / 只读降级）、`likec4 validate` 结果或未校验原因、跨文件引用是否已用 FQN、设计资产归属层级（项目层或全局层），以及 LikeC4 无法表达而改走轨道二/三的部分及其原因。
+
+**进入实现阶段时追加**：架构交接规格位置、取事实方式（MCP 或读文件）、规格各部分对应的模型依据、置信度与未达 90% 的项、建议交接路径（直接实现 / 先技术设计 / 先完成建模），以及必须由 `technical-design` 补齐的内容清单。

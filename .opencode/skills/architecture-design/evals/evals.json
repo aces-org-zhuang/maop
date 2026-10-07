@@ -170,6 +170,44 @@
         "识别界面原型属表达产物而非架构图",
         "转向 expression-delivery"
       ]
+    },
+    {
+      "id": 18,
+      "prompt": "架构图画完了，接下来要开发。帮我把架构交给开发。",
+      "expected_output": "触发 architecture-design；读取 references/06-architecture-handoff.md；经 MCP 从模型取事实产出架构交接规格，含组件边界、依赖约束、流程锚点、部署要求、验收锚点；明确说明本规格不含接口契约与业务规则，这些需 technical-design 补齐。",
+      "files": [],
+      "expectations": [
+        "产出架构交接规格而非声称可直接写代码",
+        "规格含组件边界、依赖约束、流程锚点、部署要求、验收锚点五部分",
+        "每条规格内容给出模型依据（元素 id 或 view id）",
+        "明确指出接口契约与业务规则需由 technical-design 补齐",
+        "给出置信度与交接路径判断"
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "能不能直接从架构图生成代码？",
+      "expected_output": "明确说明不能。架构模型回答「有什么、在哪里、怎么连」，代码实现回答「怎么做、对不对」；业务规则、边界条件、接口签名无法从拓扑推导。本技能消除的是实现阶段重复分析架构的工作，不是消除实现本身。",
+      "files": [],
+      "expectations": [
+        "明确否定从架构图直接生成代码",
+        "解释业务规则无法从拓扑推导",
+        "说明本技能的交接价值是消除重复分析而非消除实现",
+        "未承诺「架构即开发」"
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "我要新增一个支付服务，架构怎么改？改完开发那边怎么知道要动哪些代码？",
+      "expected_output": "触发 architecture-design；先更新模型并 validate；再用 references/06-architecture-handoff.md 产出交接规格，其中依赖约束与流程锚点需反映新组件；置信度不足时标注缺口；建议交接路径为 implementation-delivery 或先 technical-design（涉及新接口时）。",
+      "files": [],
+      "expectations": [
+        "先更新模型并 validate 再产出规格",
+        "依赖约束表包含新增组件",
+        "给出旧代码到新组件的影响面（query-incomers-graph）",
+        "涉及新接口时建议先经 technical-design 补齐契约",
+        "同步提醒设计仓发版与主仓指针更新"
+      ]
     }
   ]
 }

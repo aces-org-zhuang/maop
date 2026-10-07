@@ -52,6 +52,17 @@ Host project initialization provisions architecture-as-code through a design rep
 - Content that must land in the same PR as code stays in the host repo `docs/`. A design repo carries architecture assets that outlive any single PR.
 - A global aggregation repo may publish cross-project views, but no host repo references it via submodule.
 
+## Architecture Handoff Rules
+
+`architecture-design` hands architecture to implementation via `architecture-design/references/06-architecture-handoff.md`. The positioning matters and must not drift:
+
+- **Architecture does not derive code.** A model answers *what exists, where it lives, how it connects*. Implementation answers *how it behaves, whether it is correct*. Business rules, boundary conditions, and interface signatures cannot be inferred from topology, so the skill produces **no executable code** and makes no "architecture is development" claim.
+- **The value is removing duplicate analysis.** Implementation should not have to re-derive components, dependency direction, and deployment constraints. That is what the handoff spec eliminates.
+- **The handoff spec is a subset, not a replacement.** It fills the architecture-facing part of `technical-design`'s Handoff Mini-Spec. Interface contracts, data structures, and business rules remain `technical-design`'s responsibility.
+- **Facts come from the model, not memory.** Query via MCP (`read-project-summary`, `subgraph-summary`, `query-incomers-graph`, `query-outgoers-graph`, `read-deployment`). Every spec entry must cite a model element id or view id; entries without a citable basis are marked `待补充`, never invented.
+- **Confidence must be justified.** Below 90% on any key architectural conclusion blocks a ready declaration and requires listing the gap and the verification action.
+- **A stale model means a stale handoff.** After a model change, the design repo must ship and the host repo's submodule pointer must be updated before the spec is handed off.
+
 ## Documentation Rules
 
 - `docs/` stores stable project knowledge only.
