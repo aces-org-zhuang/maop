@@ -314,4 +314,5 @@ likec4 format          # 就地格式化
 | 视图属性后解析失败 | 属性未前置 | title/description/tags/link 写在 predicate 前 |
 | 跨文件容器元素找不到 | 用了 short name | 改 FQN |
 | deployment 块 `Line 1` 解析失败 | 用了 `instance of` | 改 `instanceOf` |
+| `The requested module 'likec4' does not provide an export named 'defineConfig'` | 1.58.0 **不导出 `defineConfig`**（实测只导出 `LikeC4`） | `likec4.config.ts` 改为 `export default { ... }` 默认导出对象；该错误只 WARN 不阻断，`validate` 仍能跑通，但项目配置未生效 |
 | EBADENGINE / ERR_MODULE_NOT_FOUND | Node 版本低于要求 | 升级到 >= 22.22.3 |

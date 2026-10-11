@@ -2,7 +2,8 @@
 
 > 本文件是七层设计链的最小可运行骨架。所有 `.c4` 代码块均经 likec4 1.58.0 实测通过。
 > 规则、边界与追溯门禁见 `references/07-seven-layer-design.md`。
-> 业务状态机（I 层核心产出）走 Mermaid `stateDiagram-v2`，LikeC4 不支持状态机。
+> **主干先行**：所有视图先只画主干，主干确认后再逐条展开分支，见 `references/11-trunk-first-design.md`。
+> 业务状态机（I 层核心产出）用 LikeC4「状态即元素 + 迁移即关系」表达，不降级到 Mermaid。
 
 ## 文件布局
 
@@ -18,13 +19,13 @@ src/
     ui.c4                UI 界面层：交互设计 + 信息设计
     src.c4               SRC 源码层（子系统多时可拆 src/checkout.c4 等）
   views/
-    chain-overview.c4    链路总览（跨层）
+    chain-overview.c4    链路总览（跨层，只含主干链路）
     chain-business.c4    业务设计视角（排除 SRC）
     chain-source.c4      源码实现视角
     chain-frame.c4       F 与 NF 框架
     chain-sequence.c4    设计时序
-  states/                I 层业务状态机（Mermaid，非 LikeC4）
-    <us-id>-state.md
+  分支视图（主干确认后逐条展开，各自成对成文件）
+    <us-id>-branch-<条件>.c4
 ```
 
 **FQN 规则归属**：上五层（US / F / NF / I / UI）是扁平设计，跨文件引用顶层元素用 short name 即可。只有 SRC 层大量嵌套，跨文件引用嵌套元素时才必须 FQN。
@@ -273,23 +274,98 @@ views {
 
 ---
 
-## states/US-001-state.md（I 层状态机，Mermaid）
+## I 层状态机（LikeC4：状态即元素 + 迁移即关系）
 
-```mermaid
-stateDiagram-v2
-    [*] --> 草稿
-    草稿 --> 已校验 : 提交并通过校验
-    已校验 --> 支付中 : 发起支付
-    支付中 --> 已确认 : 支付成功
-    支付中 --> 已取消 : 支付失败或超时
-    已校验 --> 草稿 : 校验失败回退
-    已确认 --> [*]
-    已取消 --> [*]
+主干状态与分支状态分视图表达，与主干优先一致：
+
+```c4
+model {
+  st_draft = state '草稿'
+  st_validated = state '已校验'
+  st_paying = state '支付中'
+  st_done = state '已确认'
+  st_cancelled = state '已取消（分支）'
+}
+
+views {
+  // 主干状态：只含必经状态
+  view implStateMain {
+    title '订单主干状态'
+    description '必经状态链路，不含取消与异常状态。'
+    include st_draft, st_validated, st_paying, st_done
+  }
+
+  // 分支状态：只画增量
+  view implStateBranchCancel {
+    title '订单分支：取消与失败'
+    description '自「支付中」节点岔出，合流至「已取消」节点。'
+    include st_paying, st_cancelled
+  }
+}
 ```
 
-LikeC4 1.58.0 不支持状态机（`opt` `loop` `alt` `try` 均不可用）。业务状态机是 I 层核心产出，必须走 Mermaid。
+迁移写在 model 里：
 
-状态迁移条件必须可审计：每个迁移标注触发条件，满足 NF-001 可审计性要求。
+```c4
+model {
+  st_draft -> st_validated '提交并通过校验'
+  st_validated -> st_paying '发起支付'
+  st_paying -> st_done '支付成功'
+  st_paying -> st_cancelled '支付失败或超时'
+}
+```
+
+**代价**：不能自环（`已校验 -> 草稿` 这类回退写在 `description` 中）；非经典状态机外观；视图需逐个列元素（`include st_*` 通配符不支持）。
+
+状态迁移条件必须可审计：每个迁移标注触发条件，满足 NF-001 可审计性要求。**主干状态视图 ≤ 8 个状态，超出即按分支拆分。**
+
+---
+
+## 主干视图与分支视图的分离（主干优先）
+
+**所有视图先只画主干，主干确认后再逐条展开分支。** 规则见 `references/11-trunk-first-design.md`。
+
+主干命名 `*-main`，分支命名 `*-branch-<条件>`，成对出现：
+
+```c4
+views {
+  // 主干：只有必经步骤，不含任何分支
+  dynamic view implOrderMain {
+    variant sequence
+    title '下单主干路径'
+    description '从提交订单到支付确认的必经步骤，不含异常与可选分支。'
+    include ui_submit, i_validate, i_pay, i_confirm
+    ui_submit -> i_validate '提交订单'
+    i_validate -> i_pay '校验通过'
+    i_pay -> i_confirm '支付成功'
+  }
+
+  // 分支：只画增量 + 接缝锚点，不重复主干步骤
+  dynamic view implOrderBranchStockShort {
+    variant sequence
+    title '下单分支：库存不足'
+    description '自「校验订单」节点岔出，合流至「下单失败」节点。'
+    include i_validate, i_stockCheck, i_failed
+    i_validate -> i_stockCheck '库存校验'
+    i_stockCheck -> i_failed '库存不足'
+  }
+}
+```
+
+静态结构视图用 `exclude` 把分支元素从主干视图剔除（同样实测通过）：
+
+```c4
+views {
+  view frameTrunk {
+    title '功能主干框架'
+    description '主干必需的功能单元，不含可选与增强类功能。'
+    include *
+    exclude f_export, f_batch
+  }
+}
+```
+
+**容量上限**：element view ≤ 12 元素、dynamic view ≤ 8 步 / 10 条消息、状态视图 ≤ 8 状态。超限即拆。
 
 ---
 
@@ -322,7 +398,9 @@ LikeC4 1.58.0 不支持状态机（`opt` `loop` `alt` `try` 均不可用）。�
 **视图类型**
 
 - [ ] 各层使用的视图类型与 `references/07-seven-layer-design.md` 第五节一致
-- [ ] I 层步骤用 `dynamic view`，状态机走 Mermaid
+- [ ] I 层步骤用 `dynamic view`，状态机用「状态即元素 + 迁移即关系」
+- [ ] 主干视图与分支视图已分离，分支命名 `*-branch-<条件>`，只画增量与接缝锚点
+- [ ] 各视图容量未超限（元素 ≤ 12 / 步骤 ≤ 8 / 状态 ≤ 8）
 - [ ] SRC 层时序用 `variant sequence`
 - [ ] 存在业务设计视角且已排除 SRC
 - [ ] `dynamic view` 含有显式消息（仅 `include` 会导致 build 布局失败）

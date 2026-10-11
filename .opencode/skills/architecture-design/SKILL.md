@@ -58,13 +58,15 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 ## 核心原则
 
 - **架构模型是唯一真源，且只用 LikeC4**。所有图都必须用 LikeC4 表达，不降级到 Mermaid、PlantUML 或其他工具。平替方案与各自代价见 `references/09-likec4-substitutions.md`。
+- **主干先于分支，分支独立成图**。任何视图先只画主干（happy path / 核心链路）并让用户确认，再逐条展开分支；分支各占一张视图，命名 `*-branch-<条件>`，只画增量 + 接缝锚点，不重复主干步骤。视图容量上限：元素 12 / 步骤 8 / 状态 8，超限即拆。**把主干 + 异常 + 降级 + 外围需求塞进一张图是明确错误**——面面俱到即无法评审。详见 `references/11-trunk-first-design.md`。
+- **主干确认后即冻结**。分支阶段只能新增视图，不得修改主干模型或主干视图。扩散过程中若发现主干本身有缺陷，走主干变更门禁交用户裁决，**不得"顺手补一下"**——分支反复侵蚀主干会让它失去共识基线。
 - **图类型先路由再动手**。写任何图之前先执行 `references/00-diagram-routing.md`，禁止凭印象直接选语法。
 - **所有图只用 LikeC4，禁止降级**。没有「LikeC4 画不了所以换工具」的情况。泳道用嵌套容器，状态机用「状态即元素 + 迁移即关系」，分支拆多视图，类图用嵌套 + 依赖，ER 用 `store` 承载实体。每种平替都有代价，交付时说明，不静默换工具。
 - **版本敏感，官方文档不等于可用能力**。本技能语法经 **likec4 1.58.0 实机验证**。官方文档描述最新版本，`opt` `loop` `break` `alt` `try` 与视图文件夹分组在 1.58.0 **不可用**。写入未验证语法会让 `validate` 失败。
 - **能力边界必须诚实，但不降级**。LikeC4 不原生支持类图继承、状态机外观、泳道竖列。每一种都有 LikeC4 内的平替表达与已知代价，按 `references/09-likec4-substitutions.md` 执行并**把代价告知用户**，不得静默换到另一套工具。
 - **写入前必须 validate**。任何 `.c4` 写入后必须运行 `likec4 validate`，非零退出码时不得声明完成。
 - **FQN 的必要性来自嵌套，不来自「跨文件」这件事本身**。实测：跨文件引用**顶层**元素用 short name 合法；引用**嵌套**元素必须 FQN。七层设计链中只有 SRC 层大量嵌套，因此 FQN 规则主要服务 SRC 层。US / F / NF / I / UI 五层是扁平设计，不应被迫写冗长全名。详见 `references/02-multifile-and-fqn.md`。
-- **视图类型由设计层的性质决定，不由文件组织决定**。各层的读者不同，视图形态也不同：US/F/NF 用 element view，I 层步骤用 dynamic view 且状态机走 Mermaid，UI 层交互面用 element view 而信息设计用表格，SRC 层用 element view + sequence，构建部署用 deployment view。详见 `references/07-seven-layer-design.md`。
+- **视图类型由设计层的性质决定，不由文件组织决定**。各层的读者不同，视图形态也不同：US/F/NF 用 element view，I 层步骤用 dynamic view 且状态机用「状态即元素 + 迁移即关系」，UI 层交互面用 element view 而信息设计用表格，SRC 层用 element view + sequence，构建部署用 deployment view。详见 `references/07-seven-layer-design.md`。
 - **设计资产分层存放**。单服务设计放项目层设计仓并由主仓 submodule 引用；跨项目视图放全局聚合层，禁止把多个项目的设计塞进同一个被 submodule 引用的仓（会造成 gitlink 指针抖动）。
 - **依赖必须锁版本**。LikeC4 跨版本 DSL 行为差异大，`package.json` 用精确版本号而非 `^`。
 - **环境问题不是阻塞理由，先降级再上报**。MCP 自带 LikeC4 内核，零安装即可查询模型；本地无 CLI 时走 npx，再不行就只读降级交付。详见 `references/04b-environment-and-sync.md`。
@@ -81,19 +83,20 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 
 ## 触发后先做什么
 
-1. 先读取 `references/00-diagram-routing.md`，确认目标图类型及其 LikeC4 表达方式。
-1a. 需要泳道、状态机、分支、类图、数据模型或信息设计时，同时读取 `references/09-likec4-substitutions.md` 取平替方案与代价。
-1b. **变更起点不是 US 层，或需确认关联影响是否覆盖时，先按 `references/10-design-reasoning.md` 做双向推演**，确定受影响层后再逐层与用户交互。推演在前，交互在后。
-2. **先定验证路径**：读取 `references/04b-environment-and-sync.md`，判断走 MCP 还是 CLI。不要因环境缺 likec4 而停止交付。
-3. 读取 `references/01-likec4-basics.md`，确认 specification、命名、样式和目录约定。
-4. 涉及多文件、跨项目引用或导入既有模型时，读取 `references/02-multifile-and-fqn.md`。
-5. 涉及序列流程、并发或步骤下钻时，读取 `references/03-dynamic-views.md`。
-6. 需要落地项目、配置构建、接入 MCP 或接入 CI 时，按 `references/04-project-integration.md` 执行。
-7. 写入前确认目标位置：先读 `references/05-design-repo-layout.md` 判断设计资产归属层级。
-8. **需求涉及完整设计链时（用户故事、功能/非功能框架、业务状态与步骤、交互与信息设计、源码层映射），先读 `references/07-seven-layer-design.md` 按七层组织产出。**
-9. **需要与用户交互式推进设计时，读 `references/08-design-decision-tree.md`。** 它定义每个节点 AI 该给什么候选、问什么问题、以及何时必须停下等确认。含节点 0 规模判定与节点 6 缺口盘点。
-10. 建模完成并准备进入实现时，读 `references/06-architecture-handoff.md` 产出架构交接规格。
-11. 完成后执行校验，并按 `checklists/model-quality.md` 自检。
+1. **先定主干与分支的切分**：读取 `references/11-trunk-first-design.md`，确定主干路径、分支清单与视图粒度。**这是先决步骤**——没切分就选图类型，必然产出一张什么都塞的图。
+2. 先读取 `references/00-diagram-routing.md`，确认目标图类型及其 LikeC4 表达方式。
+2a. 需要泳道、状态机、分支、类图、数据模型或信息设计时，同时读取 `references/09-likec4-substitutions.md` 取平替方案与代价。
+2b. **变更起点不是 US 层，或需确认关联影响是否覆盖时，先按 `references/10-design-reasoning.md` 做双向推演**，确定受影响层后再逐层与用户交互。推演在前，交互在后。
+3. **先定验证路径**：读取 `references/04b-environment-and-sync.md`，判断走 MCP 还是 CLI。不要因环境缺 likec4 而停止交付。
+4. 读取 `references/01-likec4-basics.md`，确认 specification、命名、样式和目录约定。
+5. 涉及多文件、跨项目引用或导入既有模型时，读取 `references/02-multifile-and-fqn.md`。
+6. 涉及序列流程、并发或步骤下钻时，读取 `references/03-dynamic-views.md`。
+7. 需要落地项目、配置构建、接入 MCP 或接入 CI 时，按 `references/04-project-integration.md` 执行。
+8. **写入前确认目标位置**：先读 `references/05-design-repo-layout.md` 判断设计资产归属层级。
+9. **需求涉及完整设计链时（用户故事、功能/非功能框架、业务状态与步骤、交互与信息设计、源码层映射），先读 `references/07-seven-layer-design.md` 按七层组织产出。**
+10. **需要与用户交互式推进设计时，读 `references/08-design-decision-tree.md`。** 它定义每个节点 AI 该给什么候选、问什么问题、以及何时必须停下等确认。含节点 0 规模判定与节点 6 缺口盘点。
+11. 建模完成并准备进入实现时，读 `references/06-architecture-handoff.md` 产出架构交接规格。
+12. 完成后执行校验，并按 `checklists/model-quality.md` 自检。
 
 ## 图类型路由（速查，likec4 1.58.0 实测）
 
@@ -124,6 +127,7 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 
 ```text
 任何架构建模请求
+  -> Stage 0a 主干优先与视图切分: references/11-trunk-first-design.md
   -> Stage 0 Intake 与图类型路由: references/00-diagram-routing.md
 
 需要分析变更影响面、确认关联影响是否覆盖、或变更起点不是 US 层
@@ -164,6 +168,7 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 
 ```text
 00 -> 01 -> 02 -> 03 -> 04 -> 05
+       ↑ 先做 11（主干与分支切分）
                         └-> 07（六层设计链）-> 06（进入实现前）
 ```
 
@@ -198,6 +203,7 @@ opt   loop   break   alt   when   else   try   catch   finally
 
 ## 资源索引
 
+- `references/11-trunk-first-design.md`: **主干优先与视图分离**。主干先行 T1、一图一意图与容量上限 T2、主干冻结与变更门禁 T3、外围需求隔离、分支清单格式。**先于图类型路由执行。**
 - `references/00-diagram-routing.md`: 图类型决策树、LikeC4 表达与代价对照、禁止写入的语法。
 - `references/09-likec4-substitutions.md`: 泳道、状态机、条件分支、循环、异常、类图、数据模型、信息设计的 LikeC4 平替写法与各自代价（全部实测通过）。
 - `references/10-design-reasoning.md`: 设计双向推演。自上而下与自下而上两条路径、横向扩展触发条件、范围裁决、闭环停止条件。沿用 reasoning-map 的渐进地图与 RED/GREEN 模式。
@@ -220,6 +226,8 @@ opt   loop   break   alt   when   else   try   catch   finally
 ## 边界
 
 - 不修改项目业务代码；架构模型落盘位置遵循 `references/05-design-repo-layout.md`。
+- **不在一张视图里混合主干、分支与外围需求**。超容量即拆，不以"内容完整"为理由把分支塞回主干。
+- **不在分支展开中就地修改已冻结的主干**；主干缺陷走变更门禁交用户裁决。
 - 不伪造未知技术栈命令；未确认的命令标为 `待补充`。
 - 不把 Mermaid/PlantUML 图倒推成 LikeC4 模型并声称是模型真源。
 - **不写入未经当前版本验证的语法**。官方文档中的部分特性（1.58.0 下的 `opt` `loop` `break` `alt` `try`、视图文件夹分组）在当前锁定版本不可用，写入会导致 `validate` 失败。
@@ -230,5 +238,7 @@ opt   loop   break   alt   when   else   try   catch   finally
 ## 交付标准
 
 默认交付模型与视图位置、验证路径（MCP / CLI / npx / 只读降级）、`likec4 validate` 结果或未校验原因、嵌套元素引用是否已用 FQN（顶层元素不应被强制写全名）、设计资产归属层级（项目层或全局层），以及使用了哪些平替方案及其代价（见 `references/09-likec4-substitutions.md`）。
+
+**追加（主干优先，规则见 `references/11-trunk-first-design.md`）**：主干路径一句话说明；分支清单（编号 / 条件 / 归属层 / 优先级 / 是否本期）；视图分工（哪张是主干视图、哪张是分支视图、各自回答什么问题）；每张视图的元素或步骤数是否在上限内；主干是否已冻结、本次是否发生过主干变更（若有附门禁记录）；登记但未展开的分支及原因。
 
 **进入实现阶段时追加**：架构交接规格落盘路径（`vendor/design/<repo>/handoff/current.md`）与模型版本、取事实方式（MCP 或读文件）、规格各部分对应的模型依据、置信度与未达 90% 的项、建议交接路径（直接实现 / 先技术设计 / 先完成建模），以及必须由 `technical-design` 补齐的内容清单。
