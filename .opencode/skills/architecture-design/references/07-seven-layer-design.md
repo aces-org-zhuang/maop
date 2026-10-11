@@ -195,7 +195,7 @@ specification {
 | --- | --- | --- | --- | --- |
 | US | `element view`（index 入口） | element | 全体 | 一个 US 一个可导航入口 |
 | F / NF | `element view` | element | 产品与架构 | NF 项与 F 项同图可见，便于对照 |
-| I | `dynamic view`（步骤序列） | dynamic + Mermaid 状态机 | 业务方 | **不含 SRC 元素** |
+| I | `dynamic view`（步骤序列） | dynamic + 状态机视图 | 业务方 | **不含 SRC 元素** |
 | UI | `element view`（交互面） | element + 表格 | 设计与前端 | 交互与信息设计都要出现 |
 | SRC | `element view` + `variant sequence` | element + dynamic + 数据流 | 工程师 | 嵌套引用需 FQN |
 | 构建部署 | `deployment view` | deployment | 运维 | 交付后才产出 |
@@ -203,9 +203,9 @@ specification {
 ### 为什么这样分配
 
 - **US / F / NF 是静态结构**，用 `element view` 表达「谁包含谁、谁要求谁」。
-- **I 层的核心是步骤与状态**。步骤序列用 `dynamic view`（diagram 变体）；**状态机必须走 Mermaid `stateDiagram-v2`**，LikeC4 1.58.0 完全无法表达状态机。
+- **I 层的核心是步骤与状态**。步骤序列用 `dynamic view`（diagram 变体）；**状态机用「状态即元素 + 迁移即关系」表达**，见 `09-likec4-substitutions.md`。
 - **UI 层是静态面 + 动态反馈的组合**：交互面用 element view 表达「哪个界面触发哪个行为」，信息设计（字段、列表、筛选区、通知）用表格更清晰，硬塞进图会失焦。
-- **SRC 层是唯一需要多种视图的层**：组件结构用 element view，调用时序用 `variant sequence`，数据流向用 Mermaid flowchart 或 element view 的依赖关系。
+- **SRC 层是唯一需要多种视图的层**：组件结构用 element view，调用时序用 `variant sequence`，数据流向用 element view 的依赖关系表达。
 - **构建部署用 `deployment view`**，且只在交付落地后产出。
 
 ### 跨层视图
@@ -254,16 +254,16 @@ dep-<环境>         部署视图
 | 层 | 轨道 | 说明 |
 | --- | --- | --- |
 | US / F / NF | **一（LikeC4）** | 结构化关系，AI 可查询 |
-| I 业务状态 | **二（Mermaid）** | 状态机 LikeC4 不支持；`flowchart` 或 `stateDiagram-v2` |
+| I 业务状态 | **一（LikeC4）** | 状态即元素 + 迁移即关系；代价是不能自环 |
 | I 业务步骤 | **一（LikeC4 dynamic view）** | 步骤序列可表达 |
-| UI 交互 | **一（dynamic view）+ 二** | 反馈流程用 LikeC4；复杂分支用 Mermaid |
-| UI 信息 | **二（Mermaid / 表格）** | 字段与列表结构用表格更清晰 |
-| SRC 类设计 | **三（PlantUML）** | LikeC4 不支持类图与继承 |
+| UI 交互 | **一（dynamic view）** | 反馈流程用 dynamic view；分支拆多视图 |
+| UI 信息 | **一（LikeC4）** | 界面为容器、字段为元素；代价是字段多时图较宽 |
+| SRC 类设计 | **一（LikeC4）** | 嵌套 + 依赖关系；代价是继承无对应 |
 | SRC 组件与依赖 | **一（LikeC4）** | 组件划分与依赖方向 |
-| SRC 时序与数据流 | **一（dynamic view）+ 二** | 简单用 LikeC4，条件分支用 Mermaid |
+| SRC 时序与数据流 | **一（dynamic view）** | 分支拆多视图 |
 | 构建部署 | **一（deployment view）** | 交付后产出 |
 
-**注意 I 层业务状态的路由**：LikeC4 1.58.0 不支持状态机（`opt`/`loop`/`alt`/`try` 均不可用）。业务状态机是 I 层的核心产出，**必须走 Mermaid `stateDiagram-v2`**。这不违反"架构真源在 LikeC4"——状态机是业务设计而非架构拓扑，本就不属于 LikeC4 的表达范围。
+**全部图都用 LikeC4 表达，不降级。** LikeC4 1.58.0 不支持 `opt`/`loop`/`alt`/`try`，所以条件分支、循环、异常一律拆成多个视图；状态机用「状态即元素 + 迁移即关系」。完整写法与代价见 `09-likec4-substitutions.md`。
 
 ---
 
@@ -272,10 +272,10 @@ dep-<环境>         部署视图
 七层设计交付时说明：
 
 1. 覆盖的 US 清单，以及每条 US 的链路是否完整（缺哪层）
-2. 各层产出物位置：LikeC4 模型文件 / Mermaid 文件 / 表格位置
+2. 各层产出物位置（全部在 LikeC4 模型内）
 3. **各层使用的视图类型**，以及是否与本 SOP 第五节的对应表一致
 4. LikeC4 版本与 `likec4 validate` **及 `build`** 结果（两者都要，只 validate 会漏掉布局错误）
-5. 哪些层走了轨道二/三及原因
+5. 哪些图使用了平替方案及其代价
 6. SRC 层的文件路径是否已核对真实代码
 7. SRC 层是否使用了 FQN 引用嵌套元素（上五层不应被迫使用）
 8. NF 项中无法度量的条目

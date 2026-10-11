@@ -251,13 +251,14 @@ views {
     title '下单设计时序'
     description '从用户提交到支付确认的步骤序列。'
     include us_checkout, f_order, i_step, ui_interaction
-    include src_checkout, src_orderService, src_paymentClient
+    include src_checkout.routes
+    include src_orderService, src_paymentClient
 
     us_checkout -> f_order '提出下单'
     f_order -> i_step '执行业务步骤'
     i_step -> ui_interaction '反馈交互'
-    ui_interaction -> src_checkout '触发源码'
-    src_checkout -> src_orderService '调用'
+    ui_interaction -> src_checkout.routes '触发源码'
+    src_checkout.routes -> src_orderService '调用'
     src_orderService -> src_paymentClient '支付'
   }
 }
@@ -267,6 +268,7 @@ views {
 
 1. `include f_*` 通配符**不支持** → 必须逐个列出
 2. `dynamic view` 若只有 `include` 没有消息 → 布局报 `actors array must not be empty`，且 **`likec4 validate` 仍通过**。必须跑 `build` 才能发现
+3. `variant sequence` **只可连接叶子元素** → 上例用的是 `src_checkout.routes`（无子元素的子组件），不是 `src_checkout`（含子元素的容器）
 3. `variant sequence` 只可连接叶子元素
 
 ---
@@ -327,9 +329,10 @@ LikeC4 1.58.0 不支持状态机（`opt` `loop` `alt` `try` 均不可用）。�
 
 **工具路由**
 
-- [ ] 业务状态机走 Mermaid `stateDiagram-v2`
-- [ ] 类设计走 PlantUML，未在 LikeC4 中伪造
-- [ ] 走轨道二/三的部分已向用户说明原因
+- [ ] 业务状态机用「状态即元素 + 迁移即关系」表达，自反迁移写在 description
+- [ ] 类设计用嵌套 + 依赖关系表达；继承关系已在 description 显式记录
+- [ ] 全部图均以 LikeC4 表达，未降级到其他工具
+- [ ] 使用平替方案的图已向用户说明代价
 - [ ] 构建部署图未产出，或已说明为何此时产出
 
 **校验**

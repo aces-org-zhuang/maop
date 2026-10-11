@@ -1,115 +1,145 @@
-# SOP 00 - 图类型路由与能力边界
+# SOP 00 - 图类型路由与 LikeC4 表达选择
 
 ## Goal
 
-在写任何图之前，先确定「这张图属于哪一类、该用哪条轨道、LikeC4 能不能表达」。避免用错语法硬凑，避免伪造 LikeC4 不支持的图类型，避免把导出物误当架构真源。
+把所有架构图收敛到 LikeC4 一种表达。**不存在"这个 LikeC4 画不了所以换工具"的情况**——每种图都有 LikeC4 内的表达方式，代价各不相同。
 
-## When Required
+## 硬规则
 
-每次使用 `architecture-design` 技能时都必须先执行本 SOP。它是唯一入口路由，不允许跳过。
+**所有图必须用 LikeC4 表达，不允许降级到 Mermaid、PlantUML 或其他工具。**
+
+选择 LikeC4 的理由只有一条但足够充分：**单一真源、可校验、可 diff、可被 AI 经 MCP 查询。** 引入第二套工具会让架构真相分裂成两份，且两份之间无法互相验证——这正是架构文档腐烂的起点。
+
+遇到代价较大的场景，**先告知代价并让用户选择**，不得静默换工具。
+
+平替方案的完整写法（含可运行的代码示例）见 `09-likec4-substitutions.md`。
 
 ## 决策树
 
 ```text
-用户要画什么图？
-├─ 架构结构类
-│  ├─ 系统上下文 / 全景 / 系统间关系 -> view（轨道一）
-│  ├─ 容器级（服务、库、外部依赖）  -> view of <system>（轨道一）
-│  ├─ 组件级（模块内部）             -> view of <component>（轨道一）
-│  ├─ 部署 / 运行时拓扑 / 环境       -> deployment view（轨道一）
-│  └─ 基础设施 / 节点 / 区域         -> deployment view（轨道一）
+用户要什么图？
 │
-├─ 时序与流程类
-│  ├─ 某个 use-case 或场景怎么走     -> dynamic view（默认 diagram 变体，轨道一）
-│  ├─ 标准 UML 时序图                -> dynamic view + variant sequence（轨道一）
-│  ├─ 并发                          -> parallel / par（轨道一，不可嵌套）
-│  ├─ 循环 / 条件 / 异常             -> 本版本不可用，转 Mermaid flowchart（轨道二）
-│  └─ 分步下钻到更细粒度             -> navigateTo（轨道一）
+├─ 系统上下文 / 容器 / 组件 / 集成关系
+│  └─ view of <element> + include/exclude                    无代价
 │
-├─ LikeC4 不支持的类型
-│  ├─ 类图 / 组合 / 继承 / 泛化      -> Mermaid 或 PlantUML（轨道二/三）
-│  ├─ 状态机图                       -> Mermaid stateDiagram（轨道二）
-│  ├─ 严格 UML 用例图（use case 椭圆 + <<extend>>）
-│  │                                 -> PlantUML（轨道三），必须说明 LikeC4 不支持
-│  └─ ER 图                          -> Mermaid erDiagram（轨道二）
+├─ 部署与环境拓扑
+│  └─ deploymentNode + instanceOf + deployment view          交付后才产出
 │
-└─ 纯视觉表达产物（非架构）
-   └─ 界面草图、视觉稿、信息图 -> 转 expression-delivery，不在本技能范围
+├─ 场景流程 / 步骤序列
+│  └─ dynamic view（默认 diagram 变体）                      无代价
+│
+├─ 时序 / 调用顺序
+│  └─ dynamic view + variant sequence                       只连叶子；须有显式消息
+│
+├─ 并发分支
+│  └─ parallel / par                                        不可嵌套
+│
+├─ 泳道（按角色或按层分组）
+│  └─ stage 类元素作嵌套容器                                 非真泳道，不保证竖列
+│
+├─ 状态机
+│  └─ 状态即元素，迁移即关系                                 不能自环；非经典外观
+│
+├─ 条件分支
+│  └─ 拆成多个视图，各表达一条路径                            视图数量增加
+│
+├─ 循环
+│  └─ 单次迭代视图 + 循环关系视图                             需人工拆分
+│
+├─ 异常处理
+│  └─ 独立异常路径视图                                       需人工拆分
+│
+├─ 类设计 / 组件设计
+│  └─ 嵌套表达包含，关系表达依赖                              继承无对应
+│
+├─ 数据模型 / ER
+│  └─ store 承载实体，关系承载引用                            无字段级、无基数标注
+│
+├─ 信息设计（字段 / 列表 / 筛选 / 状态）
+│  └─ 界面为容器，字段为元素                                  字段多时图较宽
+│
+└─ 用例 / 参与角色
+   └─ actor 元素 + 关系                                     无 use case 椭圆、无 <<extend>>
 ```
 
-## 图类型速查（likec4 1.58.0 实测）
+## LikeC4 表达与代价对照表
 
-| 用户想要的图 | LikeC4 写法 | 轨道 | 实测状态 |
-| --- | --- | --- | --- |
-| 系统上下文图 / 全景 | `view` | 一 | 可用 |
-| 容器图 | `view of <system>` | 一 | 可用 |
-| 组件图 | `view of <component>` | 一 | 可用 |
-| 部署图 | `deploymentNode` + `instanceOf` + `deployment view` | 一 | 可用 |
-| 场景流程图 | `dynamic view`（diagram 变体） | 一 | 可用 |
-| 时序图 | `dynamic view` + `variant sequence` | 一 | 可用 |
-| 并发流程 | `parallel` / `par` | 一 | 可用（不可嵌套） |
-| 条件分支 / 循环 / 异常 | `alt` / `loop` / `try` | — | **本版本不可用**，走轨道二 |
-| 类图 / 继承 / 泛化 | 不支持 | 二/三 | Mermaid classDiagram 或 PlantUML |
-| 状态机图 | 不支持 | 二 | Mermaid stateDiagram-v2 |
-| 严格 UML 用例图（<<extend>>） | 不支持 | 三 | PlantUML，必须说明差异 |
-| ER 图 | 不支持 | 二 | Mermaid erDiagram |
-
-> 官方文档描述的是最新版本。`opt` `loop` `break` `alt` `try` 在官方文档中存在，但 **1.58.0 实测不可用**。使用前必须确认版本，详见 `references/03-dynamic-views.md` 的实测表。
-
-## UML 概念到 LikeC4 的映射
-
-| UML 概念 | LikeC4 对应 | 差异与注意 |
+| 图类型 | LikeC4 表达 | 代价 |
 | --- | --- | --- |
-| System Context Diagram | `view`，包含 actor 与 system | 一致 |
-| Container Diagram | `view of <system>` | 一致 |
-| Component Diagram | `view of <component>` | 一致 |
-| Deployment Diagram | deployment view | 一致 |
-| Sequence Diagram | `dynamic view` + `variant sequence` | 无生命线（lifeline）与激活棒（activation bar）；只支持叶子元素之间的连接 |
-| Use Case Diagram（场景流程） | `dynamic view`（diagram 变体） | **语义不同**：LikeC4 表达「一次交互的时间顺序」，不是「参与者—目标」矩阵；无 use case 椭圆、无 include/extend 关系 |
-| Communication Diagram | `dynamic view`（diagram 变体） | 接近 |
-| State Machine Diagram | 无 | 走 Mermaid `stateDiagram-v2` |
-| Class Diagram | 无 | 走 Mermaid `classDiagram` 或 PlantUML |
-| ER Diagram | 无 | 走 Mermaid `erDiagram` |
-| Activity / DFD | `dynamic view`（diagram 变体） | 结构相似但非等价，不承诺 DFD 语义 |
+| 系统上下文 / 容器 / 组件 | `view of` + `include`/`exclude` | 无 |
+| 部署图 | `deploymentNode` + `instanceOf` | 交付后产出 |
+| 场景流程 | `dynamic view`（diagram 变体） | 无 |
+| 时序图 | `dynamic view` + `variant sequence` | 只连叶子；须有消息 |
+| 并发 | `parallel` / `par` | 不可嵌套 |
+| 泳道 | `stage` 嵌套容器 | 非真泳道，不保证竖列 |
+| 状态机 | 状态即元素，迁移即关系 | 不能自环 |
+| 条件分支 | 多视图拆分 | 视图数量增加 |
+| 循环 | 迭代视图 + 循环关系视图 | 需人工拆分 |
+| 异常 | 独立异常视图 | 需人工拆分 |
+| 类图 / 组件 | 嵌套 + 依赖关系 | **继承无对应** |
+| ER / 数据模型 | `store` 实体 | 无字段级 |
+| 信息设计 | 界面容器 + 字段元素 | 字段多时图宽 |
+| 用例图 | `actor` + 关系 | 无椭圆、无 `<<extend>>` |
 
-## 硬边界（必须诚实告知用户）
+**没有一条路径是零代价的。** 代价写在这里而不是假装不存在。
 
-以下能力 LikeC4 **不提供**，不得用错误语法硬凑，不得静默降级：
+## 禁止写入的语法
 
-1. **类图与继承体系**。C4 Level 4（代码级建模）仍是社区讨论议题，不是既有能力。
-2. **UML 生命线与激活棒**。sequence 变体只渲染参与者顺序与消息，不表达对象生命周期。
-3. **strict use case 泛化**。`<<extend>>` / `<<include>>` 关系没有对应写法。
-4. **状态机**。无状态定义与转移图原语。
-5. **native ER 建模**。无实体关系原语，只能借道 Mermaid。
-6. **视图文件夹分组**。`views 'Label' { ... }` 在 1.58.0 不可用，改用按用途拆分文件。
+### 不存在的关键字
 
-另外，官方文档中的 `opt` `loop` `break` `alt` `try` 流程控制块在 **1.58.0 不可用**。用户要求条件分支、循环或异常处理时，必须改走轨道二或升级 LikeC4 版本，不得直接写入这些语法。
-
-需要这些内容时，按顺序尝试：
+查证官方 `llms-full.txt` 与 1.58.0 实测，以下**不存在**：
 
 ```text
-轨道一无法表达
-  -> 轨道二 Mermaid（用例图/状态机/ER）
-  -> 轨道三 PlantUML（类图/继承/严格 UML 用例图）
-  -> 都无法表达 -> 告知用户并建议外部工具，不要伪造
+swimlane    lane    participant    column
 ```
 
-## 轨道收敛规则
+写这些不会报"未知关键字"，而是产生难以理解的解析错误。
 
-- 架构真相只能有一个来源。LikeC4 模型是结构化真源；Mermaid/PlantUML 是单向导出物或补充产物。
-- 不得从 Mermaid/PlantUML 图反推生成 LikeC4 模型后，声称该模型是从图「还原」的真源。若确需建模，必须从代码或设计意图重新建模。
-- 轨道二/三的产物若需与模型保持同步，必须由模型导出（如 `likec4 gen mermaid`），并在交付说明中指出来源方向。
+### 本版本不可用的流程控制块
 
-## 常见失败模式
+已复测确认：`opt` `loop` `break` `alt` `when` `else` `try` `catch` `finally` **在 1.58.0 全部不可用**：
 
-- 用户说「画用例图」，直接用 `dynamic view` 硬凑并宣称是 UML 用例图——语义不符，必须说明差异。
-- 用户要类图，用 element 嵌套模拟继承——错误做法，应走轨道二/三。
-- 在 `variant sequence` 中连接有子元素的容器——不受支持，sequence 只接受叶子元素。
-- 同时维护 LikeC4 模型和手写 Mermaid 图，且两者无生成关系——必然漂移。
-- 把 `par`/`opt`/`loop` 等流程控制块当稳定特性使用，未标注 experimental 风险。
+```text
+Line 11: Expecting token of type '}' but found `alt`.
+Line 15: Expecting token of type 'EOF' but found `else'.
+```
 
-## 与其他技能的边界
+**注意**：官方 `llms-full.txt` 描述了这些块，那是更新版本的能力。唯一可用的是 `parallel` / `par`，且不可嵌套。
 
-- 本技能决定「架构图用什么工具表达」；`expression-delivery` 决定「非架构的表达产物如何呈现」。
-- 本技能产出的架构模型是 `technical-design` 的架构确认输入之一。`technical-design` 的 `sop-02b-architecture-confirmation.md` 要求 Context / Component / Deployment 图，可由本技能用 LikeC4 落地，而不是手画 Mermaid。
-- 产品用例与验收标准属 `product-definition`，架构建模不替代产品定义。
+## LikeC4 没有的图形概念
+
+以下是真实的表达缺口，**必须用平替方案而非换工具**：
+
+| UML / 其他概念 | LikeC4 是否有对应 | 平替做法 |
+| --- | --- | --- |
+| 泛化 / 继承箭头 | 无 | `description` 中显式记录，交付时列为待人工核对项 |
+| use case 椭圆 | 无 | `actor` 元素 + 关系 |
+| `<<extend>>` / `<<include>>` | 无 | 关系标签写明「扩展自 X」 |
+| 字段级数据建模 | 无 | 字段清单写在 I 层或技术设计文档，模型只表达实体与关系 |
+| 基数标注（一对多等） | 无 | 关系标签写明「（多对一）」 |
+| 真泳道竖列 | 无 | 嵌套容器，靠颜色与形状强化分组 |
+
+## 三条收敛规则
+
+1. **单一真源**。架构真相只存在于 LikeC4 模型。其他一切表述都是它的投影或说明。
+2. **不反推**。不得从外部图反推生成 LikeC4 模型后声称该模型是"从图还原的真源"。若确需建模，必须从代码或设计意图重新建模。
+3. **代价先说清**。用了平替方案就说明代价（如图「自反迁移写在 description 中」），让使用者知情。
+
+## 常见错误
+
+| 错误做法 | 为什么错 |
+| --- | --- |
+| 用 `opt` / `alt` / `try` 表达分支 | 1.58.0 不可用，`validate` 失败 |
+| 写 `swimlane { }` | 该语法不存在 |
+| 用户要类图就用嵌套"模拟继承" | 继承有特定语义，嵌套表达的是包含。继承须在 description 显式记录并列为待核对项 |
+| 同时维护 LikeC4 模型和手写其他图 | 无生成关系，必然漂移 |
+| 状态机用其他工具画 | 状态即元素 + 迁移即关系即可，代价仅是不能自环 |
+| 用嵌套容器做"按步骤"泳道 | 每条泳道只有一个元素，失去分组意义。应按角色或按层划分 |
+| 多路径视图 title 不写路径条件 | 读者无法判断该看哪个 |
+| 只跑 `validate` 就交付 | dynamic view 只有 include 没有消息时 validate 通过但 build 失败 |
+
+## 与其他技能的关系
+
+`technical-design` 的架构确认要求 Context / Component / Deployment 图，由本技能用 LikeC4 落地，不另用其他工具手绘。
+
+`08-design-decision-tree.md` 的节点 3（I 层）要求状态机与分支流程时，回到本 SOP 选择平替方案。

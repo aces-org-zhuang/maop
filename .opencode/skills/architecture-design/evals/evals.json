@@ -8,19 +8,19 @@
       "files": [],
       "expectations": [
         "读取 references/00-diagram-routing.md 完成图类型路由",
-        "使用 LikeC4 的 view 与 view of <element> 语法，而不是 Mermaid",
+        "使用 LikeC4 的 view 与 view of <element> 语法，不降级到其他工具",
         "运行 likec4 validate 并报告结果"
       ]
     },
     {
       "id": 2,
       "prompt": "下单流程帮我画个时序图，带库存不足的异常分支。",
-      "expected_output": "触发 architecture-design；先用 dynamic view + variant sequence 画时序流程；说明 1.58.0 不支持 try/catch 与 alt/when/else，异常分支改走 Mermaid flowchart 或建议升级版本。",
+      "expected_output": "触发 architecture-design；先用 dynamic view + variant sequence 画时序流程；说明 1.58.0 不支持 try/catch 与 alt/when/else，异常分支拆成多个 LikeC4 视图，不降级到其他工具。",
       "files": [],
       "expectations": [
         "使用 dynamic view 与 variant sequence 表达时序流程",
         "未直接写入 opt/loop/alt/try 等当前版本不支持的块",
-        "明确告知异常分支需改走 Mermaid 或升级 LikeC4",
+        "明确告知异常分支拆成多个 LikeC4 视图，并说明该平替方案的代价",
         "确认 sequence 变体只连接叶子元素"
       ]
     },
@@ -39,12 +39,13 @@
     {
       "id": 4,
       "prompt": "帮我画一下领域模型的类图，带继承关系。",
-      "expected_output": "触发 architecture-design 但在路由阶段即识别类图属 LikeC4 不支持范围；说明能力边界；改走轨道二 Mermaid 或轨道三 PlantUML，不伪造 LikeC4 写法。",
+      "expected_output": "触发 architecture-design；识别类图的表达边界；用嵌套表达包含、关系表达依赖，继承写入 description 并列为待人工核对项；不降级到其他工具。",
       "files": [],
       "expectations": [
-        "明确指出 LikeC4 不支持类图与继承体系",
-        "未用 element 嵌套硬凑继承关系",
-        "改用 Mermaid classDiagram 或 PlantUML 并说明原因"
+        "明确指出 LikeC4 无泛化箭头，继承需在 description 显式记录",
+        "未用 element 嵌套硬凑继承关系（嵌套表达的是包含）",
+        "用 LikeC4 嵌套 + 依赖关系表达，并说明继承无对应的代价",
+        "未降级到 Mermaid classDiagram 或 PlantUML"
       ]
     },
     {
@@ -74,12 +75,12 @@
     {
       "id": 7,
       "prompt": "帮我补几张状态机图，展示订单的生命周期。",
-      "expected_output": "触发 architecture-design；识别状态机图属 LikeC4 不支持范围；改走轨道二 Mermaid stateDiagram，不伪造。",
+      "expected_output": "触发 architecture-design；用「状态即元素 + 迁移即关系」表达状态机，并说明不能自环的代价，不降级。",
       "files": [],
       "expectations": [
-        "明确指出 LikeC4 不支持状态机图",
-        "改用 Mermaid stateDiagram-v2",
-        "未用 dynamic view 冒充状态机并宣称等价"
+        "用「状态即元素 + 迁移即关系」表达状态机",
+        "说明不能自环，自反迁移写在 description",
+        "未降级到 Mermaid stateDiagram-v2"
       ]
     },
     {
@@ -295,11 +296,11 @@
     {
       "id": 26,
       "prompt": "订单状态有草稿、已校验、支付中、已确认、已取消五态，帮我画出来。",
-      "expected_output": "识别为 I 层业务状态机，走轨道二用 Mermaid stateDiagram-v2；LikeC4 1.58.0 不支持状态机（opt/loop/alt/try 均不可用），不得在 LikeC4 中硬凑。",
+      "expected_output": "识别为 I 层业务状态机；用 LikeC4「状态即元素 + 迁移即关系」表达；说明 LikeC4 1.58.0 不支持状态机外观且不能自环，自反迁移写在 description。",
       "files": [],
       "expectations": [
-        "改用 Mermaid stateDiagram-v2 而非 LikeC4",
-        "说明 LikeC4 1.58.0 不支持状态机",
+        "用状态即元素 + 迁移即关系表达，未降级到 Mermaid stateDiagram-v2",
+        "说明自环不被支持，自反迁移写在 description",
         "状态迁移标注触发条件以满足可审计性"
       ]
     },
@@ -367,6 +368,187 @@
         "按层对应视图类型而非按图名罗列",
         "说明 I 层状态机走 Mermaid",
         "指出视图类型由层性质决定而非文件组织"
+      ]
+    },
+    {
+      "id": 33,
+      "prompt": "我们要上线一个优惠券功能，你直接把完整设计都写出来吧。",
+      "expected_output": "触发 08 决策树：先做节点 0 规模判定，再按节点 1-6 交互式推进，每个 ⏸ 节点停下等用户确认。禁止一次性输出七层全部内容。",
+      "files": [],
+      "expectations": [
+        "先做规模判定而非直接产出全部七层",
+        "分节点推进并在确认点停下",
+        "说明一次性输出全量会让用户无法在关键判断上纠偏"
+      ]
+    },
+    {
+      "id": 34,
+      "prompt": "响应时间要快一点，用户体验要好。",
+      "expected_output": "NF 层反模式：不可度量表述必须拒绝写入。指出不可度量，给出可度量改写建议与推荐值，标记为待用户确认，不得当作已确认。",
+      "files": [],
+      "expectations": [
+        "指出「要快」「体验好」不可度量",
+        "给出可度量的改写建议与推荐值及理由",
+        "标记为待用户确认而非自行拍定"
+      ]
+    },
+    {
+      "id": 35,
+      "prompt": "优惠券功能的界面要有哪些字段和列表？",
+      "expected_output": "UI 层信息设计：字段、列表区、可见区域、筛选区域、扩展功能，并强制覆盖空状态、加载状态、错误状态、无权限状态四种。",
+      "files": [],
+      "expectations": [
+        "覆盖字段、列表区、可见区域、筛选区、扩展功能",
+        "强制包含空/加载/错误/无权限四种状态",
+        "询问哪些字段是决策必需的"
+      ]
+    },
+    {
+      "id": 36,
+      "prompt": "设计做完了吗？还有什么是需要我确认的？",
+      "expected_output": "触发节点 6 缺口盘点：输出待用户确认、待补充、未覆盖三类清单，并主动提出异常路径、数据增长、隐私合规、成功验证指标等易漏问题。",
+      "files": [],
+      "expectations": [
+        "输出三类缺口清单结构",
+        "主动提出 AI 易漏的问题",
+        "不得因看起来完整而跳过盘点"
+      ]
+    },
+    {
+      "id": 37,
+      "prompt": "只是在已有的订单列表里加一个「导出」按钮。",
+      "expected_output": "规模判定为局部补充：只走 UI + SRC，说明 F/NF/I 为何不动。跳过层必须说明理由，不能默默跳过。",
+      "files": [],
+      "expectations": [
+        "判定为局部补充而非完整七层",
+        "只更新受影响层",
+        "明确说明其余层为何不需要改动"
+      ]
+    },
+    {
+      "id": 38,
+      "prompt": "这个状态流转有异常分支和超时处理，你帮我画时序图。",
+      "expected_output": "识别为含分支流程：LikeC4 1.58.0 不支持 opt/loop/alt/try，含分支的流程拆成多个 LikeC4 视图，各表达一条路径且标题写清条件，不得降级到其他工具。同时询问异常态与超时态是否已完整。",
+      "files": [],
+      "expectations": [
+        "拆成多个 LikeC4 视图而未降级到 Mermaid",
+        "说明 LikeC4 1.58.0 不支持分支块",
+        "多路径视图标题写清路径条件",
+        "主动询问异常态、超时态、取消态是否完整"
+      ]
+    },
+    {
+      "id": 39,
+      "prompt": "帮我画一个按角色分泳道的下单流程图。",
+      "expected_output": "用 LikeC4 嵌套容器实现泳道：stage 类元素作泳道容器，步骤作为子元素嵌套，视图 include 容器本身。不得写 swimlane 或 lane（该语法不存在）。",
+      "files": [],
+      "expectations": [
+        "用 stage 类嵌套容器实现泳道而非 swimlane 语法",
+        "步骤作为泳道容器的子元素嵌套",
+        "说明这不是真泳道、布局不保证竖列",
+        "按角色而非按步骤划分泳道"
+      ]
+    },
+    {
+      "id": 40,
+      "prompt": "用 Mermaid 画个类图吧，LikeC4 画不了继承。",
+      "expected_output": "不降级。用 LikeC4 嵌套表达包含、关系表达依赖，继承写入 description 并列为待人工核对项，说明继承无对应这一代价。",
+      "files": [],
+      "expectations": [
+        "未降级到 Mermaid 或 PlantUML",
+        "用嵌套 + 依赖关系表达并说明继承的代价",
+        "把继承关系列为待人工核对项"
+      ]
+    },
+    {
+      "id": 41,
+      "prompt": "数据模型要能看到字段和一对多关系。",
+      "expected_output": "用 LikeC4 store 承载实体、关系标签标注基数说明字段清单放在 I 层或技术设计中；说明模型无字段级表达的代价，不降级到 Mermaid erDiagram。",
+      "files": [],
+      "expectations": [
+        "用 store 承载实体而未降级",
+        "基数写在关系标签上",
+        "说明字段清单不塞进模型的原因"
+      ]
+    },
+    {
+      "id": 42,
+      "prompt": "我在订单服务里加了新的支付方式分支，帮我看看这个改动。",
+      "expected_output": "识别起点为 SRC 层，执行自下而上推演：先上升到 UI / I / F-NF / US 确认范围，再逐层下钻。不得只改源码就交付。",
+      "files": [],
+      "expectations": [
+        "识别为 SRC 起点并走自下而上路径",
+        "上升到 UI 层确认界面是否需同步",
+        "上升到 I 层确认业务语义与状态机是否变",
+        "上升到 US 层确认范围未超出原始需求"
+      ]
+    },
+    {
+      "id": 43,
+      "prompt": "代码里实现了部分退款能力，但用户故事里没提这个需求。",
+      "expected_output": "识别为需求与实现脱节，这本身是一个红点。停下向用户说明并交裁决：扩展原 US 验收标准还是新建独立用户故事，不自行决定。",
+      "files": [],
+      "expectations": [
+        "把需求与实现脱节标记为红点",
+        "停下并交用户裁决归属",
+        "未自行扩展 US 范围"
+      ]
+    },
+    {
+      "id": 44,
+      "prompt": "我改了服务的一个返回值类型，需要改哪些设计？",
+      "expected_output": "先做双向推演确定受影响层：升到 UI 确认展示是否变、升到 I 确认业务语义、升到 F/NF 确认功能框架与质量属性，再下钻到 SRC。若业务语义不能从代码判断，标记为待用户确认。",
+      "files": [],
+      "expectations": [
+        "执行推演而非直接列出要改的层",
+        "UI / I / F-NF / US 各层均被覆盖",
+        "业务语义未从代码反推，标记待用户确认"
+      ]
+    },
+    {
+      "id": 45,
+      "prompt": "推演做到一半发现还有几个红点没解决，能先交付吗？",
+      "expected_output": "不可交付。闭环条件要求每个红点都有结论：已补齐设计、已边界化影响面、有具体验证动作或明确列为待补证。存在未下钻或无原因无动作的红点时不得停止推演。",
+      "files": [],
+      "expectations": [
+        "拒绝在红点未闭环时交付",
+        "说明每个红点需要达到的四种结果之一",
+        "指出未下钻的红点必须继续处理"
+      ]
+    },
+    {
+      "id": 46,
+      "prompt": "我在实现层给订单流程加了个退款分支，需要改哪些设计？",
+      "expected_output": "识别起点为 I 层，执行先上升再下钻：上升到 US 确认该退款是否在原始需求范围内，再下钻到 F/NF、UI、SRC。I 层起点同样必须上升。",
+      "files": [],
+      "expectations": [
+        "识别为 I 层起点并先上升到 US",
+        "未因起点不在底层而跳过上升",
+        "上升后重新下钻并做横向扩展",
+        "范围超出时交用户裁决"
+      ]
+    },
+    {
+      "id": 47,
+      "prompt": "我把订单列表的筛选区改成了多选，业务上需要确认什么？",
+      "expected_output": "识别起点为 UI 层，先上升到 I 层确认业务语义、再上升到 US 确认范围。反向还要问「这个界面改动对应哪个业务步骤」，找不到对应就是无源之水。",
+      "files": [],
+      "expectations": [
+        "识别为 UI 层起点并先上升",
+        "上升到 I 层确认业务语义",
+        "反向确认界面改动对应的业务步骤",
+        "上升到 US 做范围裁决"
+      ]
+    },
+    {
+      "id": 48,
+      "prompt": "推演已经画了三张图了，红点还是那些，能直接出结论吗？",
+      "expected_output": "不可直接出结论。三张图若无新证据则为空转。必须说明：每轮应取到新的最高保真证据把红点转绿或边界化；若证据确实取不到，应改变策略（换证据来源或交用户），而不是继续画图。",
+      "files": [],
+      "expectations": [
+        "识别无新证据的轮次为空转",
+        "要求每轮伴随证据变化",
+        "建议改变策略而非继续画图"
       ]
     }
   ]
