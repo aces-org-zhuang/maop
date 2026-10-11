@@ -178,16 +178,13 @@ model {
       description 'src/services/payment-client.js — 调用支付网关。'
     }
 
-    // US → 能力：有 US 要求这项能力
+    // 清单对应：清单项的来源，不是路径环节
     us_place .trace f_order '要求'
     us_pay .trace f_payment '要求'
 
-    // 能力 → I 逻辑
-    f_order .trace i_goal '实现目标'
-    f_order .trace i_state '实现状态'
-    f_order .trace i_step '实现步骤'
-
-    // I → UI → SRC
+    // 下钻路径：US → I → UI → SRC，中途不经过 F
+    us_place .trace i_step '落为业务步骤'
+    us_pay .trace i_goal '落为业务目标'
     i_step .trace ui_interaction '反馈交互'
     i_state .trace ui_information '展示状态'
     ui_interaction .trace src_checkout '触发源码'
@@ -199,6 +196,15 @@ model {
   }
 }
 ```
+
+**注意两组边的语义不同**：
+
+| 边组 | 语义 | 是否路径环节 |
+| --- | --- | --- |
+| `us_place .trace f_order '要求'` | 清单项由哪条 US 要求 | **否** |
+| `us_place .trace i_step '落为业务步骤'` | US 下钻到 I | **是** |
+
+前者是清单对应关系，后者才是下钻路径。**混为一谈就会读成「US 必须先经过 F 才能到 I」。**
 
 **链内没有任何 NF 元素。**
 
@@ -252,15 +258,13 @@ model {
       description 'src/repositories/audit-repository.js — 按订单号回溯。'
     }
 
-    // US → 质量属性：有 US 要求这项能力
+    // 清单对应：清单项由哪条 US 要求
     us_peak .trace nf_latency '要求'
     us_audit .trace nf_auditability '要求'
 
-    // 质量属性 → I 逻辑
-    nf_latency .trace i_perf '实现判定'
-    nf_auditability .trace i_audit '实现查询'
-
-    // I → UI → SRC
+    // 下钻路径：同样不经过 NF
+    us_peak .trace i_perf '落为判定逻辑'
+    us_audit .trace i_audit '落为查询逻辑'
     i_perf .trace ui_warning '反馈提示'
     i_audit .trace ui_trace '展示结果'
     ui_warning .trace src_probe '触发提示'
@@ -269,30 +273,40 @@ model {
 }
 ```
 
-**NF 链同样完整闭环**：
+**NF 链的清单对应边与下钻路径边，语义同样要分清**——`us_peak .trace nf_latency` 是清单来源，`us_peak .trace i_perf` 才是路径。
 
-| 环 | NF 链的内容 | 对应 F 链的 |
-| --- | --- | --- |
-| US | US-003 超时提示、US-004 操作可回溯 | US-001 / US-002 |
-| 能力单元 | NF-001 时延、NF-002 可审计 | F-001 / F-002 |
-| I 逻辑 | I-101 性能判定、I-102 审计查询 | I-001 / I-003 |
-| UI | UI-101 超时提示、UI-102 耗时查询 | UI-001 / UI-002 |
-| SRC | SRC-101 计时探针、SRC-102 审计存储 | SRC-001 / SRC-002 |
+**NF 链与 F 链结构同构**：
 
-**结构完全同构。** 差别只在切分维度与编号段：F 链用 `F-` / `I-0xx` / `SRC-0xx`，NF 链用 `NF-` / `I-1xx` / `SRC-1xx`。
+| 位置 | NF 链的内容 | 对应 F 链的 | 是什么 |
+| --- | --- | --- | --- |
+| 路径环节 | US-003 超时提示、US-004 操作可回溯 | US-001 / US-002 | **在路径上** |
+| 能力单元清单 | NF-001 时延、NF-002 可审计 | F-001 / F-002 | **不在路径上** |
+| 路径环节 | I-101 性能判定、I-102 审计查询 | I-001 / I-003 | **在路径上** |
+| 路径环节 | UI-101 超时提示、UI-102 耗时查询 | UI-001 / UI-002 | **在路径上** |
+| 路径环节 | SRC-101 计时探针、SRC-102 审计存储 | SRC-001 / SRC-002 | **在路径上** |
+
+**下钻路径两条链完全相同**：`US → I → UI → SRC`。差别在切分维度、清单内容与编号段：F 链用 `F-` / `I-0xx` / `SRC-0xx`，NF 链用 `NF-` / `I-1xx` / `SRC-1xx`。
 
 ---
 
 ## 禁止的边
 
-**跨链边是硬错误**：
+**把清单挂进路径，或跨链引用**：
 
 ```c4
-nf_latency .trace feat_checkout_f.i_step '约束步骤耗时'      // 错：NF 挂进 F 链
+nf_latency .trace feat_checkout_f.i_step '约束步骤耗时'      // 错：NF 挂进路径环节
 nf_latency .trace feat_checkout_f.us_place '约束验收标准'    // 错：NF 指向 F 链的 US
+us_place .trace f_order .trace i_step '串联'                  // 错：把清单串进下钻路径
 ```
 
-**为什么错**：跨链边等于在推 F 的过程中「顺手检视一下 NF」。切面一旦进入主链，就会在每次推进时被反复提及，最终把 F 的视图撑爆。
+**为什么错**：前两条是在推 F 的过程中「顺手检视 NF」；第三条是把旁挂的清单挤进了必经路径，读起来像「US 必须先经过 F 才能到 I」。
+
+**正确写法**：清单对应与下钻路径是**两组独立的边**，共享同一个 US 端点：
+
+```c4
+us_place .trace f_order  '要求'          // 清单对应：清单项的来源
+us_place .trace i_step   '落为业务步骤'   // 下钻路径：US → I
+```
 
 **注意**：模板中两条链虽然引用了同一个 `specification` 的 element kind，但**互不引用对方的元素**。两条链的编号段不同（F 链 `F-`/`I-0xx`，NF 链 `NF-`/`I-1xx`），避免阅读时混淆。
 
@@ -434,7 +448,7 @@ views {
 
 ```text
 起点：NF 链
-   ↓ 链内完整推演（US → NF → I → UI → SRC）
+   ↓ 链内完整推演（下钻路径 US → I → UI → SRC）
    ↓ 关联查询：本次 NF 单元在 SRC 层触达了哪些组件？
    ↓ 起第二条推演：在关联的 F 链上重跑红绿循环
    ↓ F 链推演完，再查关联 NF → 还有未覆盖的质量属性？
@@ -523,8 +537,8 @@ views {
 
 **两条链各自闭环**
 
-- [ ] F 链完整：US → F → I → UI → SRC
-- [ ] NF 链完整：US → NF → I → UI → SRC
+- [ ] F 链下钻路径完整：US → I → UI → SRC
+- [ ] NF 链下钻路径完整：US → I → UI → SRC
 - [ ] **链内未出现对方链的元素**
 - [ ] **无跨链边**（`nf → F 链元素` 一律禁止）
 - [ ] 每个能力单元有来自 US 的入追溯边
