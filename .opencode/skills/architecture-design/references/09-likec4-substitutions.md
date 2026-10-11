@@ -289,6 +289,64 @@ model {
 
 **字段清单仍应写在 I 层或技术设计中**，模型只表达实体与关系。这个分工要明确，不要试图用图承载字段定义。
 
+### 数据模型与数据流的关系
+
+**ER 表达「有什么结构」，DFD 表达「数据怎么流」。两者是不同视图，不可互相替代。**
+
+| | 数据模型全景（ER） | DFD 全景 |
+| --- | --- | --- |
+| 元素 | 持久化实体（`store`） | 全部数据载体 + UI 边界 |
+| 关系 | 从属、引用 | 数据流 `.flow`、载体转换 `.convert` |
+| 回答 | 存储长什么样 | 这个字段从哪来、改它要动几处 |
+| 视图类型 | `element view` | `dynamic view variant sequence` |
+
+```c4
+specification {
+  element dto { style { shape rectangle } }
+  element vo { style { shape rectangle } }
+  element entity { style { shape rectangle } }
+  element dataAccess { style { shape cylinder } }
+  element converter { style { shape mobile } }
+
+  relationship flow { notation '数据流' line solid color blue }
+  relationship convert { notation '转换' line dashed color muted }
+}
+
+model {
+  feat_f = feature 'Feature-001-F 结算下单' {
+    ui_order = uiSurface 'UI-001 下单交互' { }
+    in_order = dto 'IN-001 订单提交入参' { description 'src/dto/order-request.dto.ts' }
+    biz_order = entity 'BIZ-001 订单业务对象' { description 'src/domain/order.ts' }
+    pod_order = store 'POD-001 订单持久化实体' { description 'src/repository/order-record.ts' }
+    out_order = vo 'OUT-001 订单出参视图' { description 'src/dto/order-view.dto.ts' }
+    dao_order = dataAccess 'DAO-001 订单数据访问' { description 'src/repository/order-repository.ts' }
+    cvt_order = converter 'CVT-001 订单载体转换器' { description 'src/convert/order-converter.ts' }
+
+    ui_order .flow in_order '提交'
+    in_order .convert biz_order '转换为业务对象'
+    biz_order .convert pod_order '落为持久化实体'
+    pod_order .flow dao_order '写入'
+    dao_order .flow out_order '查询返回'
+    cvt_order .trace pod_order '负责 POD→OUT 映射'
+    cvt_order .trace out_order '负责 OUT→UI 映射'
+  }
+}
+```
+
+### 实测坑位（likec4 1.58.0）
+
+| 坑 | 表现 | 处置 |
+| --- | --- | --- |
+| **`shape hexagon` 非法** | `Could not resolve reference` 并列出可用 shape | 转换单元用 `mobile` |
+| **`color purple` 非法** | `Could not resolve reference to CustomColor named 'purple'` | 用 `muted` / `secondary` / `green` 等已知值 |
+| **`views` 块内`//` 注释不可用** | `Expecting token of type 'EOF'` | 注释写在 `views` 块外 |
+| **`dynamic view` 不支持 `of <容器>`** | `Expecting token of type '}' but found 'of'` | DFD 全景不写 `of`；`view of` 仅 element view 支持 |
+| **链式写边 `a .trace b .trace c`** | 被解释为**链式路径** `a→b→c`，`b` 成中间节点报 `Invalid parent-child relationship` | 拆成两条独立边：`a .trace b` 与 `a .trace c` |
+| **`dynamic view` 与 `view` 混在同一 `views` 块** | `Expecting token of type '}' but found 'view'` | 拆成两个文件，各自一个 `views` 块 |
+| **视图名全局唯一** | `Duplicate view 'nfPanorama'` | 数据流视图按 `dfd-<链序号>-<主题>` 命名 |
+
+**为什么数据流要有独立的 relationship**：`trace` 表达「为什么连」，`.flow` 表达「数据往哪走」，`.convert` 表达「在哪一步换了载体」。三者用同一箭头时，「字段从哪来」这个问题无法在图上回答。
+
 ---
 
 ## 六、信息设计（字段、列表、筛选）

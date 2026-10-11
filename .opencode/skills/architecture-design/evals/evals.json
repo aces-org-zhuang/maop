@@ -842,6 +842,66 @@
         "给出拆分后的两张表内容",
         "要求一个指标只出现一次"
       ]
+    },
+    {
+      "id": 73,
+      "prompt": "SRC 环除了源码文件目录视图和全景，还需要什么？数据流要不要也画一张？",
+      "expected_output": "要。SRC 环必备四张视图：SRC 目录视图（本链，含源码路径）、DFD 全景（数据从入口到落库经过哪些载体、在哪转换）、数据载体全景（有哪些载体、各自什么角色）、数据模型全景（持久化实体与关系）。DFD 用 dynamic view variant sequence，表达不出 of 容器作用域。没有 DFD 就无法回答「这个字段从哪来」「改它要动几处」，而这是实现阶段最频繁的改动。",
+      "files": [],
+      "expectations": [
+        "指出 SRC 环必备四张视图",
+        "说明 DFD 全景用 dynamic view",
+        "指出 dynamic view 不能写 of",
+        "说明缺 DFD 导致字段来源不可答"
+      ]
+    },
+    {
+      "id": 74,
+      "prompt": "数据对象用 PO、VO、BO、DTO 这些命名前缀可以吗？我们项目里就是这么写的。",
+      "expected_output": "不建议作为编号前缀。这些术语各语言定义不一，同一术语在不同项目含义可能相反，且 PO 与 POD 视觉上几乎无法区分。按角色归一：IN 入参 / BIZ 业务对象 / POD 持久化实体 / OUT 出参视图 / DAO 数据访问 / CVT 转换器。项目现有术语可写在显示名里，如 POD-001 订单持久化实体 PO。这样跨项目编号一致，且角色语义明确。",
+      "files": [],
+      "expectations": [
+        "给出角色前缀替代方案",
+        "说明术语跨语言定义不一致",
+        "指出 PO 与 POD 视觉易混",
+        "允许术语写入显示名保留项目习惯"
+      ]
+    },
+    {
+      "id": 75,
+      "prompt": "转换逻辑我打算直接写在各个 service 方法里用 set 一个个赋值，就不用单独建转换器了吧？",
+      "expected_output": "要单独建转换单元并给独立编号 CVT。转换散落在各处时，没人能回答「字段变更会影响哪些转换」——改一个字段要逐个方法排查，漏一处就是线上数据不一致。转换集中在一处是数据契约可维护的前提。门禁：每个转换单元必须在 description 写明覆盖哪几个载体之间的映射，不写等于字段变更时无人知道改哪里。",
+      "files": [],
+      "expectations": [
+        "要求转换集中到独立单元",
+        "说明散落转换的漏改风险",
+        "要求 CVT 编号",
+        "要求 description 写明覆盖范围"
+      ]
+    },
+    {
+      "id": 76,
+      "prompt": "我写了 cvt_order .trace pod_order .trace biz_order 表达转换关系，validate 报 Invalid parent-child relationship。",
+      "expected_output": "LikeC4 把 a .trace b .trace c 解释为链式路径 a→b→c，b 成了中间节点，于是报 parent-child。拆成两条独立边即可：cvt_order .trace pod_order 与 cvt_order .trace biz_order。补充坑位：views 块内不支持 // 注释；dynamic view 不支持 of 容器作用域；dynamic view 与 view 不能混在同一个 views 块；shape hexagon 与 color purple 都非法。",
+      "files": [],
+      "expectations": [
+        "解释链式写法被当作链式路径",
+        "给出拆成两条独立边的修法",
+        "列出相关实测坑位",
+        "未误判为父子嵌套错误"
+      ]
+    },
+    {
+      "id": 77,
+      "prompt": "ER 图和数据流图是不是一回事？一个就够了吧。",
+      "expected_output": "不是。ER 表达「有什么结构」——store 承载持久化实体，关系表达从属与引用；DFD 表达「数据怎么流」——元素是全部数据载体加 UI 边界，关系是 .flow 数据流与 .convert 载体转换。ER 回答存储长什么样，DFD 回答这个字段从哪来、改它要动几处。两者不可互相替代，都要出。注意 shape database 非法，用 cylinder 或 storage。",
+      "files": [],
+      "expectations": [
+        "区分 ER 与 DFD 的表达对象",
+        "区分两者回答的问题",
+        "指出两者不可互相替代",
+        "提醒 shape database 非法"
+      ]
     }
   ]
 }

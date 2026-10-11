@@ -74,6 +74,13 @@
 ├─ 数据模型 / ER
 │  └─ store 承载实体，关系承载引用                            无字段级、无基数标注
 │
+├─ 数据流 / DFD
+│  └─ dynamic view variant sequence，载体为元素                不支持 of 容器作用域
+│     .flow 数据流 + .convert 载体转换，两类边必须分开
+│
+├─ 数据载体全景（PO / VO / BO / DTO 等）
+│  └─ 按角色编号 IN / BIZ / POD / OUT / DAO / CVT              不按术语归类
+│
 ├─ 信息设计（字段 / 列表 / 筛选 / 状态）
 │  └─ 界面为容器，字段为元素                                  字段多时图较宽
 │

@@ -309,10 +309,16 @@ likec4 format          # 就地格式化
 | 现象 | 根因 | 修正 |
 | --- | --- | --- |
 | `Could not resolve reference to ElementKind named 'database'` | `shape database` 不是合法值 | 改 `shape cylinder` 或 `shape storage` |
+| `Could not resolve reference to ElementKind named 'hexagon'` | `shape hexagon` 不是合法值（并在报错里列出可用值） | 转换单元用 `shape mobile` |
+| `Could not resolve reference to CustomColor named 'purple'` | `color purple` 不是合法值 | 用 `muted` / `secondary` / `green` 等已知值 |
+| `views` 块内解析到下一个 `view` 时报 `Expecting token of type 'EOF'` | **`views` 块内不支持 `//` 行注释** | 注释写在 `views` 块外，或用块注释 |
+| `Expecting token of type '}' but found 'of'`（在 `dynamic view` 上） | **`dynamic view` 不支持 `of <容器>` 作用域语法** | DFD / 时序全景不写 `of`；`view of <feature>` 仅 `view` 支持 |
 | 关系后 `Expecting token of type '}' but found 'style'` | 关系上不能挂 `style` 块 | 移视图层局部 style |
 | `Duplicate view 'index'` | 视图名全局重复 | 改名或删除重复定义 |
 | 视图属性后解析失败 | 属性未前置 | title/description/tags/link 写在 predicate 前 |
 | 跨文件容器元素找不到 | 用了 short name | 改 FQN |
 | deployment 块 `Line 1` 解析失败 | 用了 `instance of` | 改 `instanceOf` |
+| `Invalid parent-child relationship` | 父子嵌套元素之间连了边，**或链式写边 `a .trace b .trace c`**（被解释为链式路径，`b` 成中间节点） | 删掉父子边；链式写法拆成两条独立边 |
+| `views` 块内解析到下一个 `view` 时报 `Expecting token of type '}'` | **`dynamic view` 与 `view` 不能混在同一个 `views` 块** | 拆成两个文件，各自一个 `views` 块 |
 | `The requested module 'likec4' does not provide an export named 'defineConfig'` | 1.58.0 **不导出 `defineConfig`**（实测只导出 `LikeC4`） | `likec4.config.ts` 改为 `export default { ... }` 默认导出对象；该错误只 WARN 不阻断，`validate` 仍能跑通，但项目配置未生效 |
 | EBADENGINE / ERR_MODULE_NOT_FOUND | Node 版本低于要求 | 升级到 >= 22.22.3 |
