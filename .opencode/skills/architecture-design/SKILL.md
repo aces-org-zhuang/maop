@@ -62,7 +62,8 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 - **版本敏感，官方文档不等于可用能力**。本技能语法经 **likec4 1.58.0 实机验证**。官方文档描述最新版本，`opt` `loop` `break` `alt` `try` 与视图文件夹分组在 1.58.0 **不可用**。写入未验证语法会让 `validate` 失败。
 - **能力边界必须诚实**。LikeC4 不支持类图、状态机图、严格 UML 用例图；不得伪造或用错误语法硬凑，改走轨道二/三并向用户说明。
 - **写入前必须 validate**。任何 `.c4` 写入后必须运行 `likec4 validate`，非零退出码时不得声明完成。
-- **跨文件必须用 FQN**。short name 不跨文件继承容器作用域，跨文件引用一律使用完整限定名，否则 `validate` 必然失败。
+- **FQN 的必要性来自嵌套，不来自「跨文件」这件事本身**。实测：跨文件引用**顶层**元素用 short name 合法；引用**嵌套**元素必须 FQN。七层设计链中只有 SRC 层大量嵌套，因此 FQN 规则主要服务 SRC 层。US / F / NF / I / UI 五层是扁平设计，不应被迫写冗长全名。详见 `references/02-multifile-and-fqn.md`。
+- **视图类型由设计层的性质决定，不由文件组织决定**。各层的读者不同，视图形态也不同：US/F/NF 用 element view，I 层步骤用 dynamic view 且状态机走 Mermaid，UI 层交互面用 element view 而信息设计用表格，SRC 层用 element view + sequence，构建部署用 deployment view。详见 `references/07-seven-layer-design.md`。
 - **设计资产分层存放**。单服务设计放项目层设计仓并由主仓 submodule 引用；跨项目视图放全局聚合层，禁止把多个项目的设计塞进同一个被 submodule 引用的仓（会造成 gitlink 指针抖动）。
 - **依赖必须锁版本**。LikeC4 跨版本 DSL 行为差异大，`package.json` 用精确版本号而非 `^`。
 - **环境问题不是阻塞理由，先降级再上报**。MCP 自带 LikeC4 内核，零安装即可查询模型；本地无 CLI 时走 npx，再不行就只读降级交付。详见 `references/04b-environment-and-sync.md`。
@@ -150,7 +151,7 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 
 - `references/00-diagram-routing.md`: 图类型路由决策树、UML 映射、能力边界与轨道选择。
 - `references/01-likec4-basics.md`: specification、model、element 样式、静态视图、部署视图和命名约定。
-- `references/02-multifile-and-fqn.md`: 多文件组织、`import`/`extend`、跨文件 FQN 规则和常见校验失败。
+- `references/02-multifile-and-fqn.md`: 多文件组织、`import`/`extend`、嵌套元素的 FQN 规则（主要服务 SRC 层）与常见校验失败。
 - `references/03-dynamic-views.md`: 动态视图语法、sequence 变体、并发块、限制，以及 1.58.0 实测可用/不可用特性表。
 - `references/04-project-integration.md`: 项目结构、构建脚本、CLI 校验、MCP 接入、CI 漂移检测。
 - `references/04b-environment-and-sync.md`: 零依赖回退链（不装 likec4 也能查询模型）、MCP watch 热重载、同步查看方式、故障降级规则。
@@ -176,6 +177,6 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 
 ## 交付标准
 
-默认交付模型与视图位置、验证路径（MCP / CLI / npx / 只读降级）、`likec4 validate` 结果或未校验原因、跨文件引用是否已用 FQN、设计资产归属层级（项目层或全局层），以及 LikeC4 无法表达而改走轨道二/三的部分及其原因。
+默认交付模型与视图位置、验证路径（MCP / CLI / npx / 只读降级）、`likec4 validate` 结果或未校验原因、嵌套元素引用是否已用 FQN（顶层元素不应被强制写全名）、设计资产归属层级（项目层或全局层），以及 LikeC4 无法表达而改走轨道二/三的部分及其原因。
 
 **进入实现阶段时追加**：架构交接规格落盘路径（`vendor/design/<repo>/handoff/current.md`）与模型版本、取事实方式（MCP 或读文件）、规格各部分对应的模型依据、置信度与未达 90% 的项、建议交接路径（直接实现 / 先技术设计 / 先完成建模），以及必须由 `technical-design` 补齐的内容清单。
