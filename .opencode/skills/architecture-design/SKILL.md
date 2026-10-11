@@ -72,6 +72,8 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 - **完整需求走七层设计链，缺层即不完整**。用户故事驱动的需求应产出 US → F/NF → I → UI → SRC 的可追溯链路，并单独说明构建部署为何此时不产出。各层读者与语言不同：I 层不含源码（换技术栈依然成立），SRC 层必须绑定真实文件路径。详见 `references/07-seven-layer-design.md`。
 - **`validate` 通过不等于能构建**。`dynamic view` 只有 `include` 没有消息时 `validate` 通过但 `build` 布局失败（`actors array must not be empty`）。交付前必须跑 `build`。
 - **交互式推进，不一次性抛全量**。设计是需要人类介入业务判断的环节，AI 负责给候选与推荐，用户负责确认业务决策。按 `references/08-design-decision-tree.md` 的节点 0-6 推进，每个 ⏸ 节点停下等确认，收尾必须输出缺口清单。一次性输出七层全部内容会导致用户在关键判断上无法纠偏，只能整体返工。
+- **推演方向由起点决定，两条路径都要闭环**。起点是 US / F / NF 则逐层下钻并每层横向扩展；起点是 SRC / UI 则先上升到 US 确认范围再下钻。源码起点的路径**不能跳过上升**——否则会漏掉界面同步、业务语义变更、NF 缺口。上升到 US 时若发现改动超出原始需求，**立即停下交用户裁决**，不自行扩大范围。
+- **I 层与 US 层的业务语义不能从源码反推**。改了代码不等于业务目标变了，也不等于没变。这必须问用户，是最容易出错的地方。
 - **改完要能同步看到效果**。优先用 MCP 查询确认；需要可视化时用 `serve` 热更新。
 - **架构不推导出代码**。模型回答「有什么、在哪里、怎么连」，代码实现回答「怎么做、对不对」。业务规则、边界条件、接口签名无法从拓扑推导，因此本技能**不产出可执行代码**，也不声称「架构即开发」。
 - **消除重复而非消除实现**。本技能的交接价值在于：实现阶段不必重新分析架构组件、依赖方向与部署约束。交接按 `references/06-architecture-handoff.md` 执行，产出 `technical-design` 交接包的架构子集。
@@ -80,6 +82,7 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 
 1. 先读取 `references/00-diagram-routing.md`，确认目标图类型及其 LikeC4 表达方式。
 1a. 需要泳道、状态机、分支、类图、数据模型或信息设计时，同时读取 `references/09-likec4-substitutions.md` 取平替方案与代价。
+1b. **变更起点不是 US 层，或需确认关联影响是否覆盖时，先按 `references/10-design-reasoning.md` 做双向推演**，确定受影响层后再逐层与用户交互。推演在前，交互在后。
 2. **先定验证路径**：读取 `references/04b-environment-and-sync.md`，判断走 MCP 还是 CLI。不要因环境缺 likec4 而停止交付。
 3. 读取 `references/01-likec4-basics.md`，确认 specification、命名、样式和目录约定。
 4. 涉及多文件、跨项目引用或导入既有模型时，读取 `references/02-multifile-and-fqn.md`。
@@ -121,6 +124,9 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 ```text
 任何架构建模请求
   -> Stage 0 Intake 与图类型路由: references/00-diagram-routing.md
+
+需要分析变更影响面、确认关联影响是否覆盖、或变更起点不是 US 层
+  -> Stage 0c 设计双向推演: references/10-design-reasoning.md
 
 需要泳道、状态机、条件分支、循环、异常、类图、数据模型或信息设计的 LikeC4 表达
   -> Stage 0b 平替方案与代价: references/09-likec4-substitutions.md
@@ -193,6 +199,7 @@ opt   loop   break   alt   when   else   try   catch   finally
 
 - `references/00-diagram-routing.md`: 图类型决策树、LikeC4 表达与代价对照、禁止写入的语法。
 - `references/09-likec4-substitutions.md`: 泳道、状态机、条件分支、循环、异常、类图、数据模型、信息设计的 LikeC4 平替写法与各自代价（全部实测通过）。
+- `references/10-design-reasoning.md`: 设计双向推演。自上而下与自下而上两条路径、横向扩展触发条件、范围裁决、闭环停止条件。沿用 reasoning-map 的渐进地图与 RED/GREEN 模式。
 - `references/01-likec4-basics.md`: specification、model、element 样式、静态视图、部署视图和命名约定。
 - `references/02-multifile-and-fqn.md`: 多文件组织、`import`/`extend`、嵌套元素的 FQN 规则（主要服务 SRC 层）与常见校验失败。
 - `references/03-dynamic-views.md`: 动态视图语法、sequence 变体、并发块、限制，以及 1.58.0 实测可用/不可用特性表。
