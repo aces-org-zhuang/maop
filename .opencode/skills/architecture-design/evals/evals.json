@@ -278,6 +278,63 @@
         "说明必须与模型同 commit 的理由",
         "指出主仓 docs 承载规则而非设计产物"
       ]
+    },
+    {
+      "id": 25,
+      "prompt": "我们要上线一个新的订单退款功能，帮我把设计梳理一遍。",
+      "expected_output": "触发七层设计链：产出 US 用户故事、F/NF 框架、I 层业务目标与状态与步骤（不含源码）、UI 交互与信息设计、SRC 层源码映射（绑定真实路径），并说明构建部署此时不产出。",
+      "files": [],
+      "expectations": [
+        "按 US → F/NF → I → UI → SRC 七层组织产出",
+        "I 层不含任何源码元素",
+        "SRC 层绑定真实文件路径",
+        "说明构建部署为何此时不产出",
+        "编号符合 US-/F-/NF-/I-/UI-/SRC- 规范"
+      ]
+    },
+    {
+      "id": 26,
+      "prompt": "订单状态有草稿、已校验、支付中、已确认、已取消五态，帮我画出来。",
+      "expected_output": "识别为 I 层业务状态机，走轨道二用 Mermaid stateDiagram-v2；LikeC4 1.58.0 不支持状态机（opt/loop/alt/try 均不可用），不得在 LikeC4 中硬凑。",
+      "files": [],
+      "expectations": [
+        "改用 Mermaid stateDiagram-v2 而非 LikeC4",
+        "说明 LikeC4 1.58.0 不支持状态机",
+        "状态迁移标注触发条件以满足可审计性"
+      ]
+    },
+    {
+      "id": 27,
+      "prompt": "这个功能的实现层里我需要写清楚用哪个类、哪个表。",
+      "expected_output": "拒绝把源码细节放进 I 层：I 层判据是换技术栈依然成立，出现类名表名即越界。类设计应落在 SRC 层，业务状态与步骤留在 I 层。",
+      "files": [],
+      "expectations": [
+        "指出 I 层不得含类名、表名等源码细节",
+        "说明 I 层判据：换技术栈设计依然成立",
+        "把类设计引导到 SRC 层"
+      ]
+    },
+    {
+      "id": 28,
+      "prompt": "我只在 LikeC4 里 include 了元素做时序图，validate 过了但页面显示不出来。",
+      "expected_output": "命中 build 才能发现的坑：dynamic view 只有 include 没有消息时 validate 通过但 build 布局失败（actors array must not be empty）。必须补显式消息，并要求交付前跑 build 而非只跑 validate。",
+      "files": [],
+      "expectations": [
+        "指出 validate 通过但 build 布局失败的差异",
+        "要求补显式消息",
+        "将 build 纳入交付前必跑命令"
+      ]
+    },
+    {
+      "id": 29,
+      "prompt": "给界面设计一下信息部分，要展示哪些字段、列表和筛选条件？",
+      "expected_output": "产出 UI 层信息设计：字段、列表区、可见区域、筛选区、扩展功能（通知/导出），并强制覆盖空状态、加载状态、错误状态、无权限状态。",
+      "files": [],
+      "expectations": [
+        "覆盖字段、列表区、筛选区、扩展功能",
+        "强制包含空/加载/错误/无权限四种状态",
+        "与交互设计区分开，两者都要有"
+      ]
     }
   ]
 }

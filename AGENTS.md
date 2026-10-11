@@ -84,6 +84,24 @@ A produced spec that nobody reads is not a handoff. These rules make the consume
 - **`development-workflow` triggers the architecture node on conditions, not judgement.** New component, dependency direction change, deployment change, or an undefined integration/data boundary routes to `architecture-design` before `technical-design`. Expressing a diagram alone stays with `expression-delivery`.
 - **The chain is verified end to end, not half.** A change to this flow is not done until a real spec has been produced from a real model and discovered at the documented path.
 
+## Seven-Layer Design Chain Rules
+
+A complete requirement passes through seven layers with different readers and different languages. `architecture-design/references/07-seven-layer-design.md` owns the detail.
+
+```text
+US → F / NF → I → UI → SRC → build & deploy
+```
+
+- **Layer boundaries are enforced, not advisory.** The I (implementation) layer holds business goals, business states, and business steps with **no source code**. The test is simple: the I layer stays valid if a different person implements it with a different stack. A class name, function name, table name, or file path in the I layer is a boundary violation.
+- **The SRC layer must bind real file paths.** `SRC-002 订单服务 → src/services/order-service.js`. An SRC element without a path is not yet implemented; mark it `待补充`. Conversely, every SRC element must answer which I step or UI element it serves — otherwise it is out-of-scope implementation.
+- **Both UI sub-designs are mandatory.** Interaction design (how the system responds) and information design (fields, lists, visible areas, filter areas, notifications). Information design must cover empty, loading, error, and no-permission states, or implementation will invent them inconsistently.
+- **NF items must be measurable.** "The system should be fast" is not acceptable; `P95 ≤ 500ms` is. Unmeasurable NF items are marked `待补充`, never invented.
+- **Incomplete chains are reported, not silently skipped.** If a US cannot reach SRC, delivery states which layer is missing.
+- **Tool routing is per layer.** Business state machines go to Mermaid `stateDiagram-v2` because LikeC4 1.58.0 cannot express them. Class design goes to PlantUML. Element structure and dependency direction stay in LikeC4.
+- **Build and deploy are not a design layer.** They depend on the final implementation; producing them during design guarantees rework. Record deployment *constraints* that affect architecture, not the full diagram.
+- **Numbering is permanent.** `US-` `F-` `NF-` `I-` `UI-` `SRC-` plus three digits, globally unique, never recycled after deletion.
+- **`build` is mandatory, not optional.** A `dynamic view` with only `include` and no messages passes `validate` but fails `build` with `actors array must not be empty`. Always run both.
+
 ## Documentation Rules
 
 - `docs/` stores stable project knowledge only.
