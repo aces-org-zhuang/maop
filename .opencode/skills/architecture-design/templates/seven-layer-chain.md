@@ -6,20 +6,30 @@
 
 ## 文件布局
 
+按层拆分，**只有 SRC 层会继续细分**（也只有它需要 FQN）：
+
 ```text
 src/
   specification.c4       六层 element kind 定义
   model/
-    us.c4                US 用户故事
+    us.c4                US 层
     framework.c4         F 功能框架 + NF 非功能框架
     implementation.c4    I 实现层：业务目标 / 状态 / 步骤
     ui.c4                UI 界面层：交互设计 + 信息设计
-    src.c4               SRC 源码层
+    src.c4               SRC 源码层（子系统多时可拆 src/checkout.c4 等）
   views/
-    chain.c4             必备五个视图
+    chain-overview.c4    链路总览（跨层）
+    chain-business.c4    业务设计视角（排除 SRC）
+    chain-source.c4      源码实现视角
+    chain-frame.c4       F 与 NF 框架
+    chain-sequence.c4    设计时序
   states/                I 层业务状态机（Mermaid，非 LikeC4）
     <us-id>-state.md
 ```
+
+**FQN 规则归属**：上五层（US / F / NF / I / UI）是扁平设计，跨文件引用顶层元素用 short name 即可。只有 SRC 层大量嵌套，跨文件引用嵌套元素时才必须 FQN。
+
+详见 `references/02-multifile-and-fqn.md`。
 
 ---
 
@@ -159,10 +169,19 @@ model {
 
 ## src/model/src.c4
 
+SRC 层是唯一会嵌套的层。下例中 `src_checkout` 内含子组件，因此**跨文件引用 `src_checkout.routes` 必须写 FQN**：
+
 ```c4
 model {
   src_checkout = srcUnit 'SRC-001 结算入口' {
     description 'src/routes/checkout-routes.js — 接收下单请求并派发。'
+
+    routes = srcUnit 'SRC-001-1 结算路由' {
+      description 'src/routes/checkout-routes.js — 路由注册。'
+    }
+    validate = srcUnit 'SRC-001-2 校验器' {
+      description 'src/services/checkout-validator.js — 订单校验。'
+    }
   }
   src_orderService = srcUnit 'SRC-002 订单服务' {
     description 'src/services/order-service.js — 订单状态机与校验。'
@@ -174,9 +193,13 @@ model {
   ui_interaction -> src_checkout '触发'
   ui_information -> src_orderService '读取'
   src_checkout -> src_orderService '调用'
-  src_orderService -> src_paymentClient '调用'
+  src_orderService -> src_paymentClient '支付'
 }
 ```
+
+**嵌套元素跨文件引用必须 FQN**：`include src_checkout.routes` 合法，`include routes` 报 `Could not resolve reference to Referenceable named 'routes'`。
+
+顶层元素跨文件仍可用 short name——`include src_orderService` 无需写前缀。FQN 的必要性来自嵌套，不来自「跨文件」这件事本身。
 
 **每个 SRC 单元必须绑定真实文件路径**。写不出路径说明该单元尚未实现，标 `待补充`。
 
@@ -185,6 +208,8 @@ model {
 ---
 
 ## src/views/chain.c4
+
+视图按层组织。**注意 `chainSource` 引用嵌套元素时用了 FQN**（`src_checkout.routes`），而引用顶层元素直接用 short name：
 
 ```c4
 views {
@@ -209,7 +234,8 @@ views {
     description 'I 层落到 SRC 层的映射，每个源码单元对应真实文件路径。'
     include i_goal, i_state, i_step
     include ui_interaction, ui_information
-    include src_checkout, src_orderService, src_paymentClient
+    include src_checkout.routes
+    include src_orderService, src_paymentClient
   }
 
   view chainFrame {
@@ -267,15 +293,47 @@ LikeC4 1.58.0 不支持状态机（`opt` `loop` `alt` `try` 均不可用）。�
 
 ## 交付检查
 
+**追溯完整性**
+
 - [ ] 每个 US 链路完整：US → F/NF → I → UI → SRC
+- [ ] 缺失层已明确报告，未静默跳过
+- [ ] 关系标签说明了「为什么连接」，不是笼统的「关联」
+- [ ] 每个 SRC 单元能回答「服务于哪个 I 步骤或 UI 元素」
+
+**命名与层级**
+
+- [ ] 编号格式正确：`US-` `F-` `NF-` `I-` `UI-` `SRC-` + 三位数字
+- [ ] 编号全局唯一，删除元素后未回收编号
 - [ ] I 层无源码元素（无类名、函数名、表名、文件名）
-- [ ] 每个 SRC 单元绑定真实文件路径
-- [ ] 交互设计与信息设计都有产出
+- [ ] SRC 层每个单元绑定真实文件路径
+- [ ] UI 层同时产出交互设计与信息设计
 - [ ] 信息设计覆盖空/加载/错误/无权限四种状态
-- [ ] NF 项均可度量，不可度量的已标 `待补充`
-- [ ] 业务状态机走 Mermaid 而非 LikeC4
+- [ ] NF 项均可度量，不可度量者标 `待补充`
+
+**FQN 与多文件**
+
+- [ ] SRC 层的嵌套元素跨文件引用使用 FQN
+- [ ] 上五层（US / F / NF / I / UI）未被无谓地强制 FQN，顶层元素用 short name
+- [ ] 文件按层拆分，仅 SRC 层继续细分
+- [ ] 视图文件按层命名，视图名全局唯一
+
+**视图类型**
+
+- [ ] 各层使用的视图类型与 `references/07-seven-layer-design.md` 第五节一致
+- [ ] I 层步骤用 `dynamic view`，状态机走 Mermaid
+- [ ] SRC 层时序用 `variant sequence`
+- [ ] 存在业务设计视角且已排除 SRC
+- [ ] `dynamic view` 含有显式消息（仅 `include` 会导致 build 布局失败）
+
+**工具路由**
+
+- [ ] 业务状态机走 Mermaid `stateDiagram-v2`
+- [ ] 类设计走 PlantUML，未在 LikeC4 中伪造
+- [ ] 走轨道二/三的部分已向用户说明原因
+- [ ] 构建部署图未产出，或已说明为何此时产出
+
+**校验**
+
 - [ ] `likec4 validate` 通过
 - [ ] `likec4 build` 通过（validate 不足以发现布局错误）
 - [ ] `likec4 format --check` 通过
-- [ ] 业务设计视角视图已排除 SRC 元素
-- [ ] 构建部署图未产出，或已说明为何此时产出

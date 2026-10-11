@@ -335,6 +335,39 @@
         "强制包含空/加载/错误/无权限四种状态",
         "与交互设计区分开，两者都要有"
       ]
+    },
+    {
+      "id": 30,
+      "prompt": "views 里引用了另一个文件里 system 下的 component，报找不到元素。",
+      "expected_output": "命中 FQN 规则的真实适用范围：嵌套元素跨文件引用必须 FQN（sys.component），顶层元素用 short name 合法。不应把它表述为『跨文件一律用 FQN』。",
+      "files": [],
+      "expectations": [
+        "指出嵌套元素必须 FQN 并给出正确写法",
+        "说明顶层元素跨文件用 short name 是合法的",
+        "不把规则表述为跨文件一律用 FQN"
+      ]
+    },
+    {
+      "id": 31,
+      "prompt": "US 用户故事和 F 功能框架要不要也写完整限定名？",
+      "expected_output": "不必。US / F / NF / I / UI 五层是扁平设计，顶层元素跨文件用 short name 即可。FQN 的必要性来自嵌套，只有 SRC 层大量嵌套。",
+      "files": [],
+      "expectations": [
+        "回答不需要强制 FQN",
+        "说明 FQN 必要性来自嵌套而非跨文件",
+        "指出只有 SRC 层大量嵌套"
+      ]
+    },
+    {
+      "id": 32,
+      "prompt": "这个需求要画哪些图？用什么视图类型？",
+      "expected_output": "按层给出视图类型：US/F/NF 用 element view；I 层步骤用 dynamic view、状态机走 Mermaid；UI 交互面用 element view、信息设计用表格；SRC 用 element view + sequence；构建部署用 deployment view。视图类型由层性质决定，不由文件组织决定。",
+      "files": [],
+      "expectations": [
+        "按层对应视图类型而非按图名罗列",
+        "说明 I 层状态机走 Mermaid",
+        "指出视图类型由层性质决定而非文件组织"
+      ]
     }
   ]
 }

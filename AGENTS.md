@@ -100,6 +100,9 @@ US → F / NF → I → UI → SRC → build & deploy
 - **Tool routing is per layer.** Business state machines go to Mermaid `stateDiagram-v2` because LikeC4 1.58.0 cannot express them. Class design goes to PlantUML. Element structure and dependency direction stay in LikeC4.
 - **Build and deploy are not a design layer.** They depend on the final implementation; producing them during design guarantees rework. Record deployment *constraints* that affect architecture, not the full diagram.
 - **Numbering is permanent.** `US-` `F-` `NF-` `I-` `UI-` `SRC-` plus three digits, globally unique, never recycled after deletion.
+- **FQN belongs to the SRC layer.** The necessity for qualified names comes from nesting, not from crossing file boundaries. Cross-file references to **top-level** elements work with short names; only **nested** elements require FQN. Since only the SRC layer nests heavily, US / F / NF / I / UI stay flat and must not be forced into verbose qualified names.
+- **View types follow the layer, not the file layout.** US/F/NF use element views; I-layer steps use dynamic views with state machines in Mermaid; UI interaction surfaces use element views while information design uses tables; SRC uses element views plus sequence views; build and deploy use deployment views after delivery lands.
+- **Files split by layer, not by technical domain.** Only the SRC layer subdivides further. Grouping views by folder is unsupported in 1.58.0, so express layer ownership in filenames.
 - **`build` is mandatory, not optional.** A `dynamic view` with only `include` and no messages passes `validate` but fails `build` with `actors array must not be empty`. Always run both.
 
 ## Documentation Rules
