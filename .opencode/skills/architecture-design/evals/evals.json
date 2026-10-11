@@ -902,6 +902,66 @@
         "指出两者不可互相替代",
         "提醒 shape database 非法"
       ]
+    },
+    {
+      "id": 78,
+      "prompt": "SRC 环除了代码结构和数据流，还需要建模什么？",
+      "expected_output": "还有两个维度：对外接口与运行时。接口需要 API 清单（回答对外暴露什么）与泳道时序（回答一次调用怎么走），泳道按调用方向划分而非操作步骤；运行时需要进程视图，用 deployment 的 processNode 与 threadNode 表达进程到线程的层级，1.58.0 不自带这两个节点，须先在 specification 声明。合起来 SRC 有四个独立维度：代码结构、数据流、对外接口、运行时。",
+      "files": [],
+      "expectations": [
+        "指出 SRC 环的四个独立维度",
+        "区分 API 清单与泳道时序的职责",
+        "要求 processNode 与 threadNode 先声明",
+        "指出泳道按调用方向而非步骤划分"
+      ]
+    },
+    {
+      "id": 79,
+      "prompt": "我想在 LikeC4 里画进程和线程的关系图，能直接用 element 嵌套表达吗？",
+      "expected_output": "不能用逻辑模型的 element，要用 deployment。1.58.0 不自带进程与线程节点，须在 specification 里自定义 deploymentNode processNode 与 threadNode。进程到线程的层级靠嵌套表达，不连边——连边会报 Invalid parent-child relationship。产出用 deployment view。",
+      "files": [],
+      "expectations": [
+        "指出必须用 deployment 而非 element",
+        "要求自定义 deploymentNode",
+        "说明层级靠嵌套不连边",
+        "指出产出用 deployment view"
+      ]
+    },
+    {
+      "id": 80,
+      "prompt": "我在 deployment 里写了 apiInst = instanceOf platform.api { threadNode pool ... }，报错 Could not resolve reference to Referenceable named pool。",
+      "expected_output": "instanceOf 节点内部不能再嵌任何节点。改成兄弟关系：apiInst = instanceOf platform.api 与 processNode apiProc { threadNode pool } 并列。这样表达也完全合理——进程归属与线程构成是两个正交问题，同一接口可部署到多个进程，同一进程的线程池也不因接口而变。",
+      "files": [],
+      "expectations": [
+        "指出 instanceOf 节点内不可嵌节点",
+        "给出兄弟关系的正确写法",
+        "说明该写法在语义上可接受",
+        "解释进程归属与线程构成正交"
+      ]
+    },
+    {
+      "id": 81,
+      "prompt": "API 的泳道应该按什么分？按「提交订单」「发起支付」「确认」这些步骤分可以吗？",
+      "expected_output": "不可以。按步骤分每条泳道只有一个元素，失去分组意义。API 泳道必须按调用方向划分：客户端 / 服务端接入 / 领域层 / 外部依赖。这样一次调用在图上呈现为从接入层到领域层再到外部的横向流动，读者一眼看出边界在哪。另外泳道只是API 时序的分组手段，不要把 UI 或 SRC 单元搬进泳道容器。",
+      "files": [],
+      "expectations": [
+        "拒绝按步骤划分泳道",
+        "给出按调用方向的划分方式",
+        "解释按步骤分为何失去分组意义",
+        "强调泳道不是存放位置"
+      ]
+    },
+    {
+      "id": 82,
+      "prompt": "系统对外的接口我在 SRC 单元的 description 里写一下就行了吧，不用单独建 API 元素。",
+      "expected_output": "不行，接口是独立元素不是 SRC 单元的别名。一个单元可暴露多个接口，一个接口也可能由多个单元协作实现——写在 description 里这两种情况都表达不了。接口编号 API-<三位编号> <METHOD> <路径> <名称>，并绑定真实路由位置（文件 + 行号）。有了独立元素才能产出 API 清单与泳道时序，读者才能知道一次调用穿过哪些边界。",
+      "files": [],
+      "expectations": [
+        "指出接口须独立建模",
+        "说明一个单元可暴露多个接口",
+        "给出 API 编号格式",
+        "说明独立建模才能产出清单与时序"
+      ]
     }
   ]
 }

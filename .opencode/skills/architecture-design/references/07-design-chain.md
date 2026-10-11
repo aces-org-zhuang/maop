@@ -238,6 +238,95 @@ model {
 
 > 实测记录（likec4 1.58.0）：以上写法 `✓ Valid`，含数据流全景与载体全景视图，`build` 输出 `✓ all views layouted`。
 
+#### 对外接口与运行时（SRC 环的另两个维度）
+
+SRC 环还承载两个常被遗漏的维度：**系统对外暴露什么接口**，以及**这些接口在什么进程与线程里跑**。
+
+##### 对外接口（API）
+
+接口是 SRC 环的独立元素，**不是 SRC 单元的别名**。`SRC-001 结算路由` 是代码单元，`POST /orders` 是它暴露的契约——一个单元可暴露多个接口，一个接口也可能由多个单元协作实现。
+
+**命名规范**：
+
+| 类型 | 格式 | 示例 |
+| --- | --- | --- |
+| 接口 | `API-<三位编号> <METHOD> <路径> <名称>` | `API-001 POST /orders 提交订单` |
+
+**METHOD 保留原文大写**（`GET` / `POST` / `PUT` / `DELETE` / `PATCH`），路径原样保留。
+
+```c4
+model {
+  feat_f = feature 'Feature-001-F 结算下单' {
+
+    // 泳道：按调用方向分组，不是按步骤
+    lane_client = feature '客户端' {
+      ui_chat = uiSurface 'UI-001 会话界面' { }
+    }
+    lane_edge = feature '服务端接入' {
+      api_placeOrder = apiEndpoint 'API-001 POST /orders 提交订单' {
+        description 'src/routes/checkout-routes.js:42'
+      }
+      api_getOrder = apiEndpoint 'API-002 GET /orders/{id} 查订单' {
+        description 'src/routes/checkout-routes.js:58'
+      }
+    }
+    lane_core = feature '领域层' {
+      svc_order = srcUnit 'SRC-002 订单服务' { }
+    }
+    lane_ext = feature '外部依赖' {
+      ext_pay = system '支付网关' { }
+    }
+  }
+}
+```
+
+**泳道按调用方向划分**，不按操作步骤。这是 `09-likec4-substitutions.md` 里泳道平替方案的延续。
+
+**接口必须绑定真实路由位置**（路径 + 行号写在 `description`）。写不出位置的接口说明尚未实现，标 `待补充`。
+
+##### 进程与线程
+
+进程与线程**属于运行投影，用 `deployment` 表达，不用逻辑模型的 element**。
+
+```c4
+deployment {
+  environment prod '生产环境' {
+    zone appZone '应用区' {
+      machine appHost 'app-1 · 4C8G' {
+        apiInst = instanceOf feat_f.lane_edge.api_placeOrder
+        processNode apiProc 'API 进程 · node src/server.js' {
+          threadNode httpPool 'HTTP 线程池 · 16' { }
+          threadNode workPool '工作线程池 · 8' { }
+        }
+        processNode workerProc 'Worker 进程 · node src/worker.js' {
+          threadNode timerThread '定时器线程' { }
+          threadNode queueThread '消费线程 · 4' { }
+        }
+      }
+    }
+  }
+}
+```
+
+**`processNode` 与 `threadNode` 需在 specification 里声明**，`deployment` 里不会自动生成。
+
+**进程与线程的层级靠嵌套表达，不连边**——包含关系已由嵌套给出，连边报 `Invalid parent-child relationship`。
+
+**关键边界（实测）**：`instanceOf` 节点**内部不能再嵌节点**。所以「接口挂到哪台机器的哪个进程」与「进程里有哪些线程」**只能并列表达，不能嵌套**：
+
+```c4
+machine appHost 'app-1' {
+  apiInst = instanceOf feat_f.lane_edge.api_placeOrder   // 逻辑挂载：哪个进程承载这个接口
+  processNode apiProc 'API 进程' {
+    threadNode httpPool 'HTTP 线程池' { }               // 运行时：进程内的线程
+  }
+}
+```
+
+**为什么这样也是可接受的**：进程归属与线程构成是两个正交问题——同一个接口可以在多个进程上部署（多副本），同一个进程的线程池也不因接口而变。
+
+> 实测记录（likec4 1.58.0）：`processNode` 嵌 `threadNode` `✓ Valid`；`instanceOf` 节点内嵌节点报 `Could not resolve reference to Referenceable named 'httpPool'`；两者同级共存 `✓ Valid`；`deployment view` + `include prod.**` `build` 通过。
+
 ### 构建与部署（SRC 的运行投影）
 
 **方向是 SRC → 部署，不是上下游环节。** 部署视图的全部内容来自 `instanceOf` 引用 SRC 元素，它是对SRC 的展开，不是 SRC 的后继。
@@ -265,6 +354,7 @@ model {
 | 数据载体 · 出参 | `OUT-<三位编号> <名称>` | `OUT-001 订单出参视图` |
 | 数据访问单元 | `DAO-<三位编号> <名称>` | `DAO-001 订单数据访问` |
 | 转换单元 | `CVT-<三位编号> <名称>` | `CVT-001 订单载体转换器` |
+| 对外接口 | `API-<三位编号> <METHOD> <路径> <名称>` | `API-001 POST /orders 提交订单` |
 
 编号**全局唯一且不复用**。删除元素后编号不回收，避免历史引用失效。
 
@@ -283,6 +373,9 @@ model {
 | 数据模型全景 | `erm-<链序号>-<主题>` | `erm-001-订单` |
 | SRC 目录视图 | `srcdir-<链序号>-<主题>` | `srcdir-001-结算` |
 | SRC 全景 | `srcpano-<链序号>` | `srcpano-001` |
+| API 清单 | `api-<链序号>-<主题>` | `api-001-结算` |
+| API 泳道时序 | `apiseq-<链序号>-<场景>` | `apiseq-001-提交订单` |
+| 进程与线程视图 | `proc-<环境>` | `proc-prod` |
 
 **视图名全局唯一**，不同文件间也不得重名（likec4 实测：重名报 `Duplicate view`）。
 
@@ -509,6 +602,8 @@ views {
 | **SRC DFD 全景** | 全部链的数据载体 + 数据流与转换 | 业务数据怎么流过系统、在哪里被转换 |
 | **SRC 数据载体全景** | 全部链的载体分类与角色 | 有哪些载体、各自承担什么角色 |
 | **SRC 数据模型全景** | 全部链的持久化实体与关系 | 存储结构长什么样、实体怎么关联 |
+| **SRC API 清单** | 全部链的对外接口 | 系统对外暴露哪些契约 |
+| **SRC 进程与线程** | 环境级 | 接口跑在哪台机器的哪个进程的哪个线程 |
 
 **全景是独立视图，不是链视图的附属内容。**
 
@@ -516,36 +611,38 @@ views {
 
 **为什么不在每张链视图里检视其他环**：那会让每张图都重复承载其他维度，视图被撑爆，评审时无从下手。**聚合发生在全景层，不发生在链视图层。**
 
-### SRC 环额外必备：四张视图
+### SRC 环额外必备：六张视图
 
-SRC 环比其他环多三层要求：**它对应真实磁盘资产，且业务数据要流过它。**
+SRC 环比其他环多四层要求：**它对应真实磁盘资产，业务数据要流过它，系统对外暴露接口，且接口跑在具体进程与线程里。**
 
-| 视图 | 范围 | 回答什么 | 视图类型 |
-| --- | --- | --- | --- |
-| **SRC 目录视图** | 本链 | 源码文件怎么组织，每个单元对应哪个文件 | `element view of <feature>` |
-| **SRC DFD 全景** | 本链 | 数据从入口到落库经过哪些载体、在哪里转换 | `dynamic view variant sequence` |
-| **数据载体全景** | 本链 | 有哪些载体、各自什么角色 | `element view` |
-| **数据模型全景** | 本链 | 持久化实体与关系 | `element view`（`store` 承载实体） |
+| 视图 | 范围 | 含源码路径 | 回答 | 视图类型 |
+| --- | --- | --- | --- | --- |
+| **SRC 目录视图** | 本链 | **是** | 源码文件怎么组织，每个单元对应哪个文件 | `view of <feature>` |
+| **SRC DFD 全景** | 本链 | 否 | 数据从入口到落库经过哪些载体、在哪里转换 | `dynamic view variant sequence` |
+| **数据载体全景** | 本链 | 否 | 有哪些载体、各自什么角色 | `element view` |
+| **数据模型全景** | 本链 | 否 | 持久化实体与关系 | `element view`（`store` 承载实体） |
+| **API 清单** | 本链 | 否（带路由位置） | 对外暴露哪些接口 | `element view` |
+| **API 泳道时序** | 本链 | 否 | 一次调用穿过哪些泳道 | `dynamic view variant sequence` |
+| **进程与线程视图** | 环境级 | 否 | 接口跑在哪个进程的哪个线程 | `deployment view` |
+| SRC 全景 | **跨全部链** | 否 | 源码单元全貌 | `element view` |
 
 SRC 单元是**唯一带真实文件路径**的环（路径写在 `description` 里）。没有目录视图，实现方拿到的是一堆抽象单元，看不到实际的文件布局。
 
 目录视图的读法：**按嵌套层级展开，每个单元标出它对应的源码路径**。子单元是父单元所在文件内的拆分，父子不连边（包含关系已由嵌套表达）。
 
-**四张视图的区别**：
-
-| 视图 | 范围 | 含源码路径 | 回答 |
-| --- | --- | --- | --- |
-| SRC 目录视图 | 本链 | **是** | 文件怎么组织 |
-| DFD 全景 | 本链 | 否 | 数据怎么流、在哪转换 |
-| 数据载体全景 | 本链 | 否 | 有哪些载体、什么角色 |
-| 数据模型全景 | 本链 | 否 | 存储结构与实体关系 |
-| SRC 全景 | **跨全部链** | 否 | 源码单元全貌 |
-
 **DFD 全景是数据维度的唯一视图**。没有它，「这个字段从哪来」「改这个字段要动几个地方」无法回答——而这正是实现阶段最频繁的改动。
 
-> 实测记录（likec4 1.58.0）：`dynamic view` **不支持 `of <容器>` 作用域语法**（报 `Expecting token of type '}' but found 'of'`），`view of <feature>` 支持。DFD 全景因此不能写 `of`，归属靠 `description` 与元素嵌套表达。
+**API 清单回答「有什么」，API 泳道时序回答「怎么走」**。只有清单时，接口之间的调用关系要靠读者自己拼。
+
+**进程与线程视图是环境级的，不属于单条链**——同一接口在生产与预发的进程结构可能不同。它的命名不带链序号。
+
+**API 泳道时序的泳道按调用方向划分**（客户端 / 服务端接入 / 领域层 / 外部依赖），不按操作步骤。详见 `09-likec4-substitutions.md` 的泳道平替。
+
+> 实测记录（likec4 1.58.0）：`dynamic view` **不支持 `of <容器>` 作用域语法**（报 `Expecting token of type '}' but found 'of'`），`view of <feature>` 支持。DFD 全景与 API 泳道时序因此不能写 `of`，归属靠 `description` 与元素嵌套表达。
 
 > `views` 块内**不支持 `//` 行注释**，会报 `Expecting token of type 'EOF'`。注释写在块外。
+
+> `dynamic view` 与 `element view` 不能混在同一 `views` 块，拆成两个文件。
 
 ---
 
@@ -560,8 +657,9 @@ SRC 单元是**唯一带真实文件路径**的环（路径写在 `description` 
 | F / NF | `element view` | element | 产品与架构 | NF 项与 F 项同图可见，便于对照 |
 | I | `dynamic view`（步骤序列） | dynamic + 状态机视图 | 业务方 | **不含 SRC 元素** |
 | UI | `element view`（交互面） | element + 表格 | 设计与前端 | 交互与信息设计都要出现 |
-| SRC | `element view` + `variant sequence` + `dynamic view`（DFD） | element + dynamic | 工程师 | 嵌套引用需 FQN；数据载体与数据流必须建模 |
+| SRC | `element view` + `variant sequence` + `dynamic view`（DFD） | element + dynamic + deployment | 工程师 | 嵌套引用需 FQN；数据载体、数据流、接口、进程线程都要建模 |
 | 数据载体 | `element view`（载体全景） | element | 工程师 | 按角色编号，不绑语言术语 |
+| 对外接口 | `element view`（API 清单）+ `dynamic view`（泳道时序） | element + dynamic | 工程师 + 前端 | 泳道按调用方向划分 |
 | 构建部署 | `deployment view` | deployment | 运维 | 交付后才产出 |
 
 ### 为什么这样分配
@@ -642,6 +740,9 @@ dep-<环境>         部署视图
 15. **数据载体清单**：按角色（`IN` / `BIZ` / `POD` / `OUT` / `DAO` / `CVT`）列出，附真实文件路径
 16. **DFD 全景是否产出**，数据从入口到落库的完整链路与转换点
 17. **数据载体三条门禁的校验结果**：持久化载体有对应 DAO、转换单元写明覆盖范围、业务载体未直连 DAO
+18. **API 清单**：编号、METHOD、路径、路由位置（文件 + 行号）
+19. **API 泳道时序是否产出**，泳道是否按调用方向划分而非按步骤
+20. **进程与线程视图是否产出**，`processNode` / `threadNode` 是否已在 specification 声明
 
 ---
 

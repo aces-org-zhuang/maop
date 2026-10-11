@@ -269,6 +269,72 @@ views {
 - 节点可写属性：`title`、`#tag`、`technology`、`description`（支持 Markdown）、`link`、`style`。
 - **命名实例** `api = instanceOf platform.api` 用于同一元素有多个副本；单实例可写匿名 `instanceOf platform.worker`。
 - 部署模型**自动继承逻辑模型的关系**，无需重复声明；部署特有关系（如主从复制）才在 `deployment` 里追加。
+
+### 进程与线程：需要自定义 deploymentNode
+
+1.58.0 **不自带进程与线程节点**，必须自己声明。层级靠嵌套表达，进程内可嵌线程：
+
+```c4
+specification {
+  deploymentNode environment { style { shape rectangle } }
+  deploymentNode zone { style { shape rectangle } }
+  deploymentNode machine { style { shape rectangle } }
+  deploymentNode processNode { style { shape rectangle } }
+  deploymentNode threadNode { style { shape rectangle } }
+}
+```
+
+```c4
+deployment {
+  environment prod '生产环境' {
+    zone appZone '应用区' {
+      machine appHost 'app-1 · 4C8G' {
+        apiInst = instanceOf feat_f.lane_edge.api_placeOrder
+        processNode apiProc 'API 进程 · node src/server.js' {
+          threadNode httpPool 'HTTP 线程池 · 16' { }
+          threadNode workPool '工作线程池 · 8' { }
+        }
+        processNode workerProc 'Worker 进程' {
+          threadNode timerThread '定时器线程' { }
+          threadNode queueThread '消费线程 · 4' { }
+        }
+      }
+    }
+  }
+}
+
+views {
+  deployment view procProd {
+    title '进程与线程视图 · 生产环境'
+    include prod.**
+  }
+}
+```
+
+**关键边界（实测）**：`instanceOf` 节点**内部不能再嵌任何节点**。
+
+```c4
+machine appHost 'app-1' {
+  apiInst = instanceOf feat_f.api_placeOrder {
+    threadNode httpPool 'HTTP 线程池' { }    // 错：报 Could not resolve reference to Referenceable named 'httpPool'
+  }
+}
+```
+
+正确做法是**逻辑挂载与线程树并列**：
+
+```c4
+machine appHost 'app-1' {
+  apiInst = instanceOf feat_f.api_placeOrder   // 这个进程承载哪个逻辑元素
+  processNode apiProc 'API 进程' {
+    threadNode httpPool 'HTTP 线程池' { }       // 进程内有哪些线程
+  }
+}
+```
+
+**为什么这样是可接受的**：进程归属与线程构成是两个正交问题——同一接口可部署到多个进程（多副本），同一进程的线程池也不因接口而变。
+
+**进程与线程之间不连边**，包含关系已由嵌套给出，连边报 `Invalid parent-child relationship`。
 - `instanceOf` 可部署到任意层级，不限叶子节点（共享数据库常用）。
 - 部署视图复用逻辑模型的谓词语法，但过滤的是部署节点与实例。
 - 标签语义：实例标签 = 逻辑标签 + 部署标签；子节点标签不自动继承。
@@ -318,6 +384,8 @@ likec4 format          # 就地格式化
 | 视图属性后解析失败 | 属性未前置 | title/description/tags/link 写在 predicate 前 |
 | 跨文件容器元素找不到 | 用了 short name | 改 FQN |
 | deployment 块 `Line 1` 解析失败 | 用了 `instance of` | 改 `instanceOf` |
+| `Could not resolve reference to Referenceable named 'httpPool'`（在 deployment 内） | **`instanceOf` 节点内部不能再嵌节点** | 把 `instanceOf` 与 `processNode` / `threadNode` 并列为兄弟 |
+| `Could not resolve reference to ElementKind named 'system'` | specification 未声明 `element system` | 补声明（`person` / `system` 都需显式声明，不自动存在） |
 | `Invalid parent-child relationship` | 父子嵌套元素之间连了边，**或链式写边 `a .trace b .trace c`**（被解释为链式路径，`b` 成中间节点） | 删掉父子边；链式写法拆成两条独立边 |
 | `views` 块内解析到下一个 `view` 时报 `Expecting token of type '}'` | **`dynamic view` 与 `view` 不能混在同一个 `views` 块** | 拆成两个文件，各自一个 `views` 块 |
 | `The requested module 'likec4' does not provide an export named 'defineConfig'` | 1.58.0 **不导出 `defineConfig`**（实测只导出 `LikeC4`） | `likec4.config.ts` 改为 `export default { ... }` 默认导出对象；该错误只 WARN 不阻断，`validate` 仍能跑通，但项目配置未生效 |

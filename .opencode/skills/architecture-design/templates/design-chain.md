@@ -20,18 +20,22 @@ src/
     feature-001-nf.c4              NF 链视图
     dfd-001-f.c4                   DFD 全景（dynamic view，不写 of）
     carrier-001-f.c4               数据载体全景
+    apiseq-001-f.c4                API 泳道时序（dynamic view，不写 of）
+    api-001-f.c4                   API 清单（element view）
     panorama.c4                    各环全景（全量设计时）
   deployment/
-    prod.c4                        交付后才产出
+    prod.c4                        进程与线程（deployment view）
 ```
 
 **为什么物理隔离而不是同一个 Feature 下双侧**：文件嵌套本身就是一种「顺便检视」的暗示。只要 NF 住在 F 的目录里，AI 和人在推 F 时都会忍不住去看它。平级分文件比口头约定可靠。
 
 **编号用序号关联交付主题**：`Feature-<序号>-F` 与 `Feature-<序号>-NF` 成对，靠序号说明它们服务于同一次交付。
 
-**`dynamic view` 不支持 `of <容器>`**（实测报 `Expecting token of type '}' but found 'of'`）。DFD 等 dynamic view 的归属靠 `description` 与元素嵌套表达。
+**`dynamic view` 不支持 `of <容器>`**（实测报 `Expecting token of type '}' but found 'of'`）。DFD 与 API 泳道时序的归属靠 `description` 与元素嵌套表达。
 
 **`views` 块内不要写 `//` 注释**（实测解析失败）。注释写在块外。
+
+**`dynamic view` 与 `element view` 不能混在同一 `views` 块**（实测报 `Expecting token of type '}' but found 'view'`）。拆成两个文件。
 
 ---
 
@@ -108,7 +112,46 @@ specification {
     }
   }
 
+  // 对外接口：独立元素，不是 SRC 单元的别名
+  element apiEndpoint {
+    style {
+      shape rectangle
+    }
+  }
+  element person {
+    style {
+      shape person
+    }
+  }
+
   element system
+
+  // 进程与线程：1.58.0 不自带，必须自定义 deploymentNode
+  deploymentNode environment {
+    style {
+      shape rectangle
+    }
+  }
+  deploymentNode zone {
+    style {
+      shape rectangle
+    }
+  }
+  deploymentNode machine {
+    style {
+      shape rectangle
+    }
+  }
+  deploymentNode processNode {
+    style {
+      shape rectangle
+    }
+  }
+  deploymentNode threadNode {
+    style {
+      shape rectangle
+    }
+  }
 
   relationship trace {
     notation '追溯'
@@ -189,6 +232,30 @@ model {
     }
     i_step = implStep 'I-003 业务步骤' {
       description '主干步骤：提交订单 → 校验库存 → 发起支付 → 确认。'
+    }
+
+    // 对外接口与泳道。泳道按调用方向划分，不按操作步骤。
+    // **泳道只是 API 时序的分组手段，不是新的存放位置**——UI 与 SRC 单元保持平铺，
+    // 泳道内只放接口、外部系统，以及泳道内独立的环节。
+    actor_cs = person '客服'
+
+    lane_edge = feature '服务端接入泳道' {
+      api_placeOrder = apiEndpoint 'API-001 POST /orders 提交订单' {
+        description 'src/routes/checkout-routes.js:42'
+      }
+      api_getOrder = apiEndpoint 'API-002 GET /orders/{id} 查订单' {
+        description 'src/routes/checkout-routes.js:58'
+      }
+    }
+    lane_core = feature '领域层泳道' {
+      i_stepLane = implStep 'I-003 业务步骤（泳道内）' {
+        description '领域层泳道内的订单服务环节。'
+      }
+    }
+    lane_ext = feature '外部依赖泳道' {
+      ext_pay = system '支付网关' {
+        description '第三方支付渠道。'
+      }
     }
 
     ui_interaction = uiSurface 'UI-001 交互设计' {
@@ -464,19 +531,24 @@ views {
 | **SRC DFD 全景** | 全部链的载体 + 数据流与转换 | 数据怎么流过系统、在哪被转换 |
 | **数据载体全景** | 全部链的载体分类与角色 | 有哪些载体、各自什么角色 |
 | **数据模型全景** | 全部链的持久化实体与关系 | 存储结构长什么样 |
+| **API 清单** | 全部链的对外接口 | 系统对外暴露哪些契约 |
+| **进程与线程** | 环境级 | 接口跑在哪台机器的哪个进程的哪个线程 |
 
 **聚合发生在全景层，不发生在链视图层。**
 
-### SRC 环额外必备：四张视图
+### SRC 环额外必备：六张视图
 
-SRC 环比其他环多三层要求：**它对应真实磁盘资产，且业务数据要流过它。**
+SRC 环比其他环多四层要求：**它对应真实磁盘资产，业务数据要流过它，系统对外暴露接口，且接口跑在具体进程与线程里。**
 
 | 视图 | 范围 | 含源码路径 | 回答 |
 | --- | --- | --- | --- |
 | SRC 目录视图 | 本链 | **是** | 文件怎么组织 |
-| **DFD 全景** | 本链 | 否 | 数据怎么流、在哪转换 |
+| DFD 全景 | 本链 | 否 | 数据怎么流、在哪转换 |
 | 数据载体全景 | 本链 | 否 | 有哪些载体、什么角色 |
 | 数据模型全景 | 本链 | 否 | 存储结构与实体关系 |
+| **API 清单** | 本链 | 否（带路由位置） | 对外暴露哪些接口 |
+| **API 泳道时序** | 本链 | 否 | 一次调用穿过哪些泳道 |
+| **进程与线程视图** | 环境级 | 否 | 接口跑在哪台机器的哪个进程的哪个线程 |
 | SRC 全景 | **跨全部链** | 否 | 源码单元全貌 |
 
 **DFD 全景是数据维度的唯一视图。** 没有它，「这个字段从哪来」「改这个字段要动几处」无法回答——而这正是实现阶段最频繁的改动。
@@ -511,12 +583,111 @@ views {
 }
 ```
 
-**命名**：`dfd-<链序号>-<主题>` / `carrier-<链序号>-<主题>` / `erm-<链序号>-<主题>` / `srcdir-<链序号>-<主题>`。**视图名全局唯一**，重名报 `Duplicate view`。
+**命名**：`dfd-<链序号>-<主题>` / `carrier-<链序号>-<主题>` / `erm-<链序号>-<主题>` / `srcdir-<链序号>-<主题>` / `api-<链序号>-<主题>` / `apiseq-<链序号>-<场景>` / `proc-<环境>`。**视图名全局唯一**，重名报 `Duplicate view`。
 
 **NF 链同理**，用1xx 段载体编号。DFD 视图里两条链的数据流互不引用。
 
 > 实测：`✓ Valid`，`build` 输出 `✓ all views layouted`。
-> 坑：`dynamic view` 不支持 `of`；`views` 块内 `//` 注释会导致解析失败。
+> 坑：`dynamic view` 不支持 `of`；`views` 块内 `//` 注释会导致解析失败；`dynamic view` 与 `element view` 不能同块。
+
+### API 清单与API 泳道时序
+
+**接口是独立元素，不是 SRC 单元的别名。** 一个单元可暴露多个接口，一个接口也可能由多个单元协作实现。
+
+**泳道按调用方向划分，不按操作步骤**。**泳道只是分组手段，不是新的存放位置**——UI 与 SRC 单元保持平铺，泳道内只放接口、外部系统与泳道内独立环节。
+
+```c4
+views {
+  view api001F of feat_checkout_f.lane_edge {
+    title 'API 清单 · Feature-001-F 结算下单'
+    description '本链对外接口清单，含方法、路径与路由位置。'
+    include feat_checkout_f.lane_edge.api_placeOrder
+    include feat_checkout_f.lane_edge.api_getOrder
+  }
+}
+```
+
+```c4
+views {
+  dynamic view apiseq001F {
+    variant sequence
+    title 'API 泳道时序 · Feature-001-F 提交订单'
+    description '泳道按调用方向：接入 → 领域 → 外部。dynamic view 不支持 of。'
+
+    include feat_checkout_f.actor_cs
+    include feat_checkout_f.lane_edge.api_placeOrder
+    include feat_checkout_f.lane_core.i_stepLane
+    include feat_checkout_f.lane_ext.ext_pay
+
+    feat_checkout_f.actor_cs -> feat_checkout_f.lane_edge.api_placeOrder 'POST /orders'
+    feat_checkout_f.lane_edge.api_placeOrder -> feat_checkout_f.lane_core.i_stepLane '校验并创建订单'
+    feat_checkout_f.lane_core.i_stepLane -> feat_checkout_f.lane_ext.ext_pay '调用支付网关'
+    feat_checkout_f.lane_ext.ext_pay -> feat_checkout_f.lane_core.i_stepLane '返回支付结果'
+  }
+}
+```
+
+**API 清单回答「有什么」，泳道时序回答「怎么走」。** 只有清单时，接口之间的调用关系要靠读者自己拼。
+
+**接口必须绑定真实路由位置**（路径 + 行号写在 `description`）。写不出位置的接口说明尚未实现，标 `待补充`。
+
+**编号**：`API-<三位编号> <METHOD> <路径> <名称>`，METHOD 保留原文大写，路径原样保留。例：`API-001 POST /orders 提交订单`。
+
+### 进程与线程视图
+
+进程与线程**属于运行投影，用 `deployment` 表达，不用逻辑模型的 element**。
+
+```c4
+deployment {
+  environment prod '生产环境' {
+    zone appZone '应用区' {
+      machine appHost 'app-1 · 4C8G' {
+        apiInst = instanceOf feat_checkout_f.lane_edge.api_placeOrder
+        processNode apiProc 'API 进程 · node src/server.js' {
+          threadNode httpPool 'HTTP 线程池 · 16' { }
+          threadNode workPool '工作线程池 · 8' { }
+        }
+        processNode workerProc 'Worker 进程 · node src/worker.js' {
+          threadNode timerThread '定时器线程' { }
+          threadNode queueThread '消费线程 · 4' { }
+        }
+      }
+    }
+    zone dataZone '数据区' {
+      machine dbHost 'db-1' {
+        processNode dbProc 'PostgreSQL 进程' { }
+      }
+    }
+  }
+}
+
+views {
+  deployment view procProd {
+    title '进程与线程视图 · 生产环境'
+    description '进程与线程的层级归属。逻辑挂载与线程树并列——instanceOf 节点内不可再嵌节点。'
+    include prod.**
+  }
+}
+```
+
+**`processNode` 与 `threadNode` 必须先在 specification 里声明**，1.58.0 不自带。
+
+**进程与线程的层级靠嵌套，不连边**——包含关系已由嵌套给出，连边报 `Invalid parent-child relationship`。
+
+**`instanceOf` 节点内部不能再嵌任何节点**（实测报 `Could not resolve reference to Referenceable named 'httpPool'`）。所以逻辑挂载与线程树只能并列：
+
+```c4
+machine appHost 'app-1' {
+  apiInst = instanceOf feat_checkout_f.lane_edge.api_placeOrder   // 这个进程承载哪个逻辑元素
+  processNode apiProc 'API 进程' {
+    threadNode httpPool 'HTTP 线程池' { }                        // 进程内有哪些线程
+  }
+}
+```
+
+**这样也是可接受的**：进程归属与线程构成是两个正交问题——同一接口可部署到多个进程（多副本），同一进程的线程池也不因接口而变。
+
+> 实测：全部`✓ Valid (5 files)` + `build` → `✓ all views layouted`。
 
 ### SRC 环额外必备：源码文件目录视图
 
@@ -747,6 +918,18 @@ views {
 - [ ] 数据载体全景与数据模型全景已产出
 - [ ] 两条链的载体编号段区分：F 链 0xx，NF 链 1xx
 - [ ] 四类边未混用：`trace` / `depends` / `flow` / `convert` 各自语义清晰
+
+**对外接口与运行时（SRC 环）**
+
+- [ ] 接口按 `API-<编号> <METHOD> <路径> <名称>` 编号，METHOD 大写、路径原样
+- [ ] 每个接口绑定真实路由位置（文件 + 行号），无位置者标 `待补充`
+- [ ] **API 清单已产出**
+- [ ] **API 泳道时序已产出**，泳道按**调用方向**划分而非按步骤
+- [ ] 泳道只是分组手段，UI 与 SRC 单元未因此被搬进泳道
+- [ ] **进程与线程视图已产出**，`processNode` / `threadNode` 已在 specification 声明
+- [ ] `instanceOf` 与 `processNode` / `threadNode` 为**兄弟关系**，未把节点嵌进 `instanceOf`
+- [ ] 进程与线程之间未连边（包含关系由嵌套表达）
+- [ ] 进程视图为环境级，命名不带链序号
 
 **FQN 与多文件**
 

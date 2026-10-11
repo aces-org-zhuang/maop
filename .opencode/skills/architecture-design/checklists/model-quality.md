@@ -293,6 +293,19 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 - [ ] **`dynamic view` 未写 `of <容器>`**（不支持）
 - [ ] **`dynamic view` 与 `view` 未混在同一 `views` 块**
 
+**对外接口与运行时（SRC 环）**
+
+- [ ] 接口按 `API-<编号> <METHOD> <路径> <名称>` 编号，METHOD 大写、路径原样保留
+- [ ] 每个接口绑定真实路由位置（文件 + 行号），无位置者标 `待补充`
+- [ ] **API 清单已产出**（回答「对外暴露什么」）
+- [ ] **API 泳道时序已产出**（回答「一次调用怎么走」）
+- [ ] 泳道按**调用方向**划分（客户端 / 服务端接入 / 领域层 / 外部依赖），非按操作步骤
+- [ ] 泳道只是分组手段，UI 与 SRC 单元未被搬进泳道
+- [ ] **进程与线程视图已产出**（环境级，不带链序号）
+- [ ] `processNode` / `threadNode` 已在 specification 声明
+- [ ] `instanceOf` 与 `processNode` / `threadNode` 为兄弟关系，未把节点嵌入 `instanceOf`
+- [ ] 进程与线程之间未连边
+
 **FQN 与多文件**
 
 - [ ] 跨作用域引用嵌套元素使用 FQN（`feat_checkout.us_place`）

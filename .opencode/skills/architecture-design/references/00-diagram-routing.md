@@ -81,6 +81,14 @@
 ├─ 数据载体全景（PO / VO / BO / DTO 等）
 │  └─ 按角色编号 IN / BIZ / POD / OUT / DAO / CVT              不按术语归类
 │
+├─ API 清单与泳道时序
+│  └─ element view 出清单，dynamic view 出泳道时序                泳道非真竖列
+│     泳道按调用方向分组，不按操作步骤
+│
+├─ 进程与线程
+│  └─ 自定义 deploymentNode processNode / threadNode             需先声明才可用
+│     instanceOf 节点内不可再嵌节点                              层级靠嵌套不连边
+│
 ├─ 信息设计（字段 / 列表 / 筛选 / 状态）
 │  └─ 界面为容器，字段为元素                                  字段多时图较宽
 │
