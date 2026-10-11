@@ -67,6 +67,8 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 - **依赖必须锁版本**。LikeC4 跨版本 DSL 行为差异大，`package.json` 用精确版本号而非 `^`。
 - **环境问题不是阻塞理由，先降级再上报**。MCP 自带 LikeC4 内核，零安装即可查询模型；本地无 CLI 时走 npx，再不行就只读降级交付。详见 `references/04b-environment-and-sync.md`。
 - **不把环境故障误报为模型缺陷**。`EBADENGINE` / `MODULE_NOT_FOUND` / 网络错误是环境问题；`Invalid` + 行号是模型问题。
+- **完整需求走七层设计链，缺层即不完整**。用户故事驱动的需求应产出 US → F/NF → I → UI → SRC 的可追溯链路，并单独说明构建部署为何此时不产出。各层读者与语言不同：I 层不含源码（换技术栈依然成立），SRC 层必须绑定真实文件路径。详见 `references/07-seven-layer-design.md`。
+- **`validate` 通过不等于能构建**。`dynamic view` 只有 `include` 没有消息时 `validate` 通过但 `build` 布局失败（`actors array must not be empty`）。交付前必须跑 `build`。
 - **改完要能同步看到效果**。优先用 MCP 查询确认；需要可视化时用 `serve` 热更新。
 - **架构不推导出代码**。模型回答「有什么、在哪里、怎么连」，代码实现回答「怎么做、对不对」。业务规则、边界条件、接口签名无法从拓扑推导，因此本技能**不产出可执行代码**，也不声称「架构即开发」。
 - **消除重复而非消除实现**。本技能的交接价值在于：实现阶段不必重新分析架构组件、依赖方向与部署约束。交接按 `references/06-architecture-handoff.md` 执行，产出 `technical-design` 交接包的架构子集。
@@ -80,8 +82,9 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 5. 涉及序列流程、并发或步骤下钻时，读取 `references/03-dynamic-views.md`。
 6. 需要落地项目、配置构建、接入 MCP 或接入 CI 时，按 `references/04-project-integration.md` 执行。
 7. 写入前确认目标位置：先读 `references/05-design-repo-layout.md` 判断设计资产归属层级。
-8. **建模完成并准备进入实现时，读 `references/06-architecture-handoff.md` 产出架构交接规格。**
-9. 完成后执行校验，并按 `checklists/model-quality.md` 自检。
+8. **需求涉及完整设计链时（用户故事、功能/非功能框架、业务状态与步骤、交互与信息设计、源码层映射），先读 `references/07-seven-layer-design.md` 按七层组织产出。**
+9. 建模完成并准备进入实现时，读 `references/06-architecture-handoff.md` 产出架构交接规格。
+10. 完成后执行校验，并按 `checklists/model-quality.md` 自检。
 
 ## 图类型路由（速查，likec4 1.58.0 实测）
 
@@ -121,15 +124,18 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 需要决定设计资产放项目层还是全局层
   -> Stage 5 设计仓分层: references/05-design-repo-layout.md
 
+需求涉及完整设计链（用户故事、功能/非功能框架、业务状态与步骤、交互与信息设计、源码层映射）
+  -> Stage 6 七层设计链: references/07-seven-layer-design.md
+
 建模完成，准备进入实现或需要交接给实现方
-  -> Stage 6 Architecture Handoff: references/06-architecture-handoff.md
+  -> Stage 7 Architecture Handoff: references/06-architecture-handoff.md
 ```
 
 推荐执行顺序：
 
 ```text
 00 -> 01 -> 02 -> 03 -> 04 -> 05
-                        └-> 06（进入实现前）
+                        └-> 07（六层设计链）-> 06（进入实现前）
 ```
 
 ## 工具轨道规则
@@ -150,10 +156,12 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 - `references/04b-environment-and-sync.md`: 零依赖回退链（不装 likec4 也能查询模型）、MCP watch 热重载、同步查看方式、故障降级规则。
 - `references/05-design-repo-layout.md`: 设计资产分层、仓边界、submodule 引用与指针抖动规避。
 - `references/06-architecture-handoff.md`: 架构交接规格，组件边界、依赖约束、流程锚点、部署要求与验收锚点，供实现阶段直接消费。
+- `references/07-seven-layer-design.md`: 七层设计链（US / F / NF / I / UI / SRC + 构建部署），各层边界、命名规范、追溯门禁与工具路由。
 - `checklists/model-quality.md`: 模型质量自检清单。
 - `templates/`: 可落盘模板。
 - `templates/c4-project-skeleton.md`: 新设计仓的最小文件骨架模板（已实机验证）。
 - `templates/architecture-handoff-spec.md`: 架构交接规格模板，字段与 `technical-design` 的 Handoff Mini-Spec 对齐。
+- `templates/seven-layer-chain.md`: 七层设计链落盘骨架，含已实测通过的六层 element kind 与五个必备视图。
 - `evals/evals.json`: 触发与路由评测用例。
 
 ## 边界

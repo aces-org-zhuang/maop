@@ -37,8 +37,10 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 ## 模型正确性
 
 - [ ] `likec4 validate` 通过（输出 `✓ Valid`，退出码 0）
+- [ ] `likec4 build` 通过（**不可省略**：`dynamic view` 只有 `include` 没有消息时 validate 通过但 build 报 `actors array must not be empty`）
 - [ ] `likec4 format --check` 通过（输出 `All N file(s) are formatted`）
 - [ ] 跨文件引用全部使用 FQN，无 short name 越界
+- [ ] `include` 未使用通配符（如 `f_*`），1.58.0 不支持
 - [ ] 视图属性（title / description / tags / link）写在 predicate 之前
 - [ ] 被 `navigateTo` 引用的视图均已具名
 - [ ] 模型事实定义在 `model/`，未藏在 `views/`
@@ -56,6 +58,46 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 - [ ] `parallel` / `par` 未嵌套（1.58.0 实测禁止）
 - [ ] 条件分支/循环/异常需求已确认当前版本是否支持；不支持时改走 Mermaid flowchart
 - [ ] 步骤元素若不在 model 中，已在视图内 `include`
+
+## 七层设计链（需求涉及完整设计链时）
+
+规则见 `references/07-seven-layer-design.md`，落盘骨架见 `templates/seven-layer-chain.md`。
+
+**追溯完整性**
+
+- [ ] 每个 US 的链路完整：US → F/NF → I → UI → SRC
+- [ ] 缺失层已明确报告，未静默跳过
+- [ ] 关系标签说明了「为什么连接」，不是笼统的「关联」
+- [ ] 每个 SRC 单元能回答「服务于哪个 I 步骤或 UI 元素」
+- [ ] 超范围实现的 SRC 单元已列为待确认项
+
+**命名规范**
+
+- [ ] 编号格式正确：`US-` `F-` `NF-` `I-` `UI-` `SRC-` + 三位数字
+- [ ] 编号全局唯一，删除元素后未回收编号
+- [ ] 显示名为中文，编号前缀为英文
+
+**各层边界**
+
+- [ ] I 层无源码元素（无类名、函数名、表名、文件名）
+- [ ] I 层判据通过：换技术栈该层设计依然成立
+- [ ] SRC 层每个单元绑定真实文件路径，无路径者标 `待补充`
+- [ ] UI 层同时产出交互设计与信息设计，未只做其一
+- [ ] 信息设计覆盖空状态、加载状态、错误状态、无权限状态
+- [ ] NF 项均可度量；不可度量者标 `待补充`，未编造指标
+
+**工具路由**
+
+- [ ] 业务状态机走 Mermaid `stateDiagram-v2`，未用 LikeC4 硬凑
+- [ ] 类设计走 PlantUML，未在 LikeC4 中伪造
+- [ ] 走轨道二/三的部分已向用户说明原因
+- [ ] 构建部署图未产出，或已说明为何此时产出
+
+**必备视图**
+
+- [ ] 存在链路总览、业务设计视角、源码实现视角、功能与非功能框架视图
+- [ ] 业务设计视角已排除全部 SRC 元素
+- [ ] `dynamic view` 含有显式消息（仅 `include` 会导致 build 布局失败）
 
 ## 工程集成
 
