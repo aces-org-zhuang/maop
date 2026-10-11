@@ -7,14 +7,23 @@
 
 ## 文件布局
 
-F 链与 NF 链是**平级的独立 Feature**，各占一个文件，物理隔离：
+**一个 Feature 分叉出两条链**，各占一个文件，物理隔离；两条链在构建与部署处收敛：
+
+```text
+Feature-001 一次可交付增量
+   ↓ 分叉：这次交付的性质是什么
+   ├─ Feature-001-F   能力链（按业务能力切）→ 各有自己的 US-00x
+   └─ Feature-001-NF  极端场景链（按极端场景切）→ 各有自己的 US-10x
+   ↓ 收敛
+构建与部署    两条链的 SRC 同处一个制品与运行时
+```
 
 ```text
 src/
   specification.c4element kind 与 relationship kind 定义
   model/
     feature-001-f-checkout.c4      Feature-001-F 结算下单（按业务能力切）
-    feature-001-nf-perf.c4         Feature-001-NF 支付性能（按质量属性切）
+    feature-001-nf-perf.c4         Feature-001-NF 极端场景保障（按极端场景切）
   views/
     feature-001-f.c4               F 链视图（view of，自动带归属容器）
     feature-001-nf.c4              NF 链视图
@@ -348,40 +357,42 @@ model {
 
 ---
 
-## src/model/feature-001-nf-perf.c4（NF 链）
+## src/model/feature-001-nf-perf.c4（NF 链 · 极端场景链）
 
-**NF 链与 F 链同维度、同本体**——它同样有 US、I、UI、SRC，不比 F 链少任何东西。NF 交付的是「性能感知上的确定性」，这是一项可交付能力。
+**NF 链与 F 链同维度、同本体**——它同样有 US、I、UI、SRC，不比 F 链少任何东西。
+
+**NF 单元是场景，不是角度。** 「性能」「可审计性」只是观察角度，必须落到具体场景才成为交付物——角度名答不出「谁在什么场景下因此受益」，不是 NF 单元。
 
 ```c4
 model {
-  feat_perf_nf = feature 'Feature-001-NF 支付性能' {
-    description '按质量属性切分。交付边界：下单超 200ms 时系统明确提示异常，客服可立即重试。可观察：月末高峰客服不需手工刷新。所属愿景：让交易更顺。'
+  feat_perf_nf = feature 'Feature-001-NF 极端场景保障' {
+    description '按极端场景切分。交付边界：高峰与故障两类场景下，客服能察觉、能行动、不丢数据。所属愿景：让交易更顺。'
 
-    us_peak = userStory 'US-003 超时提示可操作' {
-      description '作为客服，下单超过 200ms 时系统明确提示异常，以便我能立刻判断是重试还是放弃。验收：提示文案说明原因并给出「重试」操作。'
+    us_peak = userStory 'US-003 高峰期下单不卡' {
+      description '作为客服，月末高峰同时处理 20 个会话时，提交订单后无需切出等待，以便不会卡住对话。验收：20 并发下单 P95 ≤ 200ms 且无需手工刷新。'
     }
-    us_audit = userStory 'US-004 操作可回溯' {
-      description '作为客服，我能按订单号查到这次下单的耗时与结果，以便向客户解释。验收：输入订单号可见完整调用链与耗时。'
-    }
-
-    nf_latency = nonFunction 'NF-001 支付响应时延' {
-      description '支付链路 P95 ≤ 200ms；超出即触发 US-003 的提示路径。'
-    }
-    nf_auditability = nonFunction 'NF-002 可审计性' {
-      description '每次下单的耗时与结果留痕，可按订单号回溯。对应 US-004。'
+    us_audit = userStory 'US-004 出问题后能查清' {
+      description '作为客服，客户投诉订单异常时，我能查到这次下单的完整经过，以便向客户解释。验收：输入订单号可见完整调用链与各段耗时。'
     }
 
-    i_perf = implStep 'I-101 性能判定逻辑' {
+    nf_peak = nonFunction 'NF-001 高峰 200 并发下单不卡' {
+      description '场景：月末高峰 200 并发。表现：下单链路 P95 ≤ 200ms，超出即触发 US-003 的提示路径。角色：客服。'
+    }
+    nf_trace = nonFunction 'NF-002 客户投诉时可查清经过' {
+      description '场景：客户投诉订单异常。表现：完整调用链与各段耗时留痕，可按订单号回溯。对应 US-004。角色：客服。'
+    }
+
+    i_perf = implStep 'I-101 高峰判定与提示逻辑' {
       description '主干步骤：计时 → 判定是否超 200ms → 超时则生成可操作提示 → 留痕。'
     }
-    i_audit = implStep 'I-102 审计查询逻辑' {
+    i_audit = implStep 'I-102 投诉查询逻辑' {
       description '主干步骤：读取留痕 → 按订单号聚合 → 输出调用链与耗时。'
     }
 
-    ui_warning = uiSurface 'UI-101 超时提示' {
+    ui_warning = uiSurface 'UI-101 高峰超时提示' {
       description '超时弹出层：说明原因、给出重试与取消、错误 / 重试中 / 成功三态。'
     }
-    ui_trace = uiSurface 'UI-102 耗时查询' {
+    ui_trace = uiSurface 'UI-102 经过查询' {
       description '按订单号展示调用链与各段耗时，覆盖空态（无记录）与错误态（查询失败）。'
     }
 
@@ -415,8 +426,8 @@ model {
     }
 
     // 清单对应：清单项由哪条 US 要求
-    us_peak .trace nf_latency '要求'
-    us_audit .trace nf_auditability '要求'
+    us_peak .trace nf_peak '要求'
+    us_audit .trace nf_trace '要求'
 
     // 下钻路径：同样不经过 NF
     us_peak .trace i_perf '落为判定逻辑'
@@ -437,20 +448,26 @@ model {
 }
 ```
 
-**NF 链的清单对应边与下钻路径边，语义同样要分清**——`us_peak .trace nf_latency` 是清单来源，`us_peak .trace i_perf` 才是路径。
+**NF 链的清单对应边与下钻路径边，语义同样要分清**——`us_peak .trace nf_peak` 是清单来源，`us_peak .trace i_perf` 才是路径。
 
 **NF 链与 F 链结构同构**：
 
 | 位置 | NF 链的内容 | 对应 F 链的 | 是什么 |
 | --- | --- | --- | --- |
-| 路径环节 | US-003 超时提示、US-004 操作可回溯 | US-001 / US-002 | **在路径上** |
-| 能力单元清单 | NF-001 时延、NF-002 可审计 | F-001 / F-002 | **不在路径上** |
-| 路径环节 | I-101 性能判定、I-102 审计查询 | I-001 / I-003 | **在路径上** |
-| 路径环节 | UI-101 超时提示、UI-102 耗时查询 | UI-001 / UI-002 | **在路径上** |
+| 路径环节 | US-003 高峰下单不卡、US-004 出问题后能查清 | US-001 / US-002 | **在路径上** |
+| 能力单元清单 | NF-001 高峰 200 并发下单不卡、NF-002 客户投诉时可查清经过 | F-001 / F-002 | **不在路径上** |
+| 路径环节 | I-101 高峰判定与提示、I-102 投诉查询 | I-001 / I-003 | **在路径上** |
+| 路径环节 | UI-101 高峰超时提示、UI-102 经过查询 | UI-001 / UI-002 | **在路径上** |
 | 路径环节 | SRC-101 计时探针、SRC-102 审计存储 | SRC-001 / SRC-002 | **在路径上** |
 | 数据载体 | IN-101 / POD-101 / OUT-101 / DAO-101 / CVT-101 | IN-001 / POD-001 等 | SRC 环内部维度 |
 
-**下钻路径两条链完全相同**：`US → I → UI → SRC`。差别在切分维度、清单内容与编号段：F 链用 `F-` / `I-0xx` / `SRC-0xx`，NF 链用 `NF-` / `I-1xx` / `SRC-1xx`。
+**两条链的 US 是分别识别的**，不是共享的。US 来源不同、编号段不同、内容完全不同。
+
+**NF 单元写场景不写角度**：「高峰 200 并发下单不卡」是交付物，「性能」只是观察角度。命名判据见 `references/12-design-origin.md`。
+
+**下钻路径两条链完全相同**：`US → I → UI → SRC`。差别在切分维度、US 来源、清单内容与编号段：F 链用 `F-` / `I-0xx` / `SRC-0xx`，NF 链用 `NF-` / `I-1xx` / `SRC-1xx`。
+
+**收敛在构建与部署**：两条链的 SRC 最终进同一个制品、同一个运行时。**分出去的是关注点，合回来的是运行现实。**
 
 ---
 
@@ -459,8 +476,8 @@ model {
 **把清单挂进路径，或跨链引用**：
 
 ```c4
-nf_latency .trace feat_checkout_f.i_step '约束步骤耗时'      // 错：NF 挂进路径环节
-nf_latency .trace feat_checkout_f.us_place '约束验收标准'    // 错：NF 指向 F 链的 US
+nf_peak .trace feat_checkout_f.i_step '约束步骤耗时'      // 错：NF 挂进路径环节
+nf_peak .trace feat_checkout_f.us_place '约束验收标准'    // 错：NF 指向 F 链的 US
 us_place .trace f_order .trace i_step '串联'                  // 错：把清单串进下钻路径
 ```
 
@@ -523,7 +540,7 @@ views {
 | 全景视图 | 覆盖范围 | 回答什么 |
 | --- | --- | --- |
 | **F 全景** | 全部 F 链的能力单元 + US + I 逻辑 | 系统对外提供哪些能力 |
-| **NF 全景** | 全部 NF 链的质量属性 + US + I 逻辑 | 系统承诺哪些质量水平 |
+| **NF 全景** | 全部 NF 链的场景单元 + US + I 逻辑 | 系统承诺哪些场景下的表现 |
 | **US 全景** | 全部链的 US，按交付主题分组 | 谁要什么 |
 | **I 全景** | 全部链的业务状态与步骤 | 业务怎么流转 |
 | **UI 全景** | 全部链的界面面 | 用户能看到什么 |
@@ -732,9 +749,9 @@ views {
 
   view nfPanorama {
     title 'NF 全景 · 系统质量承诺'
-    description '全部 NF 链的质量属性。一次性呈现，不在每个 F 视图里检视。'
-    include feat_perf_nf.nf_latency
-    include feat_perf_nf.nf_auditability
+    description '全部 NF 链的场景单元。一次性呈现，不在每个 F 视图里检视。'
+    include feat_perf_nf.nf_peak
+    include feat_perf_nf.nf_trace
   }
 
   view usPanorama {
@@ -778,7 +795,7 @@ views {
 
 起点：F 链
    ↓ 链内完整推演
-   ↓ 关联查询：本次改动破坏了哪些质量属性？
+   ↓ 关联查询：本次改动破坏了哪些场景下的表现？
    ↓ 起第二条推演：在关联的 NF 链上重跑红绿循环
 
 直到两侧都无法再起新推演，才算推演结束。
