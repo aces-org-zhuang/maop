@@ -364,3 +364,6 @@ ui_orderList.state_forbidden = uiArea '无权限状态'
 5. **泳道按角色或层划分**，不按步骤划分。
 6. **字段清单不塞进模型**。模型表达区域与关键字段，清单写在 I 层或设计文档。
 7. **每个新增视图都要跑 `build`**。拆分出的多个视图容易出现只有 `include` 没有消息的问题（validate 发现不了）。
+8. **追溯边与依赖边分开**。用 `.trace`（为什么连）与 `.depends`（运行时怎么走）两种 relationship kind，详见 `07-design-chain.md` 第三节。
+9. **父子之间不连边**。嵌套已表达包含关系，补边会报 `Invalid parent-child relationship`。
+10. **各环元素嵌套在所属 Feature 之下**。归属由嵌套表达，不靠视图层手工画框，详见 `12-design-origin.md` 第四节。
