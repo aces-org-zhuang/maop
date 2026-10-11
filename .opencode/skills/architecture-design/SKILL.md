@@ -89,6 +89,9 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 - **链视图按环聚焦，禁止 `include *`**。一张链视图只承载一个环。**I 环必须按内容子类拆图**：业务目标 / 状态流转 / 业务步骤各自成图；状态用「状态即元素 + 迁移即关系」，步骤有责任边界时用**泳道流程图**。`include *` 会把六环加载体加泳道全塞进一张——这是"视图跨层"的真正来源。
 - **一张视图最多跨一层，且必须把上层容器画出来（硬规则）**。视图里出现的层最多是「本环 + 直接上一层」，**再往上出现就是错的**。**判据是嵌套深度不是 `include` 列表**：只 `include` 本环元素而祖先没被带上，等于归属丢失；`include` 祖先容器却没显式列出子元素，等于子元素根本没画出来（**实测：`include` 容器不会自动带出子元素**）。正确写法是**直接上层与目标元素同时显式 `include`**。**越层出现在本环之上的层（Feature/F、US、I）一律禁止**——SRC 视图出现 F 单元就是典型错误：SRC 的上层是 UI，UI 的上层是 I，`F` 已是第三层祖先。另两条实测约束：**祖先链未显式列出时 LikeC4 会自动补齐并展开，造成越层**；**同图元素分属不同父容器时必须按父容器拆视图**。详见 `references/07-design-chain.md`。
 - **全景视图的容器提升是正常的，不是错位**。`pano-src` 渲染出 `Feature[SRC 单元]` 是**正确**的——跨 Feature 聚合时 LikeC4 会自动把 Feature 提为容器以体现归属。**不要因为「出现了 Feature 框」就判定越层**：判定标准是**嵌套深度**，不是「有没有 Feature」。详见 `references/07-design-chain.md`。
+- **视图 id 与 title 都受命名规范约束，`title` 不是自由文本**。规范只管 id 而不管 title，会让每张图的标题各写各的，读者无法从标题回推它属于哪个环——「这张图为什么不是 SRC 层的」这类问题就是这么来的。**title 必须三段式 `<环代号> · <范围> · <主题>`**，SRC 四维度（`dfd` / `carrier` / `erm` / `api` / `srcdir`）**一律以 `SRC 环 ·` 开头**。视图 id 只能用九个既定前缀，**禁止驼峰与自造前缀**——要区分加连字符后缀（`srcdir001NF-notice`），不改前缀本身。详见 `references/07-design-chain.md`。
+- **编号按 Feature 分段，链内同环连续**。`Feature-001` 用 `0xx` 段、`Feature-002` 用 `2xx` 段；同链同环连续不跳号，跳号必须在文件头说明理由（预留给后续增量）。**泳道元素必须复用真实编号，不得自造**——出现「（泳道引用）」「（泳道占位）」后缀说明同一环节被定义了两次。详见 `references/07-design-chain.md`。
+- **交付前必须跑命名机械校验**：`scripts/check-naming.mjs` 检查视图 id 前缀、title 三段式、SRC 四维度的 `SRC 环 ·` 前缀、编号重复与泳道自造编号。**这些错误 `validate` 与 `build` 全部拦不住**。用法：`likec4 export json -o out.json && node scripts/check-naming.mjs out.json`。
 - **视图名必须自带类型信息**：`pano-<环>`（同类聚合全景）/ `chain<链>-<环>`（分环）/ `seq<链>-<场景>`（时序）/ `dfd`·`carrier`·`erm`·`api`·`srcdir`·`proc`（SRC 各维度）。连字符可用。
 - **全量设计时每一环都要有全景视图**，不只 NF：F/NF/US/I/UI/SRC 六张，另有 I 状态、数据载体、API 三张 SRC 维度全景，全部**跨全部 Feature 聚合**。**聚合发生在全景层，不发生在链视图层。**
 - **推演是红绿循环，不是一次画完的图**。每轮三步：给当前视野所有节点打标（🟢 已覆盖 / 🔴 缺口）→ 选最宽泛的 🔴 判断下钻或横向扩散 → 取最高保真证据把红点转绿或边界化。**每轮必须输出 `Round N Map`**，让用户看到判断如何演进。一轮没取到新证据只是重画图，那是空转不是推进。
@@ -235,6 +238,7 @@ opt   loop   break   alt   when   else   try   catch   finally
 - `references/12-design-origin.md`: **设计起点与切分维度**。交付边界确认、F 链与 NF 链的划分与同构关系、跨链边禁令、文件物理隔离、增量与全量两种模式、归属嵌套表达、变更上升路径。
 - `references/08-design-decision-tree.md`: 设计作业决策树，节点 0-6 的引导流程、每步的确认点、场景分支与反模式。
 - `checklists/model-quality.md`: 模型质量自检清单。
+- `scripts/check-naming.mjs`: **命名合规机械校验器**。检查视图 id 前缀、title 三段式、SRC 四维度的 `SRC 环 ·` 前缀、编号重复、泳道自造编号。用法 `likec4 export json -o out.json && node scripts/check-naming.mjs out.json`。**交付前必跑——这类错误 validate 与 build 都拦不住。**
 - `templates/`: 可落盘模板。
 - `templates/c4-project-skeleton.md`: 新设计仓的最小文件骨架模板（已实机验证）。
 - `templates/architecture-handoff-spec.md`: 架构交接规格模板，字段与 `technical-design` 的 Handoff Mini-Spec 对齐。

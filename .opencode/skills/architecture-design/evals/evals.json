@@ -1202,6 +1202,69 @@
         "指出能力与源码的对应应放在能力清单视图",
         "要求 SRC 视图的归属锚用 UI 面容器"
       ]
+    },
+    {
+      "id": 103,
+      "prompt": "我的 SRC 目录视图 title 写的是「数据模型全景 · Feature-001-F 工单结构」，但这个图其实只画了 POD 和 DAO 两个元素。这样写有问题吗？",
+      "expected_output": "两个问题。第一，元素与标题不符——你画的是数据模型，那是 SRC 环的第二个维度，但数据模型视图应该叫 erm 视图，不是 srcdir；srcdir 画的是代码结构与文件路径。第二，标题首段「数据模型全景」没写 SRC，读者无法回推它属于 SRC 环，这正是你疑惑「这不应该是 SRC 层的吗」的来源。正确写法：id 用 erm001F-ticket，title 用「SRC 环 · Feature-001-F · 数据模型 · 工单」。SRC 四维度 dfd / carrier / erm / api / srcdir 的 title 一律以 SRC 环 开头。",
+      "files": [],
+      "expectations": [
+        "指出 title 首段缺 SRC，读者无法回推所属环",
+        "指出元素内容与 srcdir 视图职责不符，应改用 erm 视图",
+        "给出正确的 title 三段式写法",
+        "说明 SRC 四维度 title 一律以 SRC 环 开头"
+      ]
+    },
+    {
+      "id": 104,
+      "prompt": "我给视图起了 panoSrc001F、stateMain、erm001F 这种名字。有什么问题？",
+      "expected_output": "三个问题。第一，禁止驼峰与自造前缀——panoSrc001F 和 stateMain 都是驼峰；需要区分请用连字符后缀，比如 srcdir001NF-notice，而不是 srcdir001NFnotice。第二，panoSrc001F 把前缀改成了体系里没有的词，全景前缀只能是 pano-<环>。第三，erm001F 少了主题段，规范格式是 erm<链>-<主题>，应写 erm001F-ticket。注意链编号段 001F 里的 F 是体系既定写法，不算驼峰。",
+      "files": [],
+      "expectations": [
+        "指出禁止驼峰与自造前缀",
+        "要求用连字符后缀而非改前缀",
+        "指出 pano- 是全景的唯一前缀",
+        "指出 erm 需带主题段",
+        "说明链编号里的 F 不算驼峰"
+      ]
+    },
+    {
+      "id": 105,
+      "prompt": "泳道里我定义了一个 I-201 应答编排（泳道引用）元素，用来在泳道图里表示编排环节。这样做有什么问题？",
+      "expected_output": "泳道不能自造编号。I-006 下发答复 和 I-201 泳道引用 是同一个环节的两个元素，读者无法判断哪个是真实的，一图两义。泳道只是分组手段，不是存放位置。正确做法：泳道容器只写 description 说明环节归属，流程图里直接 include 真实的嵌套元素（用 FQN，如 feat.us_ask.i_ask_deliver）。判据是任何带「（泳道引用）」「（泳道占位）」后缀的元素都违规。",
+      "files": [],
+      "expectations": [
+        "指出泳道自造编号导致同一环节重复定义",
+        "说明泳道只是分组手段不是存放位置",
+        "给出用 description + FQN 引用真实元素的写法",
+        "给出「泳道引用」后缀作为判据"
+      ]
+    },
+    {
+      "id": 106,
+      "prompt": "命名规范里好像只规定了视图 id，title 没写要求。title 可以自由写吗？",
+      "expected_output": "不可以，这正是问题根源。只规范 id 不管 title，标题就会各写各的，最终读者无法从标题回推它属于哪个环、哪个 Feature——「这张图为什么不是 SRC 层的」这类疑问就是这么来的。title 必须三段式：环代号 · 范围 · 主题。环代号用与元素编号前缀一致的写法（US / F / NF / I / UI / SRC / 构建部署），不要写「用户故事环」「源码层」「进程与线程视图」这类自造词。分环、时序、载体类视图的 title 还必须含 Feature-<编号>-<F|NF>。",
+      "files": [],
+      "expectations": [
+        "指出 title 不受约束是问题根源",
+        "要求三段式：环代号 · 范围 · 主题",
+        "要求环代号与元素编号前缀一致",
+        "要求分环类视图 title 含 Feature 编号"
+      ]
+    },
+    {
+      "id": 107,
+      "prompt": "我怎么确认整个项目的视图命名和元素编号都合规？validate 能查出来吗？",
+      "expected_output": "validate 查不出来，它只做语法与语义检查，命名违规全部静默通过，build 也一样。必须跑机械校验器：先 likec4 export json -o out.json，再 node scripts/check-naming.mjs out.json。它检查四类：视图 id 是否属于九个既定前缀且无驼峰、title 是否三段式、SRC 四维度 title 是否以 SRC 环 开头、元素编号是否重复与泳道是否自造编号。退出码非 0 即有违规，会逐条列出位置与改法。",
+      "files": [
+        "scripts/check-naming.mjs"
+      ],
+      "expectations": [
+        "指出 validate 与 build 都拦不住命名违规",
+        "给出 export json 加 check-naming.mjs 的用法",
+        "列出校验器覆盖的四类问题",
+        "说明退出码与逐条输出的含义"
+      ]
     }
   ]
 }

@@ -502,13 +502,13 @@ us_place .trace i_step   '落为业务步骤'   // 下钻路径：US → I
 ```c4
 views {
   view feat001FOverview of feat_checkout_f {
-    title 'Feature-001-F 链路总览'
+    title 'US 环 · Feature-001-F · 用户故事'
     description '按业务能力切分的完整链路。链内不含任何 NF 元素。'
     include *
   }
 
   view feat001FBusiness of feat_checkout_f {
-    title 'Feature-001-F 业务设计视角（不含源码）'
+    title 'I 环 · Feature-001-F · 业务逻辑'
     description 'US 到 UI 环的业务设计，供业务方确认。'
     include *
     exclude feat_checkout_f.src_checkout
@@ -518,7 +518,7 @@ views {
 
   dynamic view feat001FSequence {
     variant sequence
-    title 'Feature-001-F 主干时序'
+    title 'SRC 环 · Feature-001-F · 主干时序'
     description '从提交订单到支付确认的必经步骤。'
     include feat_checkout_f.us_place, feat_checkout_f.i_step
     include feat_checkout_f.ui_interaction, feat_checkout_f.src_checkout.routes
@@ -533,6 +533,67 @@ views {
 ```
 
 **NF 链视图同构**，见下文实测记录。
+
+---
+
+## 视图命名：id 与 title 都受约束
+
+**`title` 不是自由文本。** 只规范 id 而不管 title，标题就会各写各的，读者无法从标题回推它属于哪个环——「这张图为什么不是 SRC 层的」这类问题就是这么来的。
+
+**title 必须三段式：`<环代号> · <范围> · <主题>`**
+
+| 视图类别 | title 格式 | 示例 |
+| --- | --- | --- |
+| `pano-<环>` | `<环代号> 全景 · 全部 <范围> · <主题>` | `F 环 · 全部 Feature-NNN-F · 业务能力单元` |
+| `chain<链>-us` | `US 环 · Feature-<编号>-<F\|NF> · 用户故事` | `US 环 · Feature-001-F · 用户故事` |
+| `chain<链>-f` | `F 环 · Feature-<编号>-F · 业务能力单元清单` | `F 环 · Feature-001-F · 业务能力单元清单` |
+| `chain<链>-i-*` | `I 环 · Feature-<编号>-<F\|NF> · <子类>` | `I 环 · Feature-001-F · 业务步骤` |
+| `chain<链>-ui` | `UI 环 · Feature-<编号>-<F\|NF> · 交互面与信息设计` | `UI 环 · Feature-001-F · 交互面与信息设计` |
+| `srcdir<链>` | `SRC 环 · Feature-<编号>-<F\|NF> · 代码结构` | `SRC 环 · Feature-001-F · 代码结构` |
+| `dfd<链>` | `SRC 环 · Feature-<编号>-<F\|NF> · 数据流 · <场景>` | `SRC 环 · Feature-001-F · 数据流 · 订单` |
+| `carrier<链>` | `SRC 环 · Feature-<编号>-<F\|NF> · 数据载体` | `SRC 环 · Feature-001-F · 数据载体` |
+| `erm<链>` | `SRC 环 · Feature-<编号>-<F\|NF> · 数据模型 · <实体>` | `SRC 环 · Feature-001-F · 数据模型 · 工单` |
+| `api<链>` | `SRC 环 · Feature-<编号>-<F\|NF> · 对外接口` | `SRC 环 · Feature-001-F · 对外接口` |
+| `proc-<环境>` | `构建部署 · <环境> · 进程与线程` | `构建部署 · 生产环境 · 进程与线程` |
+
+**SRC 四维度一律以 `SRC 环 ·` 开头**——最容易漏的就是这条。
+
+```c4
+错  title '数据模型全景 · Feature-001-F 工单结构'
+     看不出属于 SRC 环，读者会以为它是独立的一层
+对  title 'SRC 环 · Feature-001-F · 数据模型 · 工单'
+
+错  title '能力清单'
+     看不出是 F 环还是 US 环
+对  title 'F 环 · Feature-001-F · 业务能力单元清单'
+```
+
+**视图 id 只能用九个既定前缀，禁止驼峰与自造前缀**。要区分用连字符后缀（`srcdir001NF-notice`），不改前缀本身。链编号段 `001F` 里的 `F` 是体系既定写法，不算驼峰。
+
+```c4
+错  view panoSrc001F / view srcdir001NFnotice / view stateMain
+对  view pano-src-001F / view srcdir001NF-notice / view chain001F-i-state-main
+```
+
+**编号按 Feature 分段**：`Feature-001` 用 `0xx`，`Feature-002` 用 `2xx`；链内同环连续，跳号要在文件头说明理由（预留给后续增量）。
+
+**泳道不自造编号**：
+
+```c4
+错  lane_core = feature '领域层泳道' {
+      i_stepLane = implStep 'I-201 应答编排（泳道引用）'   // 自造，同一环节出现两次
+    }
+对  lane_core = feature '领域层泳道' {
+      description '具体环节见 US-001 下的 I-001~I-006，此处不重复定义'
+    }
+```
+
+**交付前必跑机械校验**（这类错误 `validate` 与 `build` 都拦不住）：
+
+```bash
+likec4 export json -o out.json
+node scripts/check-naming.mjs out.json
+```
 
 ---
 
@@ -589,14 +650,14 @@ views {
 ```c4
 views {
   view chain001F-us of feat_f {
-    title 'US 视图 · Feature-001-F'
+    title 'US 环 · Feature-001-F · 用户故事'
     description '只承载本链的用户故事。不含能力单元、I 环与源码。'
     include feat_f                    // 上层容器：Feature
     include feat_f.us_ask, feat_f.us_pay
   }
 
   view chain001F-f of feat_f {
-    title '能力清单 · Feature-001-F'
+    title 'F 环 · Feature-001-F · 业务能力单元清单'
     description '本链的业务能力单元与对应 US。US 在此仅用于展示对应关系。'
     include feat_f                    // 上层容器：Feature
     include feat_f.us_ask, feat_f.us_pay
@@ -604,14 +665,14 @@ views {
   }
 
   view chain001F-i-goal of feat_f {
-    title 'I 环 · 业务目标 · Feature-001-F'
+    title 'I 环 · Feature-001-F · 业务目标'
     description '只承载业务目标。状态流转与业务步骤各自成图。'
     include feat_f.us_ask             // 上层容器：US（I 的直接上层）
     include feat_f.us_ask.i_goal
   }
 
   view chain001F-i-step of feat_f {
-    title 'I 环 · 业务步骤 · Feature-001-F'
+    title 'I 环 · Feature-001-F · 业务步骤'
     description '只承载业务步骤。归属靠 US 容器表达，不画 US→I 的边。'
     include feat_f.us_ask             // 上层容器：US
     include feat_f.us_ask.i_normalize, feat_f.us_ask.i_retrieve
@@ -619,14 +680,14 @@ views {
   }
 
   view chain001F-ui of feat_f {
-    title 'UI 环 · Feature-001-F'
+    title 'UI 环 · Feature-001-F · 交互面与信息设计'
     description '只承载交互面与信息设计。上层容器是 I 步骤，不是 Feature。'
     include feat_f.us_ask.i_normalize          // 上层容器：I 步骤（UI 的直接上层）
     include feat_f.us_ask.i_normalize.ui_input
   }
 
   view srcdir001F of feat_f {
-    title 'SRC 目录视图 · Feature-001-F'
+    title 'SRC 环 · Feature-001-F · 代码结构'
     description '只承载源码单元。上层容器是 UI 面，SRC 的直接上层不是 Feature。'
     include feat_f.us_ask.i_normalize.ui_input        // 上层容器：UI 面
     include feat_f.us_ask.i_normalize.ui_input.src_route
@@ -646,7 +707,7 @@ views {
 views {
   dynamic view seq001F-i-step-lanes {
     variant sequence
-    title 'I 环 · 业务步骤泳道流程 · Feature-001-F'
+    title 'I 环 · Feature-001-F · 业务步骤泳道流程'
     description '按责任分区：角色发起、接入层归一化、领域层检索、领域层校验。'
     include feat_f.lane_client.actor_customer
     include feat_f.lane_edge.api_placeOrder
@@ -686,14 +747,14 @@ views {
 ```c4
 views {
   view pano-f {
-    title 'F 全景 · 全部链的业务能力单元'
+    title 'F 环 · 全部 Feature-NNN-F · 业务能力单元'
     description '所有链的 F 单元，只含业务能力。刻意不含 US——对应关系见各链的能力清单视图。'
     include feat_f.f_order, feat_f.f_payment
     include feat_nf.f_degrade
   }
 
   view pano-nf {
-    title 'NF 全景 · 全部链的极端场景单元'
+    title 'NF 环 · 全部 Feature-NNN-NF · 极端场景单元'
     description '所有链的 NF 单元，只含场景化表现。'
     include feat_nf.nf_peak, feat_nf.nf_trace
   }
@@ -761,7 +822,7 @@ SRC 环比其他环多四层要求：**它对应真实磁盘资产，业务数�
 views {
   dynamic view dfd001F {
     variant sequence
-    title 'DFD 全景 · Feature-001-F 订单数据流'
+    title 'SRC 环 · Feature-001-F · 数据流 · 订单'
     description '从界面提交到持久化落库再回显的完整数据流，含载体与转换点。不写 of —— dynamic view 不支持容器作用域。'
 
     include feat_checkout_f.ui_interaction
@@ -778,7 +839,7 @@ views {
   }
 
   view carrier001F of feat_checkout_f {
-    title '数据载体全景 · Feature-001-F 订单'
+    title 'SRC 环 · Feature-001-F · 数据载体'
     description '本链所有数据载体的角色定位与转换关系。'
     include feat_checkout_f.in_orderReq, feat_checkout_f.biz_order
     include feat_checkout_f.pod_order, feat_checkout_f.out_orderView
@@ -805,7 +866,7 @@ views {
 ```c4
 views {
   view api001F of feat_checkout_f.lane_edge {
-    title 'API 清单 · Feature-001-F 结算下单'
+    title 'SRC 环 · Feature-001-F · 对外接口'
     description '本链对外接口清单，含方法、路径与路由位置。'
     include feat_checkout_f.lane_edge.api_placeOrder
     include feat_checkout_f.lane_edge.api_getOrder
@@ -817,7 +878,7 @@ views {
 views {
   dynamic view apiseq001F {
     variant sequence
-    title 'API 泳道时序 · Feature-001-F 提交订单'
+    title 'SRC 环 · Feature-001-F · 接口泳道时序 · 提交订单'
     description '泳道按调用方向：接入 → 领域 → 外部。dynamic view 不支持 of。'
 
     include feat_checkout_f.actor_cs
@@ -869,7 +930,7 @@ deployment {
 
 views {
   deployment view procProd {
-    title '进程与线程视图 · 生产环境'
+    title '构建部署 · 生产环境 · 进程与线程'
     description '进程与线程的层级归属。逻辑挂载与线程树并列——instanceOf 节点内不可再嵌节点。'
     include prod.**
   }
@@ -902,13 +963,13 @@ SRC 是唯一带真实磁盘资产的环，**必须有目录视图**——否则
 ```c4
 views {
   view srcdir001F of feat_checkout_f {
-    title 'SRC 目录视图 · Feature-001-F'
+    title 'SRC 环 · Feature-001-F · 代码结构'
     description '本链源码单元与真实文件路径的对应，含嵌套子单元。'
     include *
   }
 
   view srcdir001NF of feat_perf_nf {
-    title 'SRC 目录视图 · Feature-001-NF'
+    title 'SRC 环 · Feature-001-NF · 代码结构'
     description 'NF 链的源码单元与真实文件路径对应。'
     include *
   }
@@ -930,35 +991,35 @@ views {
 ```c4
 views {
   view fPanorama {
-    title 'F 全景 · 系统对外能力'
+    title 'F 环 · 全部 Feature-NNN-F · 业务能力单元'
     description '全部 F 链的能力单元。一次性呈现，不分散在各链视图里。'
     include feat_checkout_f.f_order
     include feat_checkout_f.f_payment
   }
 
   view nfPanorama {
-    title 'NF 全景 · 系统质量承诺'
+    title 'NF 环 · 全部 Feature-NNN-NF · 极端场景单元'
     description '全部 NF 链的场景单元。一次性呈现，不在每个 F 视图里检视。'
     include feat_perf_nf.nf_peak
     include feat_perf_nf.nf_trace
   }
 
   view usPanorama {
-    title 'US 全景 · 谁要什么'
+    title 'US 环 · 全部 Feature · 用户故事'
     description '全部链的用户故事，按交付主题分组。'
     include feat_checkout_f.us_place, feat_checkout_f.us_pay
     include feat_perf_nf.us_peak, feat_perf_nf.us_audit
   }
 
   view iPanorama {
-    title 'I 全景 · 业务流转'
+    title 'I 环 · 全部 Feature · 业务目标与步骤'
     description '全部链的业务逻辑，按编号段区分 F 链与 NF 链。'
     include feat_checkout_f.i_step, feat_checkout_f.i_state
     include feat_perf_nf.i_perf, feat_perf_nf.i_audit
   }
 
   view srcPanorama {
-    title 'SRC 全景 · 源码单元全貌'
+    title 'SRC 环 · 全部 Feature · 代码结构'
     description '跨全部链的源码单元。文件路径详见各链的 SRC 目录视图。'
     include feat_checkout_f.src_checkout
     include feat_checkout_f.src_orderService, feat_checkout_f.src_paymentClient
@@ -1064,13 +1125,13 @@ model {
 
 views {
   view implStateMain {
-    title '订单主干状态'
+    title 'I 环 · Feature-001-F · 业务状态 · 主干'
     description '必经状态链路，不含取消与异常状态。'
     include st_draft, st_validated, st_paying, st_done
   }
 
   view implStateBranchCancel {
-    title '订单分支：取消与失败'
+    title 'I 环 · Feature-001-F · 业务状态 · 分支取消与失败'
     description '自「支付中」节点岔出，合流至「已取消」节点。'
     include st_paying, st_cancelled
   }

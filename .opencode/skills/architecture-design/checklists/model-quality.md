@@ -386,6 +386,18 @@ for(const id of Object.keys(d.views)){
 
 - [ ] 归属判定看容器的 `children` 前缀，**未用祖先链判定**（LikeC4 保留完整 FQN，易误判为错位）
 
+**命名合规（可机械校验，最高优先级）**
+
+- [ ] 已跑 `node scripts/check-naming.mjs out.json`，输出 `✓ 命名合规`
+- [ ] 视图 id 只用九个既定前缀，**无驼峰、无自造前缀**
+- [ ] 需要区分时用连字符后缀（`srcdir001NF-notice`），不改前缀本身
+- [ ] **全部视图 title 三段式**：`<环代号> · <范围> · <主题>`
+- [ ] **SRC 四维度（`dfd`/`carrier`/`erm`/`api`/`srcdir`）的 title 以 `SRC 环 ·` 开头**
+- [ ] 分环 / 时序 / 载体类视图的 title 含 `Feature-<编号>-<F|NF>`
+- [ ] 编号按 Feature 分段（001→`0xx`、002→`2xx`），链内同环连续
+- [ ] 跳号已在文件头注释说明理由（预留给后续增量）
+- [ ] **泳道元素未自造编号**：无「（泳道引用）」「（泳道占位）」后缀，同一环节只有一个元素
+
 **FQN 与多文件**
 
 - [ ] 跨作用域引用嵌套元素使用 FQN（`feat_checkout.us_place`）
