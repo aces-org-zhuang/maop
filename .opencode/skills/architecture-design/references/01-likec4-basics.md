@@ -217,8 +217,12 @@ views {
 - 视图属性（`title`、`description`、`tags`、`link`）**必须写在任何 predicate 之前**，否则解析失败。
 - `include` / `exclude` 支持通配：`*`、`platform.*`、`* -> platform`。
 - `include x with { ... }` 可按视图覆盖属性。
+- **`include` 容器不会带出子元素**。`include us` 只渲染 US 一个框，它里面的东西一个都不出现。要显示子元素必须逐个 `include`。
+- **祖先链未显式列出时会被自动补齐并展开**。`include ui.src` 渲染成 `ui[src]`（一层）；`include us` + `include i` + `include ui` + `include src` 渲染成 `us[i[ui[src]]]`（三层）。**只 include 需要的层，多列一层就多渲染一层。**
+- **同图元素分属不同父容器时，每个父容器都会被提为视图根**，其中间层同时展开。跨不同父容器聚合时应拆成多张视图。
 - 具名视图是导出文件名与分享 URL 的一部分，必须命名；未命名视图无法被 `navigateTo` 引用。
 - **视图名全局唯一**，重名报 `Duplicate view`。
+- **越层与漏画不会被工具拦**：`validate` 与 `build` 都只检查语法与布局。核对实际渲染必须 `likec4 export json`，看每张视图的 `level` 最大值——`level ≥ 2` 即越层，「宣称有嵌套但全在 L0」即漏画。
 
 ### 视图继承
 

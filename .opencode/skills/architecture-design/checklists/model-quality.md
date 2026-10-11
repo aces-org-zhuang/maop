@@ -358,6 +358,34 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 - [ ] I 环三类内容（目标 / 状态 / 步骤）各自成图
 - [ ] 跨层归属**用嵌套表达**，未把两环元素平铺在同一层
 
+**最多跨一层（可机械校验，最高优先级）**
+
+- [ ] **每张视图的嵌套深度 ≤ 1**：出现的层只有「本环 + 直接上一层」，未出现第三层祖先
+- [ ] SRC 视图**不含** F / NF 单元，也未以 Feature 为容器（SRC 的上层是 UI，UI 的上层是 I）
+- [ ] UI 视图**不含** F / NF 单元（UI 的直接上层是 I）
+- [ ] I 视图**不含** F / NF 单元（I 的直接上层是 US）
+- [ ] **祖先与目标元素同时显式 `include`**，未只 `include` 容器（否则子元素根本不显示）
+- [ ] 未出现「只 `include` 深层元素导致祖先全丢」的平铺写法
+- [ ] **每张链视图的 `L1 > 0`**：宣称有嵌套归属的视图，子元素确实被画出来了
+- [ ] 无 `level ≥ 2` 的节点（未跨两层以上）
+- [ ] **未显式补齐祖先链**：只 include 目标层的直接上层与目标元素，没往上多列
+- [ ] 元素分属不同父容器时**已按父容器拆视图**，未把多个 US 的元素塞进同一张
+- [ ] 已导出 JSON 核对实际渲染内容（`validate` 与 `build` **都拦不住**漏画与越层）：
+
+```bash
+likec4 export json -o out.json
+node -e "
+const d=require('./out.json');
+for(const id of Object.keys(d.views)){
+  const v=d.views[id];
+  if(v._type!=='element') continue;
+  const ns=v.nodes||[];
+  console.log(id+'  节点='+ns.length+'  L0='+ns.filter(n=>n.level===0).length+'  L1='+ns.filter(n=>n.level>1).length);
+}"
+```
+
+- [ ] 归属判定看容器的 `children` 前缀，**未用祖先链判定**（LikeC4 保留完整 FQN，易误判为错位）
+
 **FQN 与多文件**
 
 - [ ] 跨作用域引用嵌套元素使用 FQN（`feat_checkout.us_place`）

@@ -1142,6 +1142,66 @@
         "说明泳道按角色或层分区",
         "指出 dynamic view 引用嵌套元素用 FQN"
       ]
+    },
+    {
+      "id": 98,
+      "prompt": "SRC 视图里我把 Feature 容器也带上，这样能看出这条链的源码单元属于哪个 Feature。这样做对吗？",
+      "expected_output": "不对。SRC 的直接上层是 UI，UI 的上层是 I，Feature 已是第三层祖先，跨了两层。SRC 视图的归属锚必须是 UI 面容器。Feature 只允许出现在 US 视图与能力清单视图里——那是 US 的直接上层。如果确实需要表达「这批源码属于哪个 Feature」，写在 description 里，不要画进图里。",
+      "files": [],
+      "expectations": [
+        "指出 SRC 的直接上层是 UI，不是 Feature",
+        "指出 Feature 作为锚跨了两层",
+        "要求把归属锚改为 UI 面容器",
+        "建议 Feature 归属写在 description 而非图上"
+      ]
+    },
+    {
+      "id": 99,
+      "prompt": "我写 view chain001F-i-step 时只 include 了 US 容器，US→I 的归属用嵌套表达。这样为什么 I 步骤一个都没显示出来？",
+      "expected_output": "因为 LikeC4 的 include 不会自动带出子元素。include feat_f.us_ask 渲染出来就是一个空的 US 框，里面的 I 步骤一个都不出现。嵌套只写在模型里，视图里必须把祖先和目标元素同时显式 include，渲染成 US[I-001, I-002] 才对。判据是导出 JSON 看 L1 是否大于 0——L1 等于 0 说明子元素根本没画出来。这个错误 validate 和 build 都拦不住。",
+      "files": [],
+      "expectations": [
+        "指出 include 容器不会自动带出子元素",
+        "要求祖先与目标元素同时显式 include",
+        "给出导出 JSON 检查 L1 的方法",
+        "指出 validate 与 build 拦不住这类错误"
+      ]
+    },
+    {
+      "id": 100,
+      "prompt": "我想在 SRC 视图里既显示 US 容器，又显示 UI 和 SRC，方便读者一路看下来。这样可以吗？",
+      "expected_output": "不可以。US → I → UI → SRC 是四层，一张图只承载本环加直接上一层，最多两层。同时显式 include us、i、ui、src 会把四层全渲染出来，跨了三层。正确写法是只 include ui 与 ui.src，渲染成 UI[SRC] 两层。规则是：只 include 目标层的直接上层与目标元素本身，不要往上补。祖先链未显式列出时 LikeC4 还会自动补齐并展开，所以往上多列一层就多渲染一层。",
+      "files": [],
+      "expectations": [
+        "指出 US 到 SRC 是四层，最多只能显示两层",
+        "给出正确写法：只 include 直接上层与目标元素",
+        "说明多列一层就多渲染一层",
+        "提到 LikeC4 会自动补齐未列出的中间层"
+      ]
+    },
+    {
+      "id": 101,
+      "prompt": "一条视图里我 include 了属于两条不同 US 的界面面，想一次看完。有办法吗？",
+      "expected_output": "应该拆成两张视图。实测中同图元素分属不同父容器时，LikeC4 会把每个父容器都提为视图根并展开其中间层，导致跨了两层。修法是按父容器拆视图，视图名加后缀区分，比如 srcdir001NF 和 srcdir001NFnotice。这与「一条分支一张图」是同一条原则的延伸。",
+      "files": [],
+      "expectations": [
+        "指出同图元素分属不同父容器会被提为根",
+        "说明会展开中间层导致越层",
+        "给出按父容器拆视图的修法",
+        "建议视图名加后缀区分"
+      ]
+    },
+    {
+      "id": 102,
+      "prompt": "我在 SRC 视图里把 F 单元也放进去了，想说明这些源码支撑了哪些能力。这样做有什么问题？",
+      "expected_output": "越层了。F 单元在 Feature 层，与 US 并列，不在 US → I → UI → SRC 这条纵向路径上。SRC 的直接上层是 UI，F 已是第三层祖先。能力与源码的对应关系应该放在能力清单视图 chain<链>-f 里，那是唯一允许 US 与 F 同图出现的例外。SRC 视图只放 SRC 单元，归属锚用 UI 面容器。",
+      "files": [],
+      "expectations": [
+        "指出 F 单元不在 US→I→UI→SRC 纵向路径上",
+        "指出 F 是 SRC 的第三层祖先，属于越层",
+        "指出能力与源码的对应应放在能力清单视图",
+        "要求 SRC 视图的归属锚用 UI 面容器"
+      ]
     }
   ]
 }

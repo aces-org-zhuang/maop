@@ -206,21 +206,27 @@ F 单元清单             NF 单元清单
 
 ```text
 US[I-001, I-002, I-003]      ← 步骤嵌在 US 容器内
+I[UI-001]                    ← 界面嵌在业务步骤内
+UI[SRC-001]                  ← 源码单元嵌在交互面内
 F[US-001, US-002, US-003]     ← 单元嵌在 F 容器内
 ```
 
-**视图层**：只 include 上层容器，下层元素作为子元素自动带出。
+**注意最后一行是唯一的例外**：F/NF 单元与 US 是**同层并列**关系，不是祖先关系。F/NF 出现在 US 视图里是合法的（US 的直接上层就是 Feature，F/NF 就在那一层），但**不能再往上到 Feature 的兄弟环**。
+
+**视图层**：祖先与目标元素**同时显式 `include`**，让 LikeC4 渲染成嵌套。**只 `include` 上层容器不会自动带出下层元素**（实测，见「最多跨一层」章节）。
 
 ```c4
-对  view chain001F-i-step of feat_answer_f {
-      title 'I 环 · 业务步骤 · Feature-001-F'
-      include feat_answer_f.us_ask        // 只 include US，I 环自动嵌套显示
+对  view chain001F-i-step {
+      include feat_answer_f.us_ask            // 祖先：US 容器
+      include feat_answer_f.us_ask.i_normalize   // 目标：I 步骤
+      include feat_answer_f.us_ask.i_retrieve
     }
+    // 渲染成 US[I-001, I-002]，归属一眼可见
 
 错  view chain001F-i-step {
-      include feat_answer_f.us_ask
-      include feat_answer_f.i_ask_normalize    // 平铺，与 US 平级
+      include feat_answer_f.us_ask            // ← 只有一个空 US 框，步骤全没画出来
       us_ask -> i_ask_normalize '实现'          // 用边表达归属
+      include feat_answer_f.us_ask.i_normalize // 平铺，祖先丢失
     }
 ```
 
@@ -818,6 +824,140 @@ pano-f  当前仅 Feature-001 一个 Feature，故本视图等于 Feature-001-F
 ```
 
 **能力清单视图可以同时出现 US**——它的目的就是展示单元与 US 的对应关系。这是有意的例外，要在 `description` 里写明，避免被误读成 US 视图。
+
+### 最多跨一层（硬规则，实测校正）
+
+**一张视图最多出现「本环 + 直接上一层」。出现第三层及以上就是错的。**
+
+层级链是**固定**的，不因某张图方便而改变：
+
+```text
+产品愿景  →  Feature-001-F  →  US  →  I  →  UI  →  SRC  →  构建部署
+              └ F/NF 单元 ┘        └ 业务步骤 ┘
+```
+
+**每一层的直接上层是固定的**：
+
+| 本环 | 直接上层（唯一合法的锚） | 上层的上层（越层，禁止） |
+| --- | --- | --- |
+| US | Feature（含 F/NF 单元） | — |
+| I | US | Feature |
+| UI | I | US、Feature |
+| SRC | UI | I、US、Feature |
+| 构建部署 | SRC | UI 及以上 |
+
+**推论一：SRC 视图里不允许出现 F / NF 单元，也不允许以 Feature 为容器。** SRC 的上层是 UI，UI 的上层是 I，Feature 已是第三层祖先。这条最常被违反——因为 SRC 视图的 `include` 顺手就把 Feature 元素带进去了。
+
+**推论二：UI 视图里不允许出现 F / NF 单元。** UI 的上层是 I，不是 Feature。
+
+**推论三：I 视图里不允许出现 F / NF 单元。** I 的直接上层是 US。F/NF 是 Feature 层的清单，与 US 并列，不在 I 的祖先路径上。
+
+**跨层 ≠ 平铺**。「跨一层」的正确表达是**嵌套**：本环元素嵌在上层容器内部，视图渲染成 `上层容器[本环元素]`。
+
+#### 关键实测：`include` 容器不会带出子元素
+
+这一条纠正了一个常见误解。**嵌套写在模型里，不等于视图里会自动画出来。**
+
+```c4
+model {
+  featA = feature '甲' {
+    us1 = userStory 'US-001' {
+      i1 = implStep 'I-001 步骤一' {
+        ui1 = uiSurface 'UI-001 交互面' {
+          src1 = srcUnit 'SRC-001 源码单元' { }
+        }
+      }
+    }
+  }
+}
+```
+
+| 视图写法 | 实际渲染 | 判定 |
+| --- | --- | --- |
+| `include featA.us1` | 只有 `us1` 一个空框，**I 步骤一个都没出现** | **错误**——看起来像嵌套了，其实没画 |
+| `include featA.us1.i1.ui1.src1` | 只有 `src1` 平铺，**US/I/UI 三个祖先全丢** | **错误**——归属完全丢失 |
+| `include featA.us1.i1.ui1` + `include featA.us1.i1.ui1.src1` | `ui1[src1]` | **正确** |
+| `include featA.us1` + `include featA.us1.i1` + `include featA.us1.i1.ui1` | `us1[i1[ui1]]` | 正确（但**已跨三层**，仅在导航类视图可用） |
+
+**规则：想显示某层，就必须把祖先链与目标元素全部显式列出。** 少列一层 → 归属丢失；多列两层 → 越层。
+
+#### 视图写法对照表
+
+| 视图 | 允许出现 | 正确写法 |
+| --- | --- | --- |
+| `chain<链>-us` | Feature 容器 + US | `include feat_f` + `include feat_f.us_x` |
+| `chain<链>-f` | Feature 容器 + F/NF 单元 + US（唯一例外） | 同上，按需列 |
+| `chain<链>-i-goal` | US 容器 + 业务目标 | `include feat_f.us_x` + `include feat_f.us_x.i_goal` |
+| `chain<链>-i-step` | US 容器 + I 步骤 | `include feat_f.us_x` + `include feat_f.us_x.i_normalize` |
+| `chain<链>-ui` | I 容器 + UI 面 | `include feat_f.us_x.i_normalize` + `include feat_f.us_x.i_normalize.ui_y` |
+| `srcdir<链>` | UI 容器 + SRC 单元 | `include feat_f...ui_y` + `include feat_f...ui_y.src_z` |
+| `carrier<链>` | SRC 维度同层平铺 | 只 `include` 载体元素，**不 include Feature** |
+| `api<链>` | 泳道容器 + API | 只 `include` 泳道容器及其 API |
+
+**载体类视图（`carrier` / `erm` / `pano-carrier`）是例外**：数据载体是 SRC 环内部的横向维度，不属于 `UI → SRC` 这条纵向路径，因此可以平铺，不强制带 UI 容器。
+
+#### 视图内容校验（实测校正）
+
+**`validate` 与 `build` 都只检查语法和布局，不检查「该显示的元素有没有显示」。** 元素漏画、归属丢失、越层三类错误全部静默通过。必须导出 JSON 核对实际渲染结果：
+
+```bash
+likec4 export json -o out.json
+node -e "
+const d=require('./out.json');
+for(const id of Object.keys(d.views)){
+  const v=d.views[id];
+  if(v._type!=='element') continue;
+  const ns=v.nodes||[];
+  const flat=ns.filter(n=>n.level===0).length;
+  // 平铺率：全平铺说明没有嵌套容器，归属靠什么表达？
+  console.log(id+'  节点='+ns.length+'  L0='+flat+'  L1='+ns.filter(n=>n.level>1).length);
+}"
+```
+
+判据：
+
+| 现象 | 含义 | 判定 |
+| --- | --- | --- |
+| `L1 = 0` 且视图宣称有嵌套归属 | 子元素**根本没画出来** | **错误**——最常见缺陷 |
+| `L1 > 0` 且容器是直接上层 | 归属正确 | 正确 |
+| `L1 > 0` 且容器是祖父层 | 越层 | **错误** |
+| 有 `level ≥ 2` 的节点 | 跨了两层以上 | **错误** |
+
+> **实测坑（务必知道）**：`include` 容器**不会**自动带出子元素。`include feat.us_x` 渲染出来就是一个**空 US 框**，里面的 I 步骤一个都不显示。这会让「I 环业务步骤视图」看起来配好了，实际是空的。必须**祖先与目标元素同时显式 `include`**。
+
+> **注意**：不要用「节点的祖先链是否在视图里」来判定归属错位——LikeC4 渲染嵌套时节点 id 保持完整 FQN，容易误判。判定归属是否正确应看**容器的 `children` 数组里每个元素的 id 是否以容器 id 为前缀**。
+
+#### 与「全景同类聚合」的关系
+
+两条规则不冲突，约束的是不同维度：
+
+- **同类聚合**管「这张图放什么种类的元素」——只放一种环的元素。
+- **最多跨一层**管「这些元素的容器嵌套多深」——容器最多到直接上一层。
+
+一条全景视图的元素全部平铺在 L0（`level: 0`）就是同时满足两条。**一旦某元素出现 `level > 0`，就必须检查它的祖先是不是合法锚。**
+
+#### LikeC4 会自动补齐断层（实测，最容易踩）
+
+**祖先与目标之间若有未 `include` 的中间层，LikeC4 会把它自动补上并展开，导致越层。**
+
+```text
+模型嵌套：US → I → UI → SRC（四层）
+
+include ui                  → ui                    0 层  ✓
+include ui + ui.src         → ui[src]               1 层  ✓ 只取下两层
+include us + i + ui + src   → us[i[ui[src]]]        3 层  ✗ 显式补齐了全链
+include src                 → src                   0 层  ✓ 但归属全丢
+```
+
+**规则：只 `include` 目标层的直接上层与目标元素本身，不要往上补。** 想显示两层就只列两层，多列一层就多渲染一层。
+
+#### 元素分属不同父容器时必须拆视图（实测）
+
+一条视图里 include 的元素如果**分属不同的父容器**（例如 NF 链的 `ui_status` 挂在 `us_kbEmpty` 下、`ui_notice` 挂在 `us_llmDown` 下），LikeC4 会把每个父容器都提为根并展开其中间层，产生越层。
+
+**修法：按父容器拆成多张视图**，视图名加后缀区分（`srcdir001NF` / `srcdir001NFnotice`）。这与「一条分支一张图」是同一条原则的延伸。
+
+> 实测记录（likec4 1.58.0）：以上全部写法 `✓ Valid` 且 `✓ built`，包括越层写法——**越层不是语法错误，工具不会拦，只能靠规则与自检**。
 
 ### SRC 环额外必备：六张视图
 
