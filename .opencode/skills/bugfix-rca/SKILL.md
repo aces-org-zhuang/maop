@@ -8,13 +8,12 @@ description: 用于问题定位、修复和“不再复现”验证。用户说�
 
 选择的基础模型：任务依赖树 + round + loop。
 
-本技能以一份 RCA 追踪报告为唯一事实载体；`document-generation` 负责把报告逐段初始化和更新，`reasoning-map` 负责收敛故障窗口与验证边界，`implementation-delivery` 负责真实修复与 fresh verification。完成条件只看“原问题不再复现”，不看“修复已提交”。
+本技能以一份 RCA 追踪报告为唯一事实载体；报告由本技能用常规文件读写命令直接创建和更新，不依赖外部文档 CLI；`reasoning-map` 负责收敛故障窗口与验证边界，`implementation-delivery` 负责真实修复与 fresh verification。完成条件只看“原问题不再复现”，不看“修复已提交”。
 
 ```text
 RCA single source of truth
   -> sop-00-intake-and-routing {归类为 bug / regression / verification failure / RCA trace}
-  -> document-generation {初始化并持续更新 fix-rca-trace.md}
-  -> sop-01-bugfix-trace-init {定义现象、环境、复现、影响和证据}
+  -> sop-01-bugfix-trace-init {用常规读写命令创建并逐段更新 fix-rca-trace.md}
   -> reasoning-map {收敛故障最小窗口与候选根因}
   -> sop-02-reasoning-map-slice {锁定最小切片、排除项和验证路径}
   -> sop-03-repair-and-fresh-verification {修复并用 build/API/WebUI/回归验证不再复现}
@@ -27,11 +26,11 @@ RCA single source of truth
 
 ## 核心契约
 
-- **Single source of truth**：一次任务只允许一份 `fix-rca-trace.md` 逻辑报告和一个与之对应的文档状态。
+- **Single source of truth**：一次任务只允许一份 `fix-rca-trace.md`，报告文件本身就是唯一状态载体。
 - **Completion rule**：只有当前证据下原问题不可复现，才允许进入完成态。
 - **Reasoning gate**：最小窗口、时序边界、候选根因和验证路径不清时，先用 `reasoning-map`。
 - **Verification gate**：必须覆盖与问题最相关的验证入口，优先级通常是最小复现 > API > WebUI > 回归 > 构建/静态检查。
-- **Document update**：报告只能通过 `document-generation` 的 CLI 片段更新，不手写第二份真相源。
+- **Document update**：报告用常规文件读写命令原地更新——首次按模板创建，之后只读改写对应小节，不新建第二份报告，也不另建旁路状态文件。
 - **Fresh evidence**：完成声明必须绑定本轮实际执行的验证结果，不能用“修复已实施”替代“不再复现”。
 
 ## 资源索引
