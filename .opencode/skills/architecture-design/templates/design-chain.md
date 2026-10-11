@@ -242,9 +242,30 @@ model {
       i_of_create = implStep 'I-003 创建订单' { }
     }
 
-    i_goal = implStep 'I-101 业务目标' {
+    // ---- I 环 · 业务目标：每条链恰好一个 ----
+    //
+    // **I 环固定包含三类内容，缺一不可**：业务目标 / 业务状态 / 业务步骤。
+    // 三类各用独立编号段：目标 I-G<n>、状态 S-xxx、步骤 I-<三位编号>。
+
+    i_goal = implStep 'I-G0 业务目标' {
       description '目标：客户在一次会话内完成下单。'
     }
+
+    // ---- I 环 · 业务状态：状态即元素，迁移即关系 ----
+    //
+    // 每条链都必须有业务状态，至少 2 个且有迁移。
+    // 「本链无状态」几乎总是漏做而非事实——真实系统总有状态。
+
+    st_draft = state 'S-000 草稿'
+    st_validated = state 'S-001 已校验'
+    st_paying = state 'S-002 支付中'
+    st_done = state 'S-003 已确认'
+    st_cancelled = state 'S-004 已取消'
+
+    st_draft -> st_validated '校验通过'
+    st_validated -> st_paying '发起支付'
+    st_paying -> st_done '支付成功'
+    st_validated -> st_cancelled '校验失败或超时'
 
     // 对外接口与泳道。泳道按调用方向划分，不按操作步骤。
     // **泳道只是 API 时序的分组手段，不是新的存放位置**——UI 与 SRC 单元保持平铺，
@@ -260,9 +281,9 @@ model {
       }
     }
     lane_core = feature '领域层泳道' {
-      i_stepLane = implStep 'I-003 业务步骤（泳道内）' {
-        description '领域层泳道内的订单服务环节。'
-      }
+      // **泳道不得自造编号**。环节用真实的 I 步骤元素，
+      // 由流程图 include 真实 FQN 表达；此处只写 description 说明范围。
+      description '领域层负责校验与下单。具体环节见 us_pay 下的 I-0xx，此处不重复定义'
     }
     lane_ext = feature '外部依赖泳道' {
       ext_pay = system '支付网关' {
@@ -711,13 +732,13 @@ views {
     description '按责任分区：角色发起、接入层归一化、领域层检索、领域层校验。'
     include feat_f.lane_client.actor_customer
     include feat_f.lane_edge.api_placeOrder
-    include feat_f.lane_core.i_stepLaneSearch
-    include feat_f.lane_core.i_stepLaneValidate
+    include feat_f.us_pay.i_normalize, feat_f.us_pay.i_validate
+    include feat_f.us_pay.i_create
 
     feat_f.lane_client.actor_customer -> feat_f.lane_edge.api_placeOrder '①提出问题'
-    feat_f.lane_edge.api_placeOrder -> feat_f.lane_core.i_stepLaneSearch '②检索候选知识'
-    feat_f.lane_core.i_stepLaneSearch -> feat_f.lane_core.i_stepLaneValidate '③候选返回'
-    feat_f.lane_core.i_stepLaneValidate -> feat_f.lane_edge.api_placeOrder '④生成答复'
+    feat_f.lane_edge.api_placeOrder -> feat_f.us_pay.i_normalize '②归一化请求'
+    feat_f.us_pay.i_normalize -> feat_f.us_pay.i_validate '③校验库存'
+    feat_f.us_pay.i_validate -> feat_f.us_pay.i_create '④创建订单'
   }
 }
 ```
@@ -883,13 +904,14 @@ views {
 
     include feat_checkout_f.actor_cs
     include feat_checkout_f.lane_edge.api_placeOrder
-    include feat_checkout_f.lane_core.i_stepLane
+    include feat_checkout_f.us_pay.i_of_validate
+    include feat_checkout_f.us_pay.i_of_create
     include feat_checkout_f.lane_ext.ext_pay
 
     feat_checkout_f.actor_cs -> feat_checkout_f.lane_edge.api_placeOrder 'POST /orders'
-    feat_checkout_f.lane_edge.api_placeOrder -> feat_checkout_f.lane_core.i_stepLane '校验并创建订单'
-    feat_checkout_f.lane_core.i_stepLane -> feat_checkout_f.lane_ext.ext_pay '调用支付网关'
-    feat_checkout_f.lane_ext.ext_pay -> feat_checkout_f.lane_core.i_stepLane '返回支付结果'
+    feat_checkout_f.lane_edge.api_placeOrder -> feat_checkout_f.us_pay.i_of_validate '校验并创建订单'
+    feat_checkout_f.us_pay.i_of_create -> feat_checkout_f.lane_ext.ext_pay '调用支付网关'
+    feat_checkout_f.lane_ext.ext_pay -> feat_checkout_f.us_pay.i_of_create '返回支付结果'
   }
 }
 ```
@@ -1111,11 +1133,11 @@ views {
 
 ```c4
 model {
-  st_draft = state '草稿'
-  st_validated = state '已校验'
-  st_paying = state '支付中'
-  st_done = state '已确认'
-  st_cancelled = state '已取消（分支）'
+  st_draft = state 'S-000 草稿'
+  st_validated = state 'S-001 已校验'
+  st_paying = state 'S-002 支付中'
+  st_done = state 'S-003 已确认'
+  st_cancelled = state 'S-004 已取消'
 
   st_draft -> st_validated '提交并通过校验'
   st_validated -> st_paying '发起支付'
