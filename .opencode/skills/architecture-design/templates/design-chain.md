@@ -337,35 +337,126 @@ views {
 
 ---
 
-## src/views/nf-panorama.c4（全量设计时的 NF 全景）
+## 全量设计时必备：各环全景
 
-**全量设计时出一张 NF 全景，一次看全部质量属性。**不是在每个 F 视图里各检视一次 NF。
+**每一环都有全景视图**，不只 NF。全景是全量设计的产物，增量设计时不出。
+
+| 全景视图 | 覆盖范围 | 回答什么 |
+| --- | --- | --- |
+| **F 全景** | 全部 F 链的能力单元 + US + I 逻辑 | 系统对外提供哪些能力 |
+| **NF 全景** | 全部 NF 链的质量属性 + US + I 逻辑 | 系统承诺哪些质量水平 |
+| **US 全景** | 全部链的 US，按交付主题分组 | 谁要什么 |
+| **I 全景** | 全部链的业务状态与步骤 | 业务怎么流转 |
+| **UI 全景** | 全部链的界面面 | 用户能看到什么 |
+| **SRC 全景** | 全部链的源码单元 | 代码怎么组织 |
+
+**聚合发生在全景层，不发生在链视图层。**
+
+### SRC 环额外必备：源码文件目录视图
+
+SRC 是唯一带真实磁盘资产的环，**必须有目录视图**——否则实现方只拿到抽象单元，看不到实际文件布局。
 
 ```c4
 views {
-  view nfPanorama {
-    title 'NF 全景 · 全部质量属性'
-    description '按质量属性切分的所有 NF 链总览。一次性呈现，不分散在 F 视图里。'
-    include feat_perf_nf.nf_latency
-    include feat_perf_nf.nf_auditability
-    include feat_perf_nf.us_peak, feat_perf_nf.us_audit
-    include feat_perf_nf.i_perf, feat_perf_nf.i_audit
+  view srcDirectory of feat_checkout_f {
+    title 'SRC 目录视图 · Feature-001-F'
+    description '本链源码单元与真实文件路径的对应，含嵌套子单元。'
+    include *
+  }
+
+  view srcDirectoryNF of feat_perf_nf {
+    title 'SRC 目录视图 · Feature-001-NF'
+    description 'NF 链的源码单元与真实文件路径对应。'
+    include *
   }
 }
 ```
 
-**NF 全景的读法**：先看有哪些质量属性被本次交付覆盖，再看每项由哪条 US 要求、落到哪段逻辑。**不从 F 侧逐个检视。**
+**读法**：按嵌套层级展开，每个单元标出其 `description` 里的源码路径。子单元是父单元所在文件内的拆分，**父子不连边**（包含关系已由嵌套表达）。
+
+**目录视图与 SRC 全景的区别**：
+
+| | SRC 目录视图 | SRC 全景 |
+| --- | --- | --- |
+| 范围 | 本链 | 全部链 |
+| 含源码路径 | **含** | 不含路径细节 |
+| 回答 | 文件怎么组织 | 源码单元全貌 |
+
+### 全景视图示例
+
+```c4
+views {
+  view fPanorama {
+    title 'F 全景 · 系统对外能力'
+    description '全部 F 链的能力单元。一次性呈现，不分散在各链视图里。'
+    include feat_checkout_f.f_order
+    include feat_checkout_f.f_payment
+  }
+
+  view nfPanorama {
+    title 'NF 全景 · 系统质量承诺'
+    description '全部 NF 链的质量属性。一次性呈现，不在每个 F 视图里检视。'
+    include feat_perf_nf.nf_latency
+    include feat_perf_nf.nf_auditability
+  }
+
+  view usPanorama {
+    title 'US 全景 · 谁要什么'
+    description '全部链的用户故事，按交付主题分组。'
+    include feat_checkout_f.us_place, feat_checkout_f.us_pay
+    include feat_perf_nf.us_peak, feat_perf_nf.us_audit
+  }
+
+  view iPanorama {
+    title 'I 全景 · 业务流转'
+    description '全部链的业务逻辑，按编号段区分 F 链与 NF 链。'
+    include feat_checkout_f.i_step, feat_checkout_f.i_state
+    include feat_perf_nf.i_perf, feat_perf_nf.i_audit
+  }
+
+  view srcPanorama {
+    title 'SRC 全景 · 源码单元全貌'
+    description '跨全部链的源码单元。文件路径详见各链的 SRC 目录视图。'
+    include feat_checkout_f.src_checkout
+    include feat_checkout_f.src_orderService, feat_checkout_f.src_paymentClient
+    include feat_perf_nf.src_probe, feat_perf_nf.src_auditStore
+  }
+}
+```
+
+**注意**：全景视图可以同时 `include` 两条链的元素——**这是唯一允许跨链的地方**，因为全景的职责就是横向聚合。链视图仍然禁止跨链。
 
 ---
 
-## 增量设计与全量设计
+## 跨链接力推演
 
-| 模式 | 做法 |
-| --- | --- |
-| **增量设计** | 一次只推一条链。做 F 增量就只推 F 链，做 NF 增量就只推 NF 链，**不因为「顺手」把另一条链拽进来** |
-| **全量设计** | 出一张 NF 全景视图，一次看全部质量属性 |
+**链内推演闭环不等于推演结束。** 两条链之间存在关联，必须沿关联起第二条推演。
 
-**违反代价**：把 NF 塞进 F 的推进过程，会导致每次推 F 都重复提及 NF，F 的视图被撑爆，评审时无从下手——这正是切面分离要避免的。
+```text
+起点：NF 链
+   ↓ 链内完整推演（US → NF → I → UI → SRC）
+   ↓ 关联查询：本次 NF 单元在 SRC 层触达了哪些组件？
+   ↓ 起第二条推演：在关联的 F 链上重跑红绿循环
+   ↓ F 链推演完，再查关联 NF → 还有未覆盖的质量属性？
+
+起点：F 链
+   ↓ 链内完整推演
+   ↓ 关联查询：本次改动破坏了哪些质量属性？
+   ↓ 起第二条推演：在关联的 NF 链上重跑红绿循环
+
+直到两侧都无法再起新推演，才算推演结束。
+```
+
+**关键区别**：
+
+| 做法 | 是否重跑红绿循环 | 结果 |
+| --- | --- | --- |
+| 在 NF 链里检视 F | 否 | F 的红点从未被验证，且 F 链视图被撑爆 |
+| **起 F 链的新推演** | 是 | F 链独立验证自己的红点，NF 链保持干净 |
+
+**任何一方都无法单独证明跨链影响**——质量承诺要作用在功能上，这个作用能否成立只在 F 链的上下文里能验证；反过来同理。这是两条链独立闭环的必然代价。
+
+**「无关联」也要显式说明**，空白会让读者以为忘了这一步。
 
 ---
 
