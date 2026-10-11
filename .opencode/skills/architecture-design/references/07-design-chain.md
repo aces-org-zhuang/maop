@@ -157,7 +157,7 @@ F 单元清单             NF 单元清单
 
 **NF 不是约束，是一次完整交付。** 极端场景下的系统表现本身就是可交付能力，因此有完整的 US 与验收标准。详见 `12-design-origin.md` 第三节。
 
-### I 层 · 实现层（业务设计）
+### I 环 · 业务设计
 
 **产出物**：`I-<编号> <类型> <名称>`，三类：
 
@@ -169,6 +169,100 @@ F 单元清单             NF 单元清单
 
 **这一层完全不涉及源码**。判断标准：**换一个人、换一种技术栈来实现，这层设计依然成立**。一旦出现类名、函数名、表名，就越界了。
 
+
+
+#### 业务步骤必须展开成元素，不能只写在 description 里（硬规则）
+
+**把步骤写进 `description` 是错的。** `'主干步骤：接收消息 → 检索候选 → 置信度校验 → 生成答复'` 这种写法有三个问题：
+
+1. 视图上只有一个 `I-xxx 业务步骤` 节点，读者看不出有几步、每步做什么
+2. 步骤无法参与追溯——没法表达「哪条 US 由哪几步实现」
+3. 无法画流程图——泳道时序需要真实的步骤元素才能连消息
+
+**正确做法**：每个业务步骤是一个独立元素，按 `I-<三位编号>` 编号，并**嵌套在对应的 US 元素内部**。
+
+```c4
+错  i_step = implStep 'I-003 业务步骤' {
+      description '主干步骤：接收消息 → 检索候选 → 置信度校验 → 生成答复'
+    }
+    // 一个节点，四个步骤全塞进文字，视图与流程图都做不出来
+
+对  us_ask = userStory 'US-001 客户提问获得专业答复' {
+      i_ask_normalize = implStep 'I-001 归一化提问' { }
+      i_ask_retrieve  = implStep 'I-002 检索候选知识' { }
+      i_ask_rank      = implStep 'I-003 候选排序与择优' { }
+      i_ask_verify    = implStep 'I-004 置信度校验' { }
+      i_ask_compose   = implStep 'I-005 生成答复' { }
+      i_ask_deliver   = implStep 'I-006 下发答复' { }
+    }
+    // 六个元素，嵌在 US 容器内，归属一眼可见
+```
+
+**判据**：一个 `implStep` 的 `description` 里如果出现了 `→` 或顿号连接的多个动作，说明该拆了。
+
+#### 归属靠嵌套容器表达，不靠跨层边（硬规则）
+
+**「跨层」不是把两环元素画在同一张图里，而是用嵌套容器让归属可见**：
+
+```text
+US[I-001, I-002, I-003]      ← 步骤嵌在 US 容器内
+F[US-001, US-002, US-003]     ← 单元嵌在 F 容器内
+```
+
+**视图层**：只 include 上层容器，下层元素作为子元素自动带出。
+
+```c4
+对  view chain001F-i-step of feat_answer_f {
+      title 'I 环 · 业务步骤 · Feature-001-F'
+      include feat_answer_f.us_ask        // 只 include US，I 环自动嵌套显示
+    }
+
+错  view chain001F-i-step {
+      include feat_answer_f.us_ask
+      include feat_answer_f.i_ask_normalize    // 平铺，与 US 平级
+      us_ask -> i_ask_normalize '实现'          // 用边表达归属
+    }
+```
+
+| 写法 | 效果 | 判定 |
+| --- | --- | --- |
+| **嵌套**（I 嵌在 US 内） | 归属由容器表达，一眼可见 | **正确** |
+| 平铺 + 边 | 归属靠连线解释，图上多一堆箭头 | 冗余 |
+| 平铺无关系 | 归属完全丢失 | 错误 |
+
+**嵌套之后不要再连 `US → I` 的边**——包含关系已由嵌套表达。
+
+**粒度按归属划分**：步骤只属于一条 US 就嵌在那条 US 下；被多条 US 共用的可嵌在 Feature 层并在 `description` 注明服务哪些 US。
+
+#### 三类内容各自成图
+
+| 内容 | 视图 | 表达方式 |
+| --- | --- | --- |
+| 业务目标 | `chain<链>-i-goal` | `element view`，只含目标 |
+| 业务状态 | `chain<链>-i-state` | `element view`，状态即元素 + 迁移即关系 |
+| 业务步骤 | `chain<链>-i-step` + `seq<链>-i-step-lanes` | 嵌套视图 + **泳道流程图** |
+
+**业务步骤必须有泳道流程图**。步骤之间有责任边界——谁发起、谁编排、谁执行外部调用——平铺的 `element view` 表达不出这个分工。
+
+```c4
+views {
+  dynamic view seq001F-i-step-lanes {
+    variant sequence
+    title 'I 环 · 业务步骤泳道流程 · Feature-001-F'
+    include feat_answer_f.lane_client.actor_customer
+    include feat_answer_f.lane_edge.api_chatCallback
+    include feat_answer_f.us_ask.i_ask_normalize      // 嵌套后的真实步骤
+    include feat_answer_f.us_ask.i_ask_retrieve
+    include feat_answer_f.us_ask.i_ask_rank
+
+    feat_answer_f.lane_client.actor_customer -> feat_answer_f.lane_edge.api_chatCallback '①提出问题'
+    feat_answer_f.lane_edge.api_chatCallback -> feat_answer_f.us_ask.i_ask_normalize '②归一化'
+    feat_answer_f.us_ask.i_ask_normalize -> feat_answer_f.us_ask.i_ask_retrieve '③检索'
+  }
+}
+```
+
+**`dynamic view` 引用嵌套元素必须用 FQN**（`feat.us_ask.i_ask_normalize`），实测有效。
 **为什么单独设 I 层**：业务方评审时看的就是这层。如果业务目标、状态、步骤混在技术方案里，业务方无法评审——这是设计与需求脱节的根因。
 
 ### UI 层 · 界面层

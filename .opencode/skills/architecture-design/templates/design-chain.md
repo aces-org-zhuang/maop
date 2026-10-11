@@ -233,14 +233,17 @@ model {
       description '承载支付发起与结果处理。'
     }
 
-    i_goal = implStep 'I-001 业务目标' {
+    // **I 环步骤嵌套在 US 容器内**：归属靠嵌套表达，不用跨层边。
+    us_place = userStory 'US-001 提交订单' {
+      description '作为客服，我能确认产品与数量并为客户下单。验收：订单已创建且订单号已送达。'
+
+      i_of_normalize = implStep 'I-001 归一化请求' { }
+      i_of_validate = implStep 'I-002 校验库存' { }
+      i_of_create = implStep 'I-003 创建订单' { }
+    }
+
+    i_goal = implStep 'I-101 业务目标' {
       description '目标：客户在一次会话内完成下单。'
-    }
-    i_state = implStep 'I-002 业务状态' {
-      description '状态：草稿 → 已校验 → 支付中 → 已确认 / 已取消。'
-    }
-    i_step = implStep 'I-003 业务步骤' {
-      description '主干步骤：提交订单 → 校验库存 → 发起支付 → 确认。'
     }
 
     // 对外接口与泳道。泳道按调用方向划分，不按操作步骤。
