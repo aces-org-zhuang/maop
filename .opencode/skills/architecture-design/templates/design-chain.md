@@ -99,12 +99,36 @@ feat.src_checkout .depends feat.paymentClient '调用支付网关'
 
 ---
 
-## src/model/feature-checkout.c4（F 类 Feature）
+## 两条链的文件布局
+
+F 链与 NF 链是**平级的独立 Feature**，各占一个文件，物理隔离：
+
+```text
+src/
+  specification.c4                 element kind 与 relationship kind 定义
+  model/
+    feature-001-f-checkout.c4      Feature-001-F 结算下单（按业务能力切）
+    feature-001-nf-perf.c4         Feature-001-NF 支付性能（按质量属性切）
+  views/
+    feature-001-f.c4               F 链视图
+    feature-001-nf.c4              NF 链视图
+    nf-panorama.c4                 NF 全景（全量设计时，一次看全部质量属性）
+  deployment/
+    prod.c4                        交付后才产出
+```
+
+**为什么物理隔离而不是同一个 Feature 下双侧**：文件嵌套本身就是一种「顺便检视」的暗示。只要 NF 住在 F 的目录里，AI 和人在推 F 时都会忍不住去看它。平级分文件比口头约定可靠。
+
+**编号用序号关联交付主题**：`Feature-<序号>-F` 与 `Feature-<序号>-NF` 成对，靠序号说明它们服务于同一次交付。
+
+---
+
+## src/model/feature-001-f-checkout.c4（F 链）
 
 ```c4
 model {
-  feat_checkout = feature 'Feature-001 结算下单' {
-    description '本次做到：客服在对话中可直接完成下单。可观察：下单转化率提升 15%。所属愿景：让交易更顺。'
+  feat_checkout_f = feature 'Feature-001-F 结算下单' {
+    description '按业务能力切分。交付边界：客服在对话中可直接完成下单。可观察：下单转化率提升 15%。所属愿景：让交易更顺。'
 
     us_place = userStory 'US-001 提交订单' {
       description '作为客服，我能在对话中直接为客户下单，以便当场完成交易。验收：提交后 2 秒内返回订单号。'
@@ -119,15 +143,9 @@ model {
     f_payment = function 'F-002 支付功能' {
       description '承载支付发起与结果处理。'
     }
-    nf_auditability = nonFunction 'NF-001 可审计性' {
-      description '所有状态变更留痕，可按订单号回溯。'
-    }
-    nf_latency = nonFunction 'NF-002 响应时延' {
-      description '下单请求 P95 不超过 200ms；客服提交后无需切换页面等待。'
-    }
 
     i_goal = implStep 'I-001 业务目标' {
-      description '目标：客户在一次会话内完成下单，且状态可回溯。'
+      description '目标：客户在一次会话内完成下单。'
     }
     i_state = implStep 'I-002 业务状态' {
       description '状态：草稿 → 已校验 → 支付中 → 已确认 / 已取消。'
@@ -160,22 +178,14 @@ model {
       description 'src/services/payment-client.js — 调用支付网关。'
     }
 
-    // US → F：这条意图要什么能力
+    // US → 能力：有 US 要求这项能力
     us_place .trace f_order '要求'
     us_pay .trace f_payment '要求'
 
-    // NF → US：这条约束压着哪条验收标准
-    nf_latency .trace us_place '约束验收标准'
-    nf_auditability .trace us_pay '约束验收标准'
-
-    // F → I：能力如何落成业务逻辑
+    // 能力 → I 逻辑
     f_order .trace i_goal '实现目标'
     f_order .trace i_state '实现状态'
     f_order .trace i_step '实现步骤'
-
-    // NF → I：约束压着哪段业务逻辑
-    nf_latency .trace i_step '约束步骤耗时'
-    nf_auditability .trace i_state '约束状态迁移'
 
     // I → UI → SRC
     i_step .trace ui_interaction '反馈交互'
@@ -190,188 +200,184 @@ model {
 }
 ```
 
-**要点**：
-
-- 编号格式 `Feature-` `US-` `F-` `NF-` `I-` `UI-` `SRC-` + 三位数字，全局唯一不复用
-- **F 与 NF 必须双向有边**：`US → F` 说明功能从哪来，`NF → US` 说明约束压着谁。入边为零的 F 项与指向 US 的边为零的 NF 项，都是门禁要报的缺口
-- **NF 的承接关系必须写成边**，不能只写在 `description` 里——文字无法校验，也无法经 MCP 查询
-- **NF 项必须可度量**，且**必须落在至少一条 US 的验收标准上**，否则是空悬约束
-- **I 环禁止出现**类名、函数名、表名、文件名。判据：换个人、换技术栈，这环设计依然成立
-- **SRC 单元必须绑定真实源码路径**（写在 `description` 里），写不出路径说明尚未实现，标 `待补充`
-- **父子之间不连边**——`src_checkout` 与 `src_checkout.routes` 是嵌套关系，不写 `depends` 边
-- **注意区分两种引用**：`feat_checkout.src_checkout` 是架构设计 FQN（给 LikeC4 定位），`src/routes/checkout-routes.js` 是源码路径（供人工核对），两者并列
+**链内没有任何 NF 元素。**
 
 ---
 
-## src/model/feature-perf.c4（NF 类 Feature）
+## src/model/feature-001-nf-perf.c4（NF 链）
 
-**NF 类不得跳过 US 环**。质量目标必须落到可感知收益上，否则无人能验收。
+**NF 链与 F 链同维度、同本体**——它同样有 US、I、UI、SRC，不比 F 链少任何东西。NF 交付的是「性能感知上的确定性」，这是一项可交付能力。
 
 ```c4
 model {
-  feat_perf = feature 'Feature-004 支付性能提升' {
-    description '本次做到：月末结算高峰，客服不用再手工刷新状态。可观察：20 并发下单 P95 ≤ 200ms。所属愿景：让交易更顺。'
+  feat_perf_nf = feature 'Feature-001-NF 支付性能' {
+    description '按质量属性切分。交付边界：下单超 200ms 时系统明确提示异常，客服可立即重试。可观察：月末高峰客服不需手工刷新。所属愿景：让交易更顺。'
 
-    us_peak = userStory 'US-005 高峰下单不卡' {
-      description '作为一线客服，月末高峰同时处理 20 个会话时，提交订单后无需切出等待。验收：20 并发下单 P95 ≤ 200ms，且客服侧无需手工刷新。'
+    us_peak = userStory 'US-003 超时提示可操作' {
+      description '作为客服，下单超过 200ms 时系统明确提示异常，以便我能立刻判断是重试还是放弃。验收：提示文案说明原因并给出「重试」操作。'
+    }
+    us_audit = userStory 'US-004 操作可回溯' {
+      description '作为客服，我能按订单号查到这次下单的耗时与结果，以便向客户解释。验收：输入订单号可见完整调用链与耗时。'
     }
 
-    // NF 类：F 侧显式声明无需新增，不沉默跳过
-    f_note = function 'F-005 本次无需新增功能单元' {
-      description '对外可见能力不变，本次仅提升既有支付链路的响应时延。'
+    nf_latency = nonFunction 'NF-001 支付响应时延' {
+      description '支付链路 P95 ≤ 200ms；超出即触发 US-003 的提示路径。'
+    }
+    nf_auditability = nonFunction 'NF-002 可审计性' {
+      description '每次下单的耗时与结果留痕，可按订单号回溯。对应 US-004。'
     }
 
-    nf_latency = nonFunction 'NF-003 支付响应时延' {
-      description '支付链路 P95 ≤ 200ms。'
+    i_perf = implStep 'I-101 性能判定逻辑' {
+      description '主干步骤：计时 → 判定是否超 200ms → 超时则生成可操作提示 → 留痕。'
     }
-    nf_consistency = nonFunction 'NF-004 数据一致性' {
-      description '优化后仍保证支付状态最终一致，不出现超卖。'
-    }
-
-    i_step = implStep 'I-004 业务步骤' {
-      description '主干步骤：提交订单 → 批量预取 → 发起支付 → 确认。'
+    i_audit = implStep 'I-102 审计查询逻辑' {
+      description '主干步骤：读取留痕 → 按订单号聚合 → 输出调用链与耗时。'
     }
 
-    src_paymentClient = srcUnit 'SRC-004 支付客户端（优化）' {
-      description 'src/services/payment-client.js — 增加批量预取与连接复用。'
+    ui_warning = uiSurface 'UI-101 超时提示' {
+      description '超时弹出层：说明原因、给出重试与取消、错误 / 重试中 / 成功三态。'
+    }
+    ui_trace = uiSurface 'UI-102 耗时查询' {
+      description '按订单号展示调用链与各段耗时，覆盖空态（无记录）与错误态（查询失败）。'
     }
 
-    // NF → US：NF 类同样必须写边，不能只写「落在 US-005 上」
-    nf_latency .trace us_peak '约束验收标准'
-    nf_consistency .trace us_peak '约束验收标准'
+    src_probe = srcUnit 'SRC-101 计时探针' {
+      description 'src/services/perf-probe.js — 埋点与阈值判定。'
 
-    // NF → I：约束压着哪段业务逻辑
-    nf_latency .trace i_step '约束步骤耗时'
+      timer = srcUnit 'SRC-101-1 计时器' {
+        description 'src/services/perf-timer.js — 分段计时。'
+      }
+    }
+    src_auditStore = srcUnit 'SRC-102 审计存储' {
+      description 'src/repositories/audit-repository.js — 按订单号回溯。'
+    }
 
-    // I → SRC
-    i_step .trace src_paymentClient '落到实现'
+    // US → 质量属性：有 US 要求这项能力
+    us_peak .trace nf_latency '要求'
+    us_audit .trace nf_auditability '要求'
+
+    // 质量属性 → I 逻辑
+    nf_latency .trace i_perf '实现判定'
+    nf_auditability .trace i_audit '实现查询'
+
+    // I → UI → SRC
+    i_perf .trace ui_warning '反馈提示'
+    i_audit .trace ui_trace '展示结果'
+    ui_warning .trace src_probe '触发提示'
+    ui_trace .trace src_auditStore '读取留痕'
   }
 }
 ```
 
-**NF 类的两条硬要求**：
+**NF 链同样完整闭环**：
 
-1. **必须建 US 体系**，且 NF 必须用 `.trace` 边指向那条 US——不能只在 description 里写「落在 US-005 上」。
-2. **F 侧必须显式声明「无需新增」**，让门禁能区分「确实无需」与「忘了做」。
-
-**两类 Feature 走同一条链，只在产出重心上不同**：
-
-| | F 类 | NF 类 |
+| 环 | NF 链的内容 | 对应 F 链的 |
 | --- | --- | --- |
-| US | 有 | **必须有** |
-| F 侧 | 有新增单元 | **显式声明「无需新增」** |
-| NF 侧 | 附带约束 | **本次主要产出** |
-| I / UI / SRC | 照常 | 照常 |
+| US | US-003 超时提示、US-004 操作可回溯 | US-001 / US-002 |
+| 能力单元 | NF-001 时延、NF-002 可审计 | F-001 / F-002 |
+| I 逻辑 | I-101 性能判定、I-102 审计查询 | I-001 / I-003 |
+| UI | UI-101 超时提示、UI-102 耗时查询 | UI-001 / UI-002 |
+| SRC | SRC-101 计时探针、SRC-102 审计存储 | SRC-001 / SRC-002 |
+
+**结构完全同构。** 差别只在切分维度与编号段：F 链用 `F-` / `I-0xx` / `SRC-0xx`，NF 链用 `NF-` / `I-1xx` / `SRC-1xx`。
 
 ---
 
-## src/views/feature-001.c4
+## 禁止的边
 
-视图按 Feature 组织，**作用域指向 Feature 即自动带上归属容器**：
+**跨链边是硬错误**：
 
 ```c4
-views {
-  view feat001Overview of feat_checkout {
-    title 'Feature-001 链路总览'
-    description '本次交付贯穿 US、I、UI、SRC 的完整链路。'
-    include *
-  }
-
-  view feat001Business of feat_checkout {
-    title 'Feature-001 业务设计视角（不含源码）'
-    description 'US 到 UI 环的业务设计，供业务方确认。不含任何源码元素。'
-    include *
-    exclude feat_checkout.src_checkout
-    exclude feat_checkout.src_orderService
-    exclude feat_checkout.src_paymentClient
-  }
-
-  view feat001Frame of feat_checkout {
-    title 'Feature-001 功能与非功能框架'
-    description 'F 与 NF 的对照，NF 项均落在 US 验收标准上。'
-    include feat_checkout.us_place, feat_checkout.us_pay
-    include feat_checkout.f_order, feat_checkout.f_payment
-    include feat_checkout.nf_auditability, feat_checkout.nf_latency
-  }
-
-  view feat001Source of feat_checkout {
-    title 'Feature-001 源码实现视角'
-    description 'I 环落到 SRC 的映射，每个源码单元对应真实文件路径。'
-    include feat_checkout.i_step, feat_checkout.ui_interaction
-    include feat_checkout.src_checkout.routes
-    include feat_checkout.src_orderService, feat_checkout.src_paymentClient
-  }
-
-  dynamic view feat001Sequence {
-    variant sequence
-    title 'Feature-001 主干时序'
-    description '从提交订单到支付确认的必经步骤，不含异常与可选分支。'
-    include feat_checkout.us_place, feat_checkout.i_step
-    include feat_checkout.ui_interaction, feat_checkout.src_checkout.routes
-    include feat_checkout.src_orderService
-
-    feat_checkout.us_place -> feat_checkout.i_step '提出下单'
-    feat_checkout.i_step -> feat_checkout.ui_interaction '反馈交互'
-    feat_checkout.ui_interaction -> feat_checkout.src_checkout.routes '触发源码'
-    feat_checkout.src_checkout.routes -> feat_checkout.src_orderService '调用'
-  }
-}
+nf_latency .trace feat_checkout_f.i_step '约束步骤耗时'      // 错：NF 挂进 F 链
+nf_latency .trace feat_checkout_f.us_place '约束验收标准'    // 错：NF 指向 F 链的 US
 ```
 
-**跨作用域引用嵌套元素一律用 FQN**（`feat_checkout.src_checkout.routes`）。写 `include routes` 报 `Could not resolve reference to Referenceable named 'routes'`。
+**为什么错**：跨链边等于在推 F 的过程中「顺手检视一下 NF」。切面一旦进入主链，就会在每次推进时被反复提及，最终把 F 的视图撑爆。
 
-**四条实测约束**：
-
-1. `include f_*` 通配符**不支持** → 必须逐个列出
-2. `dynamic view` 若只有 `include` 没有消息 → 布局报 `actors array must not be empty`，且 **`likec4 validate` 仍通过**。必须跑 `build` 才能发现
-3. `variant sequence` **只可连接叶子元素** → 上例用 `src_checkout.routes`（无子元素的子组件），不用 `src_checkout`
-4. **父子不可连边** → `src_checkout .depends src_checkout.routes` 报 `Invalid parent-child relationship`
+**注意**：模板中两条链虽然引用了同一个 `specification` 的 element kind，但**互不引用对方的元素**。两条链的编号段不同（F 链 `F-`/`I-0xx`，NF 链 `NF-`/`I-1xx`），避免阅读时混淆。
 
 ---
 
-## 主干视图与分支视图的分离（主干优先）
-
-**所有视图先只画主干，主干确认后再逐条展开分支**。规则见 `references/11-trunk-first-design.md`。
-
-主干命名 `*-main`，分支命名 `*-branch-<条件>`，成对出现：
+## src/views/feature-001-f.c4
 
 ```c4
 views {
-  dynamic view feat001Main {
-    variant sequence
-    title '主干：下单必经路径'
-    description '从提交订单到支付确认的必经步骤，不含异常与可选分支。'
-    include feat_checkout.us_place, feat_checkout.i_step
-    include feat_checkout.src_checkout.routes
-    feat_checkout.us_place -> feat_checkout.i_step '提出下单'
-    feat_checkout.i_step -> feat_checkout.src_checkout.routes '执行下单'
-  }
-
-  dynamic view feat001BranchStockShort {
-    variant sequence
-    title '分支：库存不足'
-    description '自「业务步骤」节点岔出，合流至「下单失败」节点。'
-    include feat_checkout.i_step, feat_checkout.src_checkout.validate
-    feat_checkout.i_step -> feat_checkout.src_checkout.validate '库存校验'
-    feat_checkout.src_checkout.validate -> feat_checkout.i_step '库存不足则终止'
-  }
-}
-```
-
-静态结构视图用 `exclude` 把分支元素从主干视图剔除（同样实测通过）：
-
-```c4
-views {
-  view feat001Trunk {
-    title '主干：功能框架'
-    description '主干必需的功能单元，不含可选与增强类功能。'
+  view feat001FOverview of feat_checkout_f {
+    title 'Feature-001-F 链路总览'
+    description '按业务能力切分的完整链路。链内不含任何 NF 元素。'
     include *
-    exclude feat_perf.f_note
+  }
+
+  view feat001FBusiness of feat_checkout_f {
+    title 'Feature-001-F 业务设计视角（不含源码）'
+    description 'US 到 UI 环的业务设计，供业务方确认。'
+    include *
+    exclude feat_checkout_f.src_checkout
+    exclude feat_checkout_f.src_orderService
+    exclude feat_checkout_f.src_paymentClient
+  }
+
+  dynamic view feat001FSequence {
+    variant sequence
+    title 'Feature-001-F 主干时序'
+    description '从提交订单到支付确认的必经步骤。'
+    include feat_checkout_f.us_place, feat_checkout_f.i_step
+    include feat_checkout_f.ui_interaction, feat_checkout_f.src_checkout.routes
+    include feat_checkout_f.src_orderService
+
+    feat_checkout_f.us_place -> feat_checkout_f.i_step '提出下单'
+    feat_checkout_f.i_step -> feat_checkout_f.ui_interaction '反馈交互'
+    feat_checkout_f.ui_interaction -> feat_checkout_f.src_checkout.routes '触发源码'
+    feat_checkout_f.src_checkout.routes -> feat_checkout_f.src_orderService '调用'
   }
 }
 ```
 
-**容量上限**：element view ≤ 12 元素、dynamic view ≤ 8 步 / 10 条消息、状态视图 ≤ 8 状态。超限即拆。
+**NF 链视图同构**，见下文实测记录。
+
+---
+
+## src/views/nf-panorama.c4（全量设计时的 NF 全景）
+
+**全量设计时出一张 NF 全景，一次看全部质量属性。**不是在每个 F 视图里各检视一次 NF。
+
+```c4
+views {
+  view nfPanorama {
+    title 'NF 全景 · 全部质量属性'
+    description '按质量属性切分的所有 NF 链总览。一次性呈现，不分散在 F 视图里。'
+    include feat_perf_nf.nf_latency
+    include feat_perf_nf.nf_auditability
+    include feat_perf_nf.us_peak, feat_perf_nf.us_audit
+    include feat_perf_nf.i_perf, feat_perf_nf.i_audit
+  }
+}
+```
+
+**NF 全景的读法**：先看有哪些质量属性被本次交付覆盖，再看每项由哪条 US 要求、落到哪段逻辑。**不从 F 侧逐个检视。**
+
+---
+
+## 增量设计与全量设计
+
+| 模式 | 做法 |
+| --- | --- |
+| **增量设计** | 一次只推一条链。做 F 增量就只推 F 链，做 NF 增量就只推 NF 链，**不因为「顺手」把另一条链拽进来** |
+| **全量设计** | 出一张 NF 全景视图，一次看全部质量属性 |
+
+**违反代价**：把 NF 塞进 F 的推进过程，会导致每次推 F 都重复提及 NF，F 的视图被撑爆，评审时无从下手——这正是切面分离要避免的。
+
+---
+
+## F / NF 链内门禁（两条链各查一遍）
+
+| 检查项 | 判定 |
+| --- | --- |
+| 每个能力单元至少有一条来自 US 的入追溯边 | **入边为零 = 凭空出现的单元**，必须报告 |
+| 每条链各自的 `US → 能力` 边未写成 `约束` 类标签 | 两条链的门禁形式相同，都是「US 要求这项能力」 |
+| 链内未出现对方链的元素 | F 链无 NF 元素，NF 链无 F 元素 |
+| 编号段区分 | F 链 `F-`/`I-0xx`/`SRC-0xx`；NF 链 `NF-`/`I-1xx`/`SRC-1xx` |
+| NF 项可度量 | 「系统要快」不合格；「P95 ≤ 200ms」合格；无法度量标 `待补充` |
 
 ---
 
@@ -410,53 +416,51 @@ views {
 
 **代价**：不能自环（`已校验 -> 草稿` 这类回退写在 `description` 中）；非经典状态机外观；视图需逐个列元素（`include st_*` 通配符不支持）。
 
-状态迁移条件必须可审计：每个迁移标注触发条件，满足 NF-001 可审计性要求。**主干状态视图 ≤ 8 个状态，超出即按分支拆分。**
+**主干状态视图 ≤ 8 个状态，超出即按分支拆分。**
 
 ---
 
 ## 交付检查
 
-**交付边界与 Feature 类型**
+**交付边界与切分维度**
 
 - [ ] 交付边界已写成一句话，且业务方能说「不是」
-- [ ] Feature 类型已判定（F 类 / NF 类），判据是对外可见能力是否变化，非占比
-- [ ] NF 类 Feature 已建立 US 体系，验收含可感知收益
-- [ ] NF 类 Feature 的 F 侧已显式声明「无需新增」
-- [ ] 每个 NF 项都落在至少一条 US 的验收标准上，无空悬 NF
+- [ ] F 链与 NF 链各自有独立交付边界，序号配对（`Feature-001-F` / `Feature-001-NF`）
+- [ ] **F 与 NF 同维度处理**，未被建模为「功能 vs 约束」
+- [ ] 增量设计一次只推了一条链，未把另一条链拽进来
+- [ ] 全量设计出了 NF 全景视图，而非在每个 F 视图里检视 NF
 
-**追溯完整性**
+**两条链各自闭环**
 
-- [ ] 链路完整：Feature → US → I → UI → SRC
-- [ ] 缺失环已明确报告，未静默跳过
-- [ ] 每条追溯边都用 `.trace`，未与 `.depends` 混用
-- [ ] 每个 SRC 单元能回答「服务于哪个 I 环步骤或 UI 元素」；纯依赖节点已标注而非判为超范围
+- [ ] F 链完整：US → F → I → UI → SRC
+- [ ] NF 链完整：US → NF → I → UI → SRC
+- [ ] **链内未出现对方链的元素**
+- [ ] **无跨链边**（`nf → F 链元素` 一律禁止）
+- [ ] 每个能力单元有来自 US 的入追溯边
+- [ ] NF 链的 US 有角色、场景、期望与可判定验收，与 F 链 US 同构
 
 **命名与归属**
 
-- [ ] 编号格式正确：`Feature-` `US-` `F-` `NF-` `I-` `UI-` `SRC-` + 三位数字
+- [ ] 编号格式：`Feature-<序号>-F|NF`、`US-`、`F-`、`NF-`、`I-`、`UI-`、`SRC-`
+- [ ] **编号段区分**：F 链 `I-0xx`/`SRC-0xx`，NF 链 `I-1xx`/`SRC-1xx`
 - [ ] 编号全局唯一，删除元素后未回收
-- [ ] 各环元素嵌套在所属 Feature 之下，视图打开即见归属
+- [ ] 两条链各占一个 model 文件，物理隔离
 - [ ] I 环无源码元素（无类名、函数名、表名、文件名）
 - [ ] SRC 单元绑定真实源码路径，无路径者标 `待补充`
-- [ ] UI 环同时产出交互设计与信息设计
-- [ ] 信息设计覆盖空 / 加载 / 错误 / 无权限四种状态
+- [ ] UI 环同时产出交互设计与信息设计，覆盖四种状态
 - [ ] NF 项均可度量，不可度量者标 `待补充`
 
 **FQN 与多文件**
 
-- [ ] 跨作用域引用嵌套元素使用 FQN（`feat_checkout.us_place`）
+- [ ] 跨作用域引用嵌套元素使用 FQN（`feat_checkout_f.src_checkout`）
 - [ ] 父子之间未连边
-- [ ] 一个 Feature 一个 model 文件
 - [ ] 视图名全局唯一
 
-**视图类型**
+**视图**
 
 - [ ] 各环视图类型与 `references/07-design-chain.md` 第五节一致
-- [ ] I 环步骤用 `dynamic view`，状态机用「状态即元素 + 迁移即关系」
-- [ ] SRC 环时序用 `variant sequence`
-- [ ] 存在业务设计视角且已排除 SRC
 - [ ] `dynamic view` 含有显式消息（仅 `include` 会导致 build 布局失败）
-- [ ] 主干视图与分支视图已分离，分支命名 `*-branch-<条件>`，只画增量与接缝锚点
+- [ ] 主干视图与分支视图已分离，分支命名 `*-branch-<条件>`
 - [ ] 各视图容量未超限（元素 ≤ 12 / 步骤 ≤ 8 / 状态 ≤ 8）
 
 **校验**

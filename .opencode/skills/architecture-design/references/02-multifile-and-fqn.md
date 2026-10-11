@@ -165,7 +165,7 @@ src/
   model/
     feature-checkout.c4   # Feature-001，含其下 US / F / NF / I / UI / SRC
     feature-payment.c4    # Feature-002
-    feature-perf.c4       # Feature-003（NF 类）
+    feature-003-nf-perf.c4  # Feature-003-NF（按质量属性切）
   views/
     <feature>-overview.c4
     <feature>-business.c4
