@@ -30,7 +30,7 @@
 **处理规则**：
 
 1. 用户要求条件分支、循环、异常处理时，**先确认目标版本**。
-2. 若当前版本不支持，明确告知「本版本不支持，改用 Mermaid `stateDiagram-v2` / `flowchart` 或 PlantUML」，并说明升级 LikeC4 可能获得该能力。
+2. 若当前版本不支持，**不降级到其他工具**。按 `references/09-likec4-substitutions.md` 用 LikeC4 内的平替方案（条件分支拆多视图、循环拆迭代视图、异常独立视图），并把该方案的代价告知用户。
 3. 不要把官方文档中的 `opt`/`loop`/`alt`/`try` 写进代码——它们在 1.58.0 会直接让 `validate` 失败。
 4. 升级版本后必须重新实测，并更新本表。
 
@@ -173,11 +173,11 @@ dynamic view a {
 | 关系 | include / extend 泛化 | 仅步骤连线 |
 | 回答的问题 | 系统为谁提供哪些能力 | 这条链路依次经过哪些环节 |
 
-用户说「用例图」时必须说明差异，并按 `references/00-diagram-routing.md` 判断是否改走 PlantUML。
+用户说「用例图」时必须说明差异：LikeC4 用 `actor` 元素 + 关系表达，无 use case 椭圆、无 `<<extend>>`。按 `references/00-diagram-routing.md` 的平替方案处理，不换工具。
 
 ## 条件分支的替代方案（本版本不可用时）
 
-若用户确实需要条件分支、循环或异常处理，本版本用 Mermaid 更实际：
+若用户确实需要条件分支、循环或异常处理，用 LikeC4 内的平替方案（拆分为多个视图）：
 
 ```mermaid
 flowchart TD
@@ -188,13 +188,13 @@ flowchart TD
   E --> F[完成]
 ```
 
-这类图应明确标注为**表达产物（轨道二）**，不是架构模型真源。
+这类拆分视图属于**同一架构模型的多个投影**，不是独立产物。拆分出的视图必须各自跑 `build`。
 
 ## 常见失败模式（实测确认）
 
 | 现象 | 根因 | 修正 |
 | --- | --- | --- |
-| `Could not resolve reference to Referenceable named 'try'` | 本版本无 `try` | 改 Mermaid flowchart |
+| `Could not resolve reference to Referenceable named 'try'` | 本版本无 `try` | 按 09 SOP 拆成多个视图 |
 | 期望 `}` 但遇到 `catch` / `else` | 本版本无异常/分支块 | 同上 |
 | sequence 视图渲染异常 | 连接了非叶子元素 | 改连叶子元素或用 diagram 变体 |
 | 嵌套 `parallel` 报错 | 并发块不可嵌套 | 拍平成单层 |

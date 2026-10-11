@@ -25,8 +25,11 @@ Use `reasoning-map` before complex problem diagnosis, architecture changes, docs
 `architecture-design` owns architecture-as-code modeling with LikeC4. Its syntax is verified against a pinned LikeC4 version, not the latest official docs.
 
 - LikeC4 is a **version-sensitive** tool. DSL features differ across releases. Before writing `.c4`, confirm the target version and read `architecture-design/references/03-dynamic-views.md` for the verified feature table.
+- **LikeC4 is the only tool.** Every diagram is expressed in LikeC4. There is no "LikeC4 cannot draw this, so switch tools" path. Substitutions live in `architecture-design/references/09-likec4-substitutions.md`, each with its cost stated: swimlanes as nested containers, state machines as elements plus relationships, branches split across views, class design as nesting plus dependencies, data models as `store` elements, information design as surfaces containing fields.
+- **Substitution costs are disclosed, not hidden.** None is free. Inheritance has no LikeC4 equivalent and must be written into `description` and listed as a manual review item. Self-loops are rejected. Swimlane containers do not guarantee column alignment. When a cost is significant, tell the user and let them choose — never silently switch tools.
+- **Two categories do not exist in LikeC4.** `swimlane`, `lane`, `participant`, `column` are absent from the DSL. `opt`, `loop`, `break`, `alt`, `when`, `else`, `try`, `catch`, `finally` do not work in 1.58.0. Writing either makes `validate` fail. The official `llms-full.txt` documents the latter set, which describes a newer release.
 - **Never write unverified syntax.** Features described in official docs may be unavailable in the pinned version; writing them makes `likec4 validate` fail.
-- After any `.c4` change, run `likec4 validate` when a CLI is available. Do not report completion on a non-zero exit code.
+- After any `.c4` change, run **both** `likec4 validate` and `likec4 build`. A dynamic view with only `include` and no messages passes validate but fails layout with `actors array must not be empty`.
 - When validation cannot run, report the reason, degraded evidence, and residual risk instead of claiming success.
 - Pin the LikeC4 version exactly (no `^` ranges) **when a CLI is used**. Cross-version DSL behavior changes make CI non-reproducible.
 - Host projects using `architecture-design` must configure the LikeC4 MCP server so agents can query the model instead of reading raw `.c4` text.

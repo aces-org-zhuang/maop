@@ -57,10 +57,11 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 
 ## 核心原则
 
-- **架构模型是唯一真源**。LikeC4 模型是结构化、可校验、可被 AI 查询的真源；Mermaid/PlantUML 只作为导出物或补充层，不反向成为架构真相。
+- **架构模型是唯一真源，且只用 LikeC4**。所有图都必须用 LikeC4 表达，不降级到 Mermaid、PlantUML 或其他工具。平替方案与各自代价见 `references/09-likec4-substitutions.md`。
 - **图类型先路由再动手**。写任何图之前先执行 `references/00-diagram-routing.md`，禁止凭印象直接选语法。
+- **所有图只用 LikeC4，禁止降级**。没有「LikeC4 画不了所以换工具」的情况。泳道用嵌套容器，状态机用「状态即元素 + 迁移即关系」，分支拆多视图，类图用嵌套 + 依赖，ER 用 `store` 承载实体。每种平替都有代价，交付时说明，不静默换工具。
 - **版本敏感，官方文档不等于可用能力**。本技能语法经 **likec4 1.58.0 实机验证**。官方文档描述最新版本，`opt` `loop` `break` `alt` `try` 与视图文件夹分组在 1.58.0 **不可用**。写入未验证语法会让 `validate` 失败。
-- **能力边界必须诚实**。LikeC4 不支持类图、状态机图、严格 UML 用例图；不得伪造或用错误语法硬凑，改走轨道二/三并向用户说明。
+- **能力边界必须诚实，但不降级**。LikeC4 不原生支持类图继承、状态机外观、泳道竖列。每一种都有 LikeC4 内的平替表达与已知代价，按 `references/09-likec4-substitutions.md` 执行并**把代价告知用户**，不得静默换到另一套工具。
 - **写入前必须 validate**。任何 `.c4` 写入后必须运行 `likec4 validate`，非零退出码时不得声明完成。
 - **FQN 的必要性来自嵌套，不来自「跨文件」这件事本身**。实测：跨文件引用**顶层**元素用 short name 合法；引用**嵌套**元素必须 FQN。七层设计链中只有 SRC 层大量嵌套，因此 FQN 规则主要服务 SRC 层。US / F / NF / I / UI 五层是扁平设计，不应被迫写冗长全名。详见 `references/02-multifile-and-fqn.md`。
 - **视图类型由设计层的性质决定，不由文件组织决定**。各层的读者不同，视图形态也不同：US/F/NF 用 element view，I 层步骤用 dynamic view 且状态机走 Mermaid，UI 层交互面用 element view 而信息设计用表格，SRC 层用 element view + sequence，构建部署用 deployment view。详见 `references/07-seven-layer-design.md`。
@@ -77,7 +78,8 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 
 ## 触发后先做什么
 
-1. 先读取 `references/00-diagram-routing.md`，确认目标图类型及其对应工具轨道。
+1. 先读取 `references/00-diagram-routing.md`，确认目标图类型及其 LikeC4 表达方式。
+1a. 需要泳道、状态机、分支、类图、数据模型或信息设计时，同时读取 `references/09-likec4-substitutions.md` 取平替方案与代价。
 2. **先定验证路径**：读取 `references/04b-environment-and-sync.md`，判断走 MCP 还是 CLI。不要因环境缺 likec4 而停止交付。
 3. 读取 `references/01-likec4-basics.md`，确认 specification、命名、样式和目录约定。
 4. 涉及多文件、跨项目引用或导入既有模型时，读取 `references/02-multifile-and-fqn.md`。
@@ -91,23 +93,37 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 
 ## 图类型路由（速查，likec4 1.58.0 实测）
 
-| 用户想要的图 | LikeC4 写法 | 轨道 |
-| --- | --- | --- |
-| 系统上下文图 / 容器图 / 组件图 | `view of <element>` + `include`/`exclude` | 一 |
-| 部署图 | `deploymentNode` + `instanceOf` + `deployment view` | 一 |
-| 场景流程图 | `dynamic view`（默认 diagram 变体） | 一 |
-| 时序图 | `dynamic view` + `variant sequence` | 一 |
-| 并发流程 | `parallel` / `par`（不可嵌套） | 一 |
-| 循环 / 条件分支 / 异常 | **本版本不可用** → Mermaid flowchart | 二 |
-| 类图 / 状态机图 / 严格 UML 用例图 / ER 图 | 不支持 | 二或三 |
+**所有图都在 LikeC4 内表达。** 平替方案的完整写法与代价见 `references/09-likec4-substitutions.md`。
 
-完整决策树、版本差异和边界说明见 `references/00-diagram-routing.md` 与 `references/03-dynamic-views.md`。
+| 用户想要的图 | LikeC4 写法 | 代价 |
+| --- | --- | --- |
+| 系统上下文图 / 容器图 / 组件图 | `view of <element>` + `include`/`exclude` | 无 |
+| 部署图 | `deploymentNode` + `instanceOf` + `deployment view` | 交付后才产出 |
+| 场景流程图 | `dynamic view`（默认 diagram 变体） | 无 |
+| 时序图 | `dynamic view` + `variant sequence` | 只连叶子元素；须有显式消息 |
+| 并发流程 | `parallel` / `par` | **不可嵌套** |
+| 泳道图 | `stage` 类元素作嵌套容器 | 非真泳道，不保证竖列 |
+| 状态机 | 状态即元素，迁移即关系 | 不能自环；非经典外观 |
+| 条件分支 | 拆成多个视图，各表达一条路径 | 视图数量增加 |
+| 循环 | 单次迭代视图 + 循环关系视图 | 需人工拆分 |
+| 异常处理 | 独立异常路径视图 | 需人工拆分 |
+| 类图 / 组件设计 | 嵌套表达包含，关系表达依赖 | **继承无对应** |
+| ER 图 / 数据模型 | `store` 承载实体 | 无字段级、无基数标注 |
+| 信息设计 | 界面为容器，字段为元素 | 字段多时图较宽 |
+| 用例图 | `actor` 元素 + 关系 | 无 use case 椭圆、无 `<<extend>>` |
+
+**禁止写入**：`swimlane` `lane` `participant` `column`（不存在）；`opt` `loop` `break` `alt` `when` `else` `try` `catch` `finally`（1.58.0 不可用）。
+
+完整决策树与版本差异见 `references/00-diagram-routing.md`、`03-dynamic-views.md`。
 
 ## Stage Router
 
 ```text
 任何架构建模请求
   -> Stage 0 Intake 与图类型路由: references/00-diagram-routing.md
+
+需要泳道、状态机、条件分支、循环、异常、类图、数据模型或信息设计的 LikeC4 表达
+  -> Stage 0b 平替方案与代价: references/09-likec4-substitutions.md
 
 需要写 specification、model、静态视图或样式
   -> Stage 1 DSL 基础: references/01-likec4-basics.md
@@ -146,15 +162,37 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 
 ## 工具轨道规则
 
-- **轨道一（LikeC4）**：架构真源。上下文图、容器图、组件图、部署图、场景流程图、时序图、并发流程。可校验、可 diff、可被 AI 经 MCP 查询。
-- **轨道二（Mermaid）**：用例图、状态机图、条件分支与循环流程图、数据流图、ER 图、甘特图。可由 `likec4 gen mermaid` 导出或独立手写，只作补充产物。
-- **轨道三（PlantUML）**：类图、组合与继承、严格 UML 用例图泛化关系。仅在轨道一无法表达时作为逃生层使用。
+**所有图必须用 LikeC4 表达，不允许降级到 Mermaid、PlantUML 或其他工具。** 每种图在 LikeC4 中都有对应表达方式与已知代价，详见 `references/09-likec4-substitutions.md`。
 
-收敛规则：能用轨道一就不用轨道二；轨道三仅作例外，且必须向用户说明为什么 LikeC4 不支持。
+选择 LikeC4 的理由只有一条但足够充分：**单一真源、可校验、可 diff、可被 AI 经 MCP 查询。** 引入第二套工具会让架构真相分裂成两份且无法互相验证。
+
+| 图类型 | LikeC4 表达 | 已知代价 |
+| --- | --- | --- |
+| 状态机 | 状态即元素，迁移即关系 | 不能自环；非经典状态机外观 |
+| 条件分支 | 拆成多个视图，各表达一条路径 | 视图数量增加 |
+| 循环 | 单次迭代视图 + 循环关系视图 | 需人工拆分 |
+| 异常 | 独立异常路径视图 | 需人工拆分 |
+| 类图 / 组件 | 嵌套表达包含，关系表达依赖 | **继承无对应**，须在 description 记录 |
+| ER / 数据模型 | `store` 承载实体 | 无字段级、无基数标注 |
+| 泳道 | 嵌套容器（`stage` 类元素） | 非真泳道，不保证竖列排列 |
+| 信息设计 | 界面为容器，字段为元素 | 字段多时图较宽 |
+| 用例图 | `actor` 元素 + 关系 | 无 use case 椭圆、无 `<<extend>>` |
+
+**没有一条路径是零代价的。** 遇到代价较大的场景，**先告知用户代价并让其选择**，不得静默换工具。
+
+**禁止写入的语法**（不存在或本版本不可用）：
+
+```text
+swimlane   lane   participant   column
+opt   loop   break   alt   when   else   try   catch   finally
+```
+
+前四个在官方 `llms-full.txt` 与 1.58.0 中均不存在；后八个在 1.58.0 不可用（官方文档描述的是更新版本）。写入会让 `validate` 失败。
 
 ## 资源索引
 
-- `references/00-diagram-routing.md`: 图类型路由决策树、UML 映射、能力边界与轨道选择。
+- `references/00-diagram-routing.md`: 图类型决策树、LikeC4 表达与代价对照、禁止写入的语法。
+- `references/09-likec4-substitutions.md`: 泳道、状态机、条件分支、循环、异常、类图、数据模型、信息设计的 LikeC4 平替写法与各自代价（全部实测通过）。
 - `references/01-likec4-basics.md`: specification、model、element 样式、静态视图、部署视图和命名约定。
 - `references/02-multifile-and-fqn.md`: 多文件组织、`import`/`extend`、嵌套元素的 FQN 规则（主要服务 SRC 层）与常见校验失败。
 - `references/03-dynamic-views.md`: 动态视图语法、sequence 变体、并发块、限制，以及 1.58.0 实测可用/不可用特性表。
@@ -183,6 +221,6 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 
 ## 交付标准
 
-默认交付模型与视图位置、验证路径（MCP / CLI / npx / 只读降级）、`likec4 validate` 结果或未校验原因、嵌套元素引用是否已用 FQN（顶层元素不应被强制写全名）、设计资产归属层级（项目层或全局层），以及 LikeC4 无法表达而改走轨道二/三的部分及其原因。
+默认交付模型与视图位置、验证路径（MCP / CLI / npx / 只读降级）、`likec4 validate` 结果或未校验原因、嵌套元素引用是否已用 FQN（顶层元素不应被强制写全名）、设计资产归属层级（项目层或全局层），以及使用了哪些平替方案及其代价（见 `references/09-likec4-substitutions.md`）。
 
 **进入实现阶段时追加**：架构交接规格落盘路径（`vendor/design/<repo>/handoff/current.md`）与模型版本、取事实方式（MCP 或读文件）、规格各部分对应的模型依据、置信度与未达 90% 的项、建议交接路径（直接实现 / 先技术设计 / 先完成建模），以及必须由 `technical-design` 补齐的内容清单。
