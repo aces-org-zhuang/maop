@@ -22,8 +22,8 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 - [ ] 已确认所用 LikeC4 版本（记录在交付说明中）
 - [ ] 未用 LikeC4 硬凑类图、状态机图或严格 UML 用例图
 - [ ] 未写入当前版本不支持的语法（1.58.0：`opt` `loop` `break` `alt` `try`、视图文件夹分组）
-- [ ] 走轨道二/三的部分已向用户说明原因
-- [ ] 未把 Mermaid/PlantUML 产物当作架构真源
+- [ ] 全部图均以 LikeC4 表达，未降级到 Mermaid / PlantUML / 其他工具
+- [ ] 使用平替方案的图已向用户说明其代价
 
 ## 语法正确性（1.58.0 实测坑位）
 
@@ -56,7 +56,8 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 
 - [ ] sequence 变体只连接叶子元素
 - [ ] `parallel` / `par` 未嵌套（1.58.0 实测禁止）
-- [ ] 条件分支/循环/异常需求已确认当前版本是否支持；不支持时改走 Mermaid flowchart
+- [ ] 条件分支/循环/异常已拆成多个 LikeC4 视图，未降级到其他工具
+- [ ] 多路径视图的 title 已写清路径条件
 - [ ] 步骤元素若不在 model 中，已在视图内 `include`
 
 ## 设计交互与决策树（走七层设计链时）
@@ -114,7 +115,7 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 **视图类型**
 
 - [ ] 各层视图类型与 `references/07-seven-layer-design.md` 第五节对应表一致
-- [ ] I 层步骤用 `dynamic view`，状态机走 Mermaid `stateDiagram-v2`
+- [ ] I 层步骤用 `dynamic view`，状态机用「状态即元素 + 迁移即关系」表达
 - [ ] UI 层交互面用 element view，信息设计有表格或清单承载
 - [ ] SRC 层时序用 `variant sequence`
 - [ ] 构建部署用 `deployment view` 且仅在交付后产出
@@ -130,9 +131,10 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 
 **工具路由**
 
-- [ ] 业务状态机走 Mermaid `stateDiagram-v2`，未用 LikeC4 硬凑
-- [ ] 类设计走 PlantUML，未在 LikeC4 中伪造
-- [ ] 走轨道二/三的部分已向用户说明原因
+- [ ] 业务状态机用「状态即元素 + 迁移即关系」表达，自反迁移写在 description
+- [ ] 类设计用嵌套 + 依赖关系表达；继承关系已在 description 显式记录
+- [ ] 泳道用 `stage` 类嵌套容器实现，未写 `swimlane` / `lane` / `participant`
+- [ ] 使用平替方案的图已向用户说明代价
 - [ ] 构建部署图未产出，或已说明为何此时产出
 
 **必备视图**

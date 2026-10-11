@@ -8,19 +8,19 @@
       "files": [],
       "expectations": [
         "读取 references/00-diagram-routing.md 完成图类型路由",
-        "使用 LikeC4 的 view 与 view of <element> 语法，而不是 Mermaid",
+        "使用 LikeC4 的 view 与 view of <element> 语法，不降级到其他工具",
         "运行 likec4 validate 并报告结果"
       ]
     },
     {
       "id": 2,
       "prompt": "下单流程帮我画个时序图，带库存不足的异常分支。",
-      "expected_output": "触发 architecture-design；先用 dynamic view + variant sequence 画时序流程；说明 1.58.0 不支持 try/catch 与 alt/when/else，异常分支改走 Mermaid flowchart 或建议升级版本。",
+      "expected_output": "触发 architecture-design；先用 dynamic view + variant sequence 画时序流程；说明 1.58.0 不支持 try/catch 与 alt/when/else，异常分支拆成多个 LikeC4 视图，不降级到其他工具。",
       "files": [],
       "expectations": [
         "使用 dynamic view 与 variant sequence 表达时序流程",
         "未直接写入 opt/loop/alt/try 等当前版本不支持的块",
-        "明确告知异常分支需改走 Mermaid 或升级 LikeC4",
+        "明确告知异常分支拆成多个 LikeC4 视图，并说明该平替方案的代价",
         "确认 sequence 变体只连接叶子元素"
       ]
     },
@@ -39,12 +39,13 @@
     {
       "id": 4,
       "prompt": "帮我画一下领域模型的类图，带继承关系。",
-      "expected_output": "触发 architecture-design 但在路由阶段即识别类图属 LikeC4 不支持范围；说明能力边界；改走轨道二 Mermaid 或轨道三 PlantUML，不伪造 LikeC4 写法。",
+      "expected_output": "触发 architecture-design；识别类图的表达边界；用嵌套表达包含、关系表达依赖，继承写入 description 并列为待人工核对项；不降级到其他工具。",
       "files": [],
       "expectations": [
-        "明确指出 LikeC4 不支持类图与继承体系",
-        "未用 element 嵌套硬凑继承关系",
-        "改用 Mermaid classDiagram 或 PlantUML 并说明原因"
+        "明确指出 LikeC4 无泛化箭头，继承需在 description 显式记录",
+        "未用 element 嵌套硬凑继承关系（嵌套表达的是包含）",
+        "用 LikeC4 嵌套 + 依赖关系表达，并说明继承无对应的代价",
+        "未降级到 Mermaid classDiagram 或 PlantUML"
       ]
     },
     {
@@ -74,12 +75,12 @@
     {
       "id": 7,
       "prompt": "帮我补几张状态机图，展示订单的生命周期。",
-      "expected_output": "触发 architecture-design；识别状态机图属 LikeC4 不支持范围；改走轨道二 Mermaid stateDiagram，不伪造。",
+      "expected_output": "触发 architecture-design；用「状态即元素 + 迁移即关系」表达状态机，并说明不能自环的代价，不降级。",
       "files": [],
       "expectations": [
-        "明确指出 LikeC4 不支持状态机图",
-        "改用 Mermaid stateDiagram-v2",
-        "未用 dynamic view 冒充状态机并宣称等价"
+        "用「状态即元素 + 迁移即关系」表达状态机",
+        "说明不能自环，自反迁移写在 description",
+        "未降级到 Mermaid stateDiagram-v2"
       ]
     },
     {
@@ -295,11 +296,11 @@
     {
       "id": 26,
       "prompt": "订单状态有草稿、已校验、支付中、已确认、已取消五态，帮我画出来。",
-      "expected_output": "识别为 I 层业务状态机，走轨道二用 Mermaid stateDiagram-v2；LikeC4 1.58.0 不支持状态机（opt/loop/alt/try 均不可用），不得在 LikeC4 中硬凑。",
+      "expected_output": "识别为 I 层业务状态机；用 LikeC4「状态即元素 + 迁移即关系」表达；说明 LikeC4 1.58.0 不支持状态机外观且不能自环，自反迁移写在 description。",
       "files": [],
       "expectations": [
-        "改用 Mermaid stateDiagram-v2 而非 LikeC4",
-        "说明 LikeC4 1.58.0 不支持状态机",
+        "用状态即元素 + 迁移即关系表达，未降级到 Mermaid stateDiagram-v2",
+        "说明自环不被支持，自反迁移写在 description",
         "状态迁移标注触发条件以满足可审计性"
       ]
     },
@@ -427,12 +428,47 @@
     {
       "id": 38,
       "prompt": "这个状态流转有异常分支和超时处理，你帮我画时序图。",
-      "expected_output": "识别为含分支流程：LikeC4 1.58.0 不支持 opt/loop/alt/try，含分支的流程用 Mermaid flowchart 或 stateDiagram-v2，不得硬凑。同时询问异常态与超时态是否已完整。",
+      "expected_output": "识别为含分支流程：LikeC4 1.58.0 不支持 opt/loop/alt/try，含分支的流程拆成多个 LikeC4 视图，各表达一条路径且标题写清条件，不得降级到其他工具。同时询问异常态与超时态是否已完整。",
       "files": [],
       "expectations": [
-        "改用 Mermaid 而非 LikeC4 硬凑",
-        "说明 LikeC4 不支持分支块",
+        "拆成多个 LikeC4 视图而未降级到 Mermaid",
+        "说明 LikeC4 1.58.0 不支持分支块",
+        "多路径视图标题写清路径条件",
         "主动询问异常态、超时态、取消态是否完整"
+      ]
+    },
+    {
+      "id": 39,
+      "prompt": "帮我画一个按角色分泳道的下单流程图。",
+      "expected_output": "用 LikeC4 嵌套容器实现泳道：stage 类元素作泳道容器，步骤作为子元素嵌套，视图 include 容器本身。不得写 swimlane 或 lane（该语法不存在）。",
+      "files": [],
+      "expectations": [
+        "用 stage 类嵌套容器实现泳道而非 swimlane 语法",
+        "步骤作为泳道容器的子元素嵌套",
+        "说明这不是真泳道、布局不保证竖列",
+        "按角色而非按步骤划分泳道"
+      ]
+    },
+    {
+      "id": 40,
+      "prompt": "用 Mermaid 画个类图吧，LikeC4 画不了继承。",
+      "expected_output": "不降级。用 LikeC4 嵌套表达包含、关系表达依赖，继承写入 description 并列为待人工核对项，说明继承无对应这一代价。",
+      "files": [],
+      "expectations": [
+        "未降级到 Mermaid 或 PlantUML",
+        "用嵌套 + 依赖关系表达并说明继承的代价",
+        "把继承关系列为待人工核对项"
+      ]
+    },
+    {
+      "id": 41,
+      "prompt": "数据模型要能看到字段和一对多关系。",
+      "expected_output": "用 LikeC4 store 承载实体、关系标签标注基数说明字段清单放在 I 层或技术设计中；说明模型无字段级表达的代价，不降级到 Mermaid erDiagram。",
+      "files": [],
+      "expectations": [
+        "用 store 承载实体而未降级",
+        "基数写在关系标签上",
+        "说明字段清单不塞进模型的原因"
       ]
     }
   ]
