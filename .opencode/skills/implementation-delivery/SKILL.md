@@ -17,6 +17,12 @@ description: 必须用于实现交付、按设计落地代码、bugfix、测试�
 
 1. 读取 `references/sop-00-intake.md`，确认输入是实现、bugfix、验证、代码审查、安全/CVE 还是交付说明。
 2. 若缺少产品需求或技术设计，回到 `product-definition` 或 `technical-design`；不要凭空补齐关键需求和架构决策。
+2a. **架构交接规格存在性检查**。开工前先查找 `vendor/design/<design-repo-name>/handoff/current.md`：
+   - 存在 → 把其中的「组件边界 / 依赖约束 / 部署要求 / 验收锚点」作为实现约束。组件划分与依赖方向**以规格为准**，发现代码与规格不一致时停下报告，不要就地改代码去迁就代码现状。
+   - 「模型版本」与主仓 pinned gitlink 不一致 → 视为过期，明确告知用户规格已过期，不基于旧规格实现。
+   - 不存在 → 正常按技术设计交接包工作，不报错、不阻塞。
+   - 规格与本次任务无关（不触及所列组件）→ 忽略，不要为无关改动读规格。
+   - 规格**只读不改**。发现规格本身有误时回报给用户，由 `architecture-design` 重新产出。
 3. bug 根因、复杂时序、跨模块影响或安全问题不清时，先使用 `reasoning-map`。
 4. 跨阶段实现、代码交付或会产生证据记录时，按 `development-workflow/references/knowledge-handoff-gate.md` 执行 Knowledge & Handoff Gate：优先消费 Technical Handoff Packet，维护 Reuse Ledger，并在交付时产出 Delivery Evidence Packet。
 5. 复杂实现、并行委派多个子代理执行、验证、提交/PR 或 submodule 操作前，先更新 todo；每个子代理委派、验证动作、提交/PR 动作和 submodule 操作都要有对应 todo；简单单步任务可跳过。

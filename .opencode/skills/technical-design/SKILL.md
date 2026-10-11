@@ -22,6 +22,12 @@ description: 必须用于技术设计、架构影响面、技术方案、技术�
 5. 代码/文档探索、候选扩展、依赖初筛、方案局部评审可委派子代理执行；使用前按 `development-workflow/references/subagent-context-budgeting.md` 和 Delegation Quality Gate 定义边界、lens、return contract 和证据字段，最终架构、技术路线、primary 依赖和 Review Gate 由主 agent 决定。
 6. 跨阶段设计、架构定版或 implementation handoff 必须按 `development-workflow/references/knowledge-handoff-gate.md` 执行 Knowledge & Handoff Gate：优先消费 Product Handoff Packet，维护 Reuse Ledger，并在交给 `implementation-delivery` 前产出 Technical Handoff Packet。
 7. 新系统、新 POC、外部平台接入、部署/资源/账号/网络边界不清，或将进入接口、数据、状态、实施切片、implementation handoff 前，必须先执行 `references/sop-02b-architecture-confirmation.md`：输出或复用 Context Diagram、System Component Diagram、Deployment Diagram、Data/State Boundary、Integration Boundary、IT Resource List 和 Open RED Points。架构确认包未完成时，不得定版 API、数据表、状态机或实施切片。
+7a. **架构交接规格复用检查（Architecture Handoff Reuse Gate）**。执行第 7 步前，先查找 `vendor/design/<design-repo-name>/handoff/current.md`：
+   - 文件存在 → 读取「组件边界 / 依赖约束 / 流程锚点 / 部署要求 / 验收锚点」五部分，**直接复用，不得重新推导组件划分、依赖方向或部署形态**。只在本技能职责范围内补齐接口签名、数据结构、业务规则和状态机。
+   - 规格中的「模型版本」与主仓 pinned gitlink 不一致 → 规格视为过期，先要求更新 submodule 指针，或明确告知用户规格过期并按未产出处理，不得混用旧规格推导新架构。
+   - 文件不存在 → 架构交接尚未产出。若本次设计涉及新增组件、依赖关系变更或部署形态变更，转入 `architecture-design` 产出规格后再继续；否则按默认路径工作，不阻塞。
+   - 规格中标记为 `待补充` 或置信度 <90% 的条目，必须在本技能内补证或列为 Open RED Points，禁止直接采纳为设计结论。
+   - 规格**只读不改**。需要修正架构时回到 `architecture-design` 重新产出，不在本技能手改规格文件。
 8. 只要设计面向既有代码仓、模块接入、重构、能力扩展或 implementation handoff，必须先确认源码目录结构和相关入口文件；技术方案必须映射到现有目录/模块 owner，并说明新增、修改、禁止触碰的目录边界。无法确认源码结构时，不得定版架构或实施切片，只能输出待补证设计。
 9. 进入 POC、implementation handoff、真实构建/验证设计或外部服务接入前，按 `development-workflow/references/configuration-readiness-gate.md` 统一确认必需路径、命令、依赖、版本锁、环境变量/凭据边界、外部服务、验证信号和授权；缺失 required 配置时只输出补证/降级方案，不推进下游。
 10. 需要图表、原型或其他表达产物时转入 `expression-delivery`；本技能决定是否需要表达产物，`expression-delivery` 决定形式和质量。

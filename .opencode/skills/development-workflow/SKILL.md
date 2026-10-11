@@ -17,7 +17,19 @@ description: 必须用于判断研发请求应进入需求、设计、实现还�
 
 1. 判断用户请求处于哪个阶段：产品定义、技术设计、实现交付、表达产物，或跨阶段 POC。
 2. 若跨阶段执行，先安排质量门禁：Todo Planning Gate、Reasoning Gate、Configuration Readiness Gate、Preview Gate、Review Gate、POC Gate、Verification Gate、Confidence Gate 和 Auto-Remediation Gate Loop。
-3. 明确每一段应转入的专门技能：`product-definition`、`technical-design`、`implementation-delivery`、`expression-delivery`、`research`。
+3. 明确每一段应转入的专门技能：`product-definition`、`architecture-design`、`technical-design`、`implementation-delivery`、`expression-delivery`、`research`。
+3a. **架构节点触发条件（写死，不依赖主观判断）**。出现以下任一情形，必须先转入 `architecture-design` 再进入技术设计：
+   - 新增组件、服务、模块或外部依赖
+   - 改变既有依赖方向或新增跨模块调用
+   - 改变部署形态、运行时边界或资源依赖
+   - 需求涉及系统拆分、数据边界或集成边界
+   - 技术设计中架构确认包（Context / Component / Deployment Diagram）无法复用现有模型
+
+   触发时：`architecture-design` 建模 → 产出 `vendor/design/<repo>/handoff/current.md` → `technical-design` 复用该规格补齐接口与数据。
+
+   未触发且已有交接规格时：`technical-design` 直接复用，不重复建模。
+
+   无论触发与否，规格缺失都不阻塞纯实现类任务，只是不做架构复用。
 4. 跨阶段或会产生稳定知识的工作必须执行 Knowledge & Handoff Gate：按 `references/knowledge-handoff-gate.md` 读取最小 docs/上游 packet，记录 Reuse Ledger，明确 Archive Gate、Revision Gate 和下游 Handoff Packet。
 5. 遇到复杂根因、时序、影响面、不确定方案、高成本生成、真实脚本运行、构建验证或跨模块修改前，先使用 `reasoning-map` 做低成本推演预检，减少真实执行失败率。
 6. 委派子代理执行前必须执行 Delegation Quality Gate：按 `references/delegation-quality-gate.md` 先做前置防错决策、上下文隔离、返回契约和合成门禁；若条件不足或返回不合格，fallback 到主 agent 收敛处理。
@@ -25,7 +37,7 @@ description: 必须用于判断研发请求应进入需求、设计、实现还�
 8. 大范围检索、代码/文档探索、候选扩展、证据抽取或独立评审可按 `references/subagent-context-budgeting.md` 委派子代理执行；主 agent 保留 reasoning-map、收敛、评审和最终决策责任。
 9. 遇到深度研究、开源仓库对比或证据包时，转入 `research`。
 10. 遇到外部资料、技术链接、微信文章、微信关键词搜索、学习资源、趋势发现、工具/skill 查找、创新机会或研究沉淀时，转入 `research` 并先创建或续接 `research_root`。
-11. 用户只要求流程图、时序图、架构图、状态图、前端 UI、原型、HTML slides、图片或其他表达产物时，转入 `expression-delivery`，不要展开完整 technical-design 或 implementation-delivery 主流程。
+11. 用户只要求流程图、时序图、架构图、状态图、前端 UI、原型、HTML slides、图片或其他表达产物时，转入 `expression-delivery`，不要展开完整 technical-design 或 implementation-delivery 主流程。区分方式：只要一张图、不改变模型事实用 `expression-delivery`；要改模型事实（新增组件、改依赖、改部署）或需产出交接规格给实现侧，用 `architecture-design`。
 12. 用户要求 90%+ 置信度时，必须给出 eval、验证证据和未闭环风险；不能只口头声明置信度。
 13. 用户要求复杂 Mermaid、前端界面、幻灯片、多模态图像、长文档或其他高成本产物时，必须显式经过 Preview Gate；如果同时涉及复杂影响面、根因、时序或方案取舍，顺序是 Todo Planning Gate -> Reasoning Gate -> Configuration Readiness Gate -> Preview Gate -> Review Gate -> Generation -> Verification Gate。
 14. 必要节点需要 Review Gate：需求定版、设计定版、复杂图/前端/多模态预览确认、高风险 POC 后、交付前 review 分数必须 >=80；低于 80 按 `references/auto-remediation-gate-loop.md` 自动修复并复审，不默认停下来等用户继续。
@@ -38,9 +50,14 @@ description: 必须用于判断研发请求应进入需求、设计、实现还�
   -> product-definition
   -> 控制点: Preview Gate
 
+需要新增组件、改变依赖关系或改变部署形态
+  -> architecture-design（架构节点，先于技术设计）
+  -> 控制点: Architecture Handoff Gate
+  -> 产出 vendor/design/<repo>/handoff/current.md
+
 需求已确认，需要架构、接口、数据、状态、风险、验证策略
   -> technical-design
-  -> 控制点: Reasoning Gate when complex + Preview Gate + Review Gate
+  -> 控制点: Architecture Handoff Reuse Gate + Reasoning Gate when complex + Preview Gate + Review Gate
 
 设计或任务已明确，需要代码、bugfix、测试、审查、交付摘要
   -> implementation-delivery
@@ -57,7 +74,8 @@ description: 必须用于判断研发请求应进入需求、设计、实现还�
 
 跨阶段 POC 或完整研发流程
   -> product-definition: Preview Sketch
-  -> technical-design: Preview Sketch
+  -> architecture-design: 命中触发条件时先建模并产出交接规格
+  -> technical-design: 复用交接规格并补齐 Preview Sketch
   -> implementation-delivery: POC Slice Plan when implementation risk is high
   -> expression-delivery: visual/prototype/diagram/slides output when needed
 ```
@@ -70,6 +88,19 @@ Workflow Control
     -> update todo before complex tasks, parallel delegation, verification, commit/PR, or submodule operations
     -> 为每个子代理委派、验证动作、提交/PR 动作和 submodule 操作建立对应 todo
     -> simple single-step tasks may skip this gate
+
+  Architecture Handoff Gate
+    -> trigger: new component, dependency direction change, deployment change, or undefined integration/data boundary
+    -> architecture-design models first, then writes vendor/design/<repo>/handoff/current.md
+    -> spec must cite a model element id or view id per entry; no basis means 待补充
+    -> stale check: spec model version must match the host repo pinned gitlink, else spec is expired
+    -> missing spec is not a blocker for pure implementation tasks; it only means no architecture reuse
+
+  Architecture Handoff Reuse Gate
+    -> technical-design: read the spec, reuse component boundaries and dependency direction, never re-derive them
+    -> fill only interfaces, data structures, business rules, and state machines
+    -> implementation-delivery: treat spec as a constraint; on mismatch stop and report, do not bend code to match reality
+    -> both skills read the spec read-only; corrections go back to architecture-design
 
   Reasoning Gate
     -> use reasoning-map for complex impact, root cause, async order, uncertainty, tradeoff, or high-cost execution preflight

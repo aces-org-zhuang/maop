@@ -72,6 +72,18 @@ Host project initialization provisions architecture-as-code through a design rep
 - **Confidence must be justified.** Below 90% on any key architectural conclusion blocks a ready declaration and requires listing the gap and the verification action.
 - **A stale model means a stale handoff.** After a model change, the design repo must ship and the host repo's submodule pointer must be updated before the spec is handed off.
 
+## Handoff Consumption Rules
+
+A produced spec that nobody reads is not a handoff. These rules make the consumer side explicit.
+
+- **The spec lives in the design repo** at `handoff/current.md`, never in the host repo's `docs/`. It is a derivative of the model and must ship in the same commit; splitting them allows a spec describing one architecture to be read against a model describing another. Host `docs/` carries rules and indexes.
+- **`technical-design` reuses, never re-derives.** Before architecture confirmation, read the spec and take component boundaries and dependency direction from it. Fill only interfaces, data structures, business rules, and state machines.
+- **`implementation-delivery` treats the spec as a constraint.** When code disagrees with it, stop and report. Do not bend code to match reality, and do not edit the spec.
+- **Both consumers treat a missing spec as normal.** It means no architecture reuse is available, not an error. It must not block pure implementation work.
+- **Both consumers check staleness.** If the model commit recorded in the spec differs from the host repo's pinned gitlink, the spec is expired and must not be used to justify new architecture.
+- **`development-workflow` triggers the architecture node on conditions, not judgement.** New component, dependency direction change, deployment change, or an undefined integration/data boundary routes to `architecture-design` before `technical-design`. Expressing a diagram alone stays with `expression-delivery`.
+- **The chain is verified end to end, not half.** A change to this flow is not done until a real spec has been produced from a real model and discovered at the documented path.
+
 ## Documentation Rules
 
 - `docs/` stores stable project knowledge only.
