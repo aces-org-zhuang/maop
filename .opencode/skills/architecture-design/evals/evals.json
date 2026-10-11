@@ -1070,6 +1070,42 @@
         "给出完整命名前缀清单",
         "确认连字符可用"
       ]
+    },
+    {
+      "id": 92,
+      "prompt": "F 全景应该展示什么？我现在只有 Feature-001-F 一条链。",
+      "expected_output": "F 全景聚合的是所有 Feature-NNN-F 的 F 单元，不是某条链的。正确的定义是 Feature-001-F + Feature-002-F + … 全部收进来。当前只有一条时，pano-f 必然等于该链全量，必须在 description 里声明「当前仅 Feature-001-F 一个 Feature，故本视图等于该链全量，新增后自动聚合」，不能假装这是全景。链是 Feature 内部的实现单位，不是全景的聚合轴。",
+      "files": [],
+      "expectations": [
+        "指出全景聚合单位是 Feature 而非链",
+        "要求声明退化而非假装全景",
+        "说明链不是聚合轴",
+        "指出新增 Feature 后视图自动扩展"
+      ]
+    },
+    {
+      "id": 93,
+      "prompt": "我建了 index 视图把两条链都列进去了，作为架构总览。这样对吗？",
+      "expected_output": "不对。index 是全部 Feature 的导航入口，不是某个 Feature 的总览。只列 Feature-001 的两条链，会让读者以为项目只交付了一次。正确做法是把所有 Feature 都列入导航——Feature-001 的两条链、Feature-002 的能力链，并在 description 里写明当前交付了几个 Feature、各自分叉成什么形状。",
+      "files": [],
+      "expectations": [
+        "指出 index 是导航而非某 Feature 的总览",
+        "要求列出全部 Feature",
+        "说明 description 应写明 Feature 数量与分叉形状",
+        "指出遗漏会让读者误判交付范围"
+      ]
+    },
+    {
+      "id": 94,
+      "prompt": "NF 全景只收到 Feature-001-NF 的单元，是不是漏了？",
+      "expected_output": "不算漏。当前只有 Feature-001 分叉出 NF 侧，Feature-002 走能力链无 NF 侧，所以 pano-nf 收到的就是全部 NF 单元。但必须在 description 里声明范围：「当前仅 Feature-001-NF 一条；Feature-002 走能力链无 NF 侧，新增后本视图自动聚合」。不写这句，读者无法判断是漏了还是本来就只有一条。",
+      "files": [],
+      "expectations": [
+        "判断不算漏",
+        "要求在 description 声明范围",
+        "说明不声明的后果是读者无法判断",
+        "指出新增后视图自动扩展"
+      ]
     }
   ]
 }

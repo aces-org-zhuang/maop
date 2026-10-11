@@ -326,6 +326,9 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 - [ ] **F 全景不含 US**——单元与 US 的对应放在各链的能力清单视图
 - [ ] **I 全景不含 SRC**——SRC 是独立环
 - [ ] SRC 维度全景（`pano-carrier` / `pano-api`）只含该维度元素
+- [ ] **全景聚合单位是 Feature 而非链**：`pano-f` 收所有 `Feature-NNN-F`，`pano-nf` 收所有 `Feature-NNN-NF`
+- [ ] **只有一个 Feature 时，全景 description 已声明退化**，未假装是全景
+- [ ] **index 是全部 Feature 的导航**，不是某个 Feature 的总览
 - [ ] I 状态单独成图（`pano-i-state`），不与步骤混在一张
 
 **链视图：按环聚焦**
