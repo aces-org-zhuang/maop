@@ -39,7 +39,7 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 - [ ] `likec4 validate` 通过（输出 `✓ Valid`，退出码 0）
 - [ ] `likec4 build` 通过（**不可省略**：`dynamic view` 只有 `include` 没有消息时 validate 通过但 build 报 `actors array must not be empty`）
 - [ ] `likec4 format --check` 通过（输出 `All N file(s) are formatted`）
-- [ ] 跨文件引用全部使用 FQN，无 short name 越界
+- [ ] 嵌套元素跨文件引用使用 FQN（顶层元素用 short name 即可，不应无谓写全名）
 - [ ] `include` 未使用通配符（如 `f_*`），1.58.0 不支持
 - [ ] 视图属性（title / description / tags / link）写在 predicate 之前
 - [ ] 被 `navigateTo` 引用的视图均已具名
@@ -76,6 +76,21 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 - [ ] 编号格式正确：`US-` `F-` `NF-` `I-` `UI-` `SRC-` + 三位数字
 - [ ] 编号全局唯一，删除元素后未回收编号
 - [ ] 显示名为中文，编号前缀为英文
+
+**FQN 与多文件**
+
+- [ ] SRC 层的嵌套元素跨文件引用使用 FQN
+- [ ] 上五层（US / F / NF / I / UI）未被无谓地强制 FQN，顶层元素用 short name
+- [ ] 文件按层拆分，仅 SRC 层继续细分
+- [ ] 视图文件按层命名，视图名全局唯一
+
+**视图类型**
+
+- [ ] 各层视图类型与 `references/07-seven-layer-design.md` 第五节对应表一致
+- [ ] I 层步骤用 `dynamic view`，状态机走 Mermaid `stateDiagram-v2`
+- [ ] UI 层交互面用 element view，信息设计有表格或清单承载
+- [ ] SRC 层时序用 `variant sequence`
+- [ ] 构建部署用 `deployment view` 且仅在交付后产出
 
 **各层边界**
 
