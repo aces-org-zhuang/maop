@@ -152,7 +152,47 @@ Feature → US → I → UI → SRC
 
 理由：环间追溯是这套体系的全部价值。如果 US 直接连到 SRC，就退化成「画了个系统图」，业务方无法参与，评审无法定位断点。
 
-**F 与 NF 不在门禁里**——它们是 Feature 的内部分类，不是链上一环。**没有「US → F 或 NF」这种写法**，那是把从属关系写成了并列关系。
+**F 与 NF 不在门禁里**——它们是 Feature 的内部分类，不是链上一环。**没有「US → F 或 NF」这种门禁写法**，那是把从属关系写成了并列关系。
+
+### F / NF 的双向边（必写，否则 F/NF 成为孤立结构）
+
+F 与 NF 归 Feature 管之后，**归属不等于无边**。它们必须同时有入边和出边，否则「F 为什么存在」「NF 约束了谁」都无法从模型查证。
+
+| 边 | 方向 | 标签 | 回答什么 |
+| --- | --- | --- | --- |
+| US → F | `us_place .trace f_order '要求'` | 要求 | 这条意图要什么能力 |
+| **NF → US** | `nf_latency .trace us_place '约束验收标准'` | 约束验收标准 | 这条约束压着哪条验收 |
+| F → I | `f_order .trace i_goal '实现目标'` | 实现 | 这个能力如何落成业务逻辑 |
+| NF → I | `nf_latency .trace i_step '约束步骤耗时'` | 约束 | 这条约束压着哪段业务逻辑 |
+
+```c4
+model {
+  feat_checkout = feature 'Feature-001 结算下单' {
+
+    us_place = userStory 'US-001 提交订单' { }
+    f_order = function 'F-001 订单功能' { }
+    nf_latency = nonFunction 'NF-002 响应时延' { }
+    i_goal = implStep 'I-001 业务目标' { }
+
+    // US → F：意图要什么能力
+    us_place .trace f_order '要求'
+    // NF → US：约束压着哪条验收标准
+    nf_latency .trace us_place '约束验收标准'
+    // F → I：能力如何落成业务逻辑
+    f_order .trace i_goal '实现目标'
+    // NF → I：约束压着哪段业务逻辑
+    nf_latency .trace i_goal '约束业务目标'
+  }
+}
+```
+
+**三条门禁**（都可机械校验，不靠读 description）：
+
+1. 每个 F 项至少有一条入追溯边（`US → F`）。**入边为零的 F 项是凭空出现的功能单元**，必须报告。
+2. 每个 NF 项至少有一条指向 US 的追溯边。**指向 US 的边为零即为空悬 NF**。
+3. `NF → US` 的标签应为「约束验收标准」这类语义，**不得只写在 `description` 里**——文字无法校验，也无法经 MCP 查询。
+
+> **常见错误**：把「NF 落在 US-001 上」只写进 NF 的 `description`。这样规则要求的承接关系在模型里不存在，门禁形同虚设，`search-element` 也查不出哪个 NF 悬空。
 
 ### 两类边必须可区分
 

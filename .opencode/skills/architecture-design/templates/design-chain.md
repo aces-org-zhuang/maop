@@ -120,10 +120,10 @@ model {
       description '承载支付发起与结果处理。'
     }
     nf_auditability = nonFunction 'NF-001 可审计性' {
-      description '所有状态变更留痕，可按订单号回溯。落在 US-002 上。'
+      description '所有状态变更留痕，可按订单号回溯。'
     }
     nf_latency = nonFunction 'NF-002 响应时延' {
-      description '下单请求 P95 不超过 200ms。落在 US-001 上：客服提交后无需切换页面等待。'
+      description '下单请求 P95 不超过 200ms；客服提交后无需切换页面等待。'
     }
 
     i_goal = implStep 'I-001 业务目标' {
@@ -160,12 +160,24 @@ model {
       description 'src/services/payment-client.js — 调用支付网关。'
     }
 
-    // 追溯边：为什么连
+    // US → F：这条意图要什么能力
+    us_place .trace f_order '要求'
+    us_pay .trace f_payment '要求'
+
+    // NF → US：这条约束压着哪条验收标准
+    nf_latency .trace us_place '约束验收标准'
+    nf_auditability .trace us_pay '约束验收标准'
+
+    // F → I：能力如何落成业务逻辑
     f_order .trace i_goal '实现目标'
     f_order .trace i_state '实现状态'
     f_order .trace i_step '实现步骤'
-    nf_auditability .trace i_state '约束状态迁移'
+
+    // NF → I：约束压着哪段业务逻辑
     nf_latency .trace i_step '约束步骤耗时'
+    nf_auditability .trace i_state '约束状态迁移'
+
+    // I → UI → SRC
     i_step .trace ui_interaction '反馈交互'
     i_state .trace ui_information '展示状态'
     ui_interaction .trace src_checkout '触发源码'
@@ -181,6 +193,8 @@ model {
 **要点**：
 
 - 编号格式 `Feature-` `US-` `F-` `NF-` `I-` `UI-` `SRC-` + 三位数字，全局唯一不复用
+- **F 与 NF 必须双向有边**：`US → F` 说明功能从哪来，`NF → US` 说明约束压着谁。入边为零的 F 项与指向 US 的边为零的 NF 项，都是门禁要报的缺口
+- **NF 的承接关系必须写成边**，不能只写在 `description` 里——文字无法校验，也无法经 MCP 查询
 - **NF 项必须可度量**，且**必须落在至少一条 US 的验收标准上**，否则是空悬约束
 - **I 环禁止出现**类名、函数名、表名、文件名。判据：换个人、换技术栈，这环设计依然成立
 - **SRC 单元必须绑定真实源码路径**（写在 `description` 里），写不出路径说明尚未实现，标 `待补充`
@@ -208,10 +222,10 @@ model {
     }
 
     nf_latency = nonFunction 'NF-003 支付响应时延' {
-      description '支付链路 P95 ≤ 200ms。落在 US-005 上。'
+      description '支付链路 P95 ≤ 200ms。'
     }
     nf_consistency = nonFunction 'NF-004 数据一致性' {
-      description '优化后仍保证支付状态最终一致，不出现超卖。落在 US-005 上。'
+      description '优化后仍保证支付状态最终一致，不出现超卖。'
     }
 
     i_step = implStep 'I-004 业务步骤' {
@@ -222,11 +236,23 @@ model {
       description 'src/services/payment-client.js — 增加批量预取与连接复用。'
     }
 
+    // NF → US：NF 类同样必须写边，不能只写「落在 US-005 上」
+    nf_latency .trace us_peak '约束验收标准'
+    nf_consistency .trace us_peak '约束验收标准'
+
+    // NF → I：约束压着哪段业务逻辑
     nf_latency .trace i_step '约束步骤耗时'
+
+    // I → SRC
     i_step .trace src_paymentClient '落到实现'
   }
 }
 ```
+
+**NF 类的两条硬要求**：
+
+1. **必须建 US 体系**，且 NF 必须用 `.trace` 边指向那条 US——不能只在 description 里写「落在 US-005 上」。
+2. **F 侧必须显式声明「无需新增」**，让门禁能区分「确实无需」与「忘了做」。
 
 **两类 Feature 走同一条链，只在产出重心上不同**：
 
