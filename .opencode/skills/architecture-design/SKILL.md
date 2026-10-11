@@ -65,35 +65,38 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 - **版本敏感，官方文档不等于可用能力**。本技能语法经 **likec4 1.58.0 实机验证**。官方文档描述最新版本，`opt` `loop` `break` `alt` `try` 与视图文件夹分组在 1.58.0 **不可用**。写入未验证语法会让 `validate` 失败。
 - **能力边界必须诚实，但不降级**。LikeC4 不原生支持类图继承、状态机外观、泳道竖列。每一种都有 LikeC4 内的平替表达与已知代价，按 `references/09-likec4-substitutions.md` 执行并**把代价告知用户**，不得静默换到另一套工具。
 - **写入前必须 validate**。任何 `.c4` 写入后必须运行 `likec4 validate`，非零退出码时不得声明完成。
-- **FQN 的必要性来自嵌套，不来自「跨文件」这件事本身**。实测：跨文件引用**顶层**元素用 short name 合法；引用**嵌套**元素必须 FQN。七层设计链中只有 SRC 层大量嵌套，因此 FQN 规则主要服务 SRC 层。US / F / NF / I / UI 五层是扁平设计，不应被迫写冗长全名。详见 `references/02-multifile-and-fqn.md`。
-- **视图类型由设计层的性质决定，不由文件组织决定**。各层的读者不同，视图形态也不同：US/F/NF 用 element view，I 层步骤用 dynamic view 且状态机用「状态即元素 + 迁移即关系」，UI 层交互面用 element view 而信息设计用表格，SRC 层用 element view + sequence，构建部署用 deployment view。详见 `references/07-seven-layer-design.md`。
+- **架构设计 FQN 的必要性来自嵌套，不来自「跨文件」这件事本身**。实测：跨文件引用**顶层**元素用 short name 合法；引用**嵌套**元素必须 FQN。**注意区分架构设计 FQN（`.c4` 内元素定位路径）与源码路径引用（`src/x.js`，写在 description 里），两者并列，无派生关系。** Feature 内嵌各环后跨作用域引用一律需 FQN。详见 `references/02-multifile-and-fqn.md`。
+- **视图类型由设计层的性质决定，不由文件组织决定**。各层的读者不同，视图形态也不同：US/F/NF 用 element view，I 环步骤用 dynamic view 且状态机用「状态即元素 + 迁移即关系」，UI 环交互面用 element view 而信息设计用表格，SRC 环用 element view + sequence，构建部署用 deployment view。详见 `references/07-design-chain.md`。
 - **设计资产分层存放**。单服务设计放项目层设计仓并由主仓 submodule 引用；跨项目视图放全局聚合层，禁止把多个项目的设计塞进同一个被 submodule 引用的仓（会造成 gitlink 指针抖动）。
 - **依赖必须锁版本**。LikeC4 跨版本 DSL 行为差异大，`package.json` 用精确版本号而非 `^`。
 - **环境问题不是阻塞理由，先降级再上报**。MCP 自带 LikeC4 内核，零安装即可查询模型；本地无 CLI 时走 npx，再不行就只读降级交付。详见 `references/04b-environment-and-sync.md`。
 - **不把环境故障误报为模型缺陷**。`EBADENGINE` / `MODULE_NOT_FOUND` / 网络错误是环境问题；`Invalid` + 行号是模型问题。
-- **完整需求走七层设计链，缺层即不完整**。用户故事驱动的需求应产出 US → F/NF → I → UI → SRC 的可追溯链路，并单独说明构建部署为何此时不产出。各层读者与语言不同：I 层不含源码（换技术栈依然成立），SRC 层必须绑定真实文件路径。详见 `references/07-seven-layer-design.md`。
+- **完整需求走设计链，缺一环即不完整**。需求应产出 Feature → US → I → UI → SRC 的可追溯链路，并单独说明构建部署为何此时不产出。各环读者与语言不同：I 环不含源码（换技术栈依然成立），SRC 必须绑定真实文件路径。详见 `references/07-design-chain.md`。
 - **`validate` 通过不等于能构建**。`dynamic view` 只有 `include` 没有消息时 `validate` 通过但 `build` 布局失败（`actors array must not be empty`）。交付前必须跑 `build`。
-- **交互式推进，不一次性抛全量**。设计是需要人类介入业务判断的环节，AI 负责给候选与推荐，用户负责确认业务决策。按 `references/08-design-decision-tree.md` 的节点 0-6 推进，每个 ⏸ 节点停下等确认，收尾必须输出缺口清单。一次性输出七层全部内容会导致用户在关键判断上无法纠偏，只能整体返工。
-- **只有 US 是闭环的开端；起点不是 US 就必须先上升**。F / NF / I / UI / SRC 任一层作为起点，都要先上升到 US 确认范围与业务目标，再逐层下钻。区别只是要跨几层，不是要不要上升。上升到 US 时若发现改动超出原始需求，**立即停下交用户裁决**，不自行扩大范围——任何层的实现都无权替业务扩大需求。
+- **交互式推进，不一次性抛全量**。设计是需要人类介入业务判断的环节，AI 负责给候选与推荐，用户负责确认业务决策。按 `references/08-design-decision-tree.md` 的节点 -1 到 6 推进，每个 ⏸ 节点停下等确认，收尾必须输出缺口清单。一次性输出全部内容会导致用户在关键判断上无法纠偏，只能整体返工。
+- **只有 Feature 是闭环的开端；起点不是 Feature 就必须先上升**。US / F / NF / I / UI / SRC 任一环作为起点，都要先上升到 Feature 确认交付范围，再逐环下钻。区别只是要跨几环，不是要不要上升。上升到 Feature 时若发现改动超出本次交付边界，**立即停下交用户裁决**，不自行扩大范围——任何环的实现都无权替业务扩大交付范围。
+- **产品愿景不是门禁，只作坐标原点**。愿景可证伪性弱，把它设为起点会让范围裁决变成走过场。上升止于 Feature。见 `references/12-design-origin.md`。
+- **F 与 NF 是 Feature 的内部分类，不是独立环节**。判据是本次交付是否改变对外可见能力：改变为 F 类，不变为 NF 类。**NF 类不得跳过 US 环**，其 F 侧须显式声明「无需新增」。不要用占比判定。
 - **推演是红绿循环，不是一次画完的图**。每轮三步：给当前视野所有节点打标（🟢 已覆盖 / 🔴 缺口）→ 选最宽泛的 🔴 判断下钻或横向扩散 → 取最高保真证据把红点转绿或边界化。**每轮必须输出 `Round N Map`**，让用户看到判断如何演进。一轮没取到新证据只是重画图，那是空转不是推进。
-- **I 层与 US 层的业务语义不能从源码反推**。改了代码不等于业务目标变了，也不等于没变。这必须问用户，是最容易出错的地方。
+- **I 环与 US 环的业务语义不能从源码反推**。改了代码不等于业务目标变了，也不等于没变。这必须问用户，是最容易出错的地方。
 - **改完要能同步看到效果**。优先用 MCP 查询确认；需要可视化时用 `serve` 热更新。
 - **架构不推导出代码**。模型回答「有什么、在哪里、怎么连」，代码实现回答「怎么做、对不对」。业务规则、边界条件、接口签名无法从拓扑推导，因此本技能**不产出可执行代码**，也不声称「架构即开发」。
 - **消除重复而非消除实现**。本技能的交接价值在于：实现阶段不必重新分析架构组件、依赖方向与部署约束。交接按 `references/06-architecture-handoff.md` 执行，产出 `technical-design` 交接包的架构子集。
 
 ## 触发后先做什么
 
+0. **先定交付边界与 Feature 类型**：读取 `references/12-design-origin.md`，确认本次要交付什么（F 类 / NF 类）。**这是全流程第一道门禁**——交付边界未定就往下走，等于默认需求已清楚。
 1. **先定主干与分支的切分**：读取 `references/11-trunk-first-design.md`，确定主干路径、分支清单与视图粒度。**这是先决步骤**——没切分就选图类型，必然产出一张什么都塞的图。
 2. 先读取 `references/00-diagram-routing.md`，确认目标图类型及其 LikeC4 表达方式。
 2a. 需要泳道、状态机、分支、类图、数据模型或信息设计时，同时读取 `references/09-likec4-substitutions.md` 取平替方案与代价。
-2b. **变更起点不是 US 层，或需确认关联影响是否覆盖时，先按 `references/10-design-reasoning.md` 做双向推演**，确定受影响层后再逐层与用户交互。推演在前，交互在后。
+2b. **变更起点不是 Feature，或需确认关联影响是否覆盖时，先按 `references/10-design-reasoning.md` 做双向推演**，确定受影响环后再逐环与用户交互。推演在前，交互在后。
 3. **先定验证路径**：读取 `references/04b-environment-and-sync.md`，判断走 MCP 还是 CLI。不要因环境缺 likec4 而停止交付。
 4. 读取 `references/01-likec4-basics.md`，确认 specification、命名、样式和目录约定。
 5. 涉及多文件、跨项目引用或导入既有模型时，读取 `references/02-multifile-and-fqn.md`。
 6. 涉及序列流程、并发或步骤下钻时，读取 `references/03-dynamic-views.md`。
 7. 需要落地项目、配置构建、接入 MCP 或接入 CI 时，按 `references/04-project-integration.md` 执行。
 8. **写入前确认目标位置**：先读 `references/05-design-repo-layout.md` 判断设计资产归属层级。
-9. **需求涉及完整设计链时（用户故事、功能/非功能框架、业务状态与步骤、交互与信息设计、源码层映射），先读 `references/07-seven-layer-design.md` 按七层组织产出。**
+9. **需求涉及完整设计链时（用户故事、功能/非功能框架、业务状态与步骤、交互与信息设计、源码层映射），先读 `references/07-design-chain.md` 按设计链组织产出。**
 10. **需要与用户交互式推进设计时，读 `references/08-design-decision-tree.md`。** 它定义每个节点 AI 该给什么候选、问什么问题、以及何时必须停下等确认。含节点 0 规模判定与节点 6 缺口盘点。
 11. 建模完成并准备进入实现时，读 `references/06-architecture-handoff.md` 产出架构交接规格。
 12. 完成后执行校验，并按 `checklists/model-quality.md` 自检。
@@ -155,7 +158,7 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
   -> Stage 5 设计仓分层: references/05-design-repo-layout.md
 
 需求涉及完整设计链（用户故事、功能/非功能框架、业务状态与步骤、交互与信息设计、源码层映射）
-  -> Stage 6 七层设计链: references/07-seven-layer-design.md
+  -> Stage 6 设计链: references/07-design-chain.md
 
 需要逐步引导用户完成设计、决定何时停下确认、或产出缺口清单
   -> Stage 7 设计作业决策树: references/08-design-decision-tree.md
@@ -214,13 +217,14 @@ opt   loop   break   alt   when   else   try   catch   finally
 - `references/04b-environment-and-sync.md`: 零依赖回退链（不装 likec4 也能查询模型）、MCP watch 热重载、同步查看方式、故障降级规则。
 - `references/05-design-repo-layout.md`: 设计资产分层、仓边界、submodule 引用与指针抖动规避。
 - `references/06-architecture-handoff.md`: 架构交接规格，组件边界、依赖约束、流程锚点、部署要求与验收锚点，供实现阶段直接消费。
-- `references/07-seven-layer-design.md`: 七层设计链（US / F / NF / I / UI / SRC + 构建部署），各层边界、命名规范、追溯门禁与工具路由。
+- `references/07-design-chain.md`: 设计链各环边界、命名规范、追溯门禁、两类边区分与工具路由。
+- `references/12-design-origin.md`: **设计起点**。交付边界确认、Feature 类型判定（F 类 / NF 类）、归属嵌套表达、愿景与起点的关系、变更上升路径。
 - `references/08-design-decision-tree.md`: 设计作业决策树，节点 0-6 的引导流程、每步的确认点、场景分支与反模式。
 - `checklists/model-quality.md`: 模型质量自检清单。
 - `templates/`: 可落盘模板。
 - `templates/c4-project-skeleton.md`: 新设计仓的最小文件骨架模板（已实机验证）。
 - `templates/architecture-handoff-spec.md`: 架构交接规格模板，字段与 `technical-design` 的 Handoff Mini-Spec 对齐。
-- `templates/seven-layer-chain.md`: 七层设计链落盘骨架，含已实测通过的六层 element kind 与五个必备视图。
+- `templates/design-chain.md`: 设计链落盘骨架，含已实测通过的 element kind 与必备视图。
 - `evals/evals.json`: 触发与路由评测用例。
 
 ## 边界

@@ -24,12 +24,12 @@ description: 必须用于判断研发请求应进入需求、设计、实现还�
    - 改变部署形态、运行时边界或资源依赖
    - 需求涉及系统拆分、数据边界或集成边界
    - 技术设计中架构确认包（Context / Component / Deployment Diagram）无法复用现有模型
-   - **新增用户故事或用户可见的功能需求**（新角色、新场景、新操作路径），需先做七层设计链
+   - **新增用户故事或用户可见的功能需求**（新角色、新场景、新操作路径），需先做设计链
    - **业务方需要评审完整设计**，或需求方要求输出可追溯的完整设计
 
    触发时：`architecture-design` 建模 → 产出 `vendor/design/<repo>/handoff/current.md` → `technical-design` 复用该规格补齐接口与数据。
 
-   走七层设计链时，按 `architecture-design/references/08-design-decision-tree.md` 的节点 0 先做**规模判定**：小改动可只走受影响的层，但必须说明其余层为何不动。
+   走设计链时，先按 `architecture-design/references/12-design-origin.md` 确认**交付边界与 Feature 类型**（F 类 / NF 类），再按 `architecture-design/references/08-design-decision-tree.md` 的节点 0 做**规模判定**：小改动可只走受影响的环，但必须说明其余环为何不动。
 
    未触发且已有交接规格时：`technical-design` 直接复用，不重复建模。
 
