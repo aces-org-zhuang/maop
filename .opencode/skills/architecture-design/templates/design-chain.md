@@ -533,23 +533,115 @@ views {
 
 ---
 
-## 全量设计时必备：各环全景
+## 分环视图：一张图只承载一个环
 
-**每一环都有全景视图**，不只 NF。全景是全量设计的产物，增量设计时不出。
+**禁止 `include *`。** 它会把六个环加上数据载体、泳道全部塞进一张——这是"视图跨层"的真正来源。
 
-| 全景视图 | 覆盖范围 | 回答什么 |
+| 视图 | 只包含 |
+| --- | --- |
+| `chain<链>-us` | 本链的 US |
+| `chain<链>-f` / `chain<链>-nf` | 本链的能力/场景清单 + 对应 US（**唯一允许同图出现 US 的例外**） |
+| `chain<链>-i-goal` | **只**有业务目标 |
+| `chain<链>-i-state` | **只**有业务状态与迁移 |
+| `chain<链>-i-step` | **只**有业务步骤 |
+| `chain<链>-ui` | 本链的交互面与信息设计 |
+
+**I 环必须按内容子类拆图**：业务目标、状态流转、业务步骤是三种不同内容。状态用「状态即元素 + 迁移即关系」，步骤有责任边界时用**泳道流程图**。
+
+```c4
+views {
+  view chain001F-us of feat_f {
+    title 'US 视图 · Feature-001-F'
+    description '只承载本链的用户故事。不含能力单元、I 环与源码。'
+    include feat_f.us_ask, feat_f.us_pay
+  }
+
+  view chain001F-f of feat_f {
+    title '能力清单 · Feature-001-F'
+    description '本链的业务能力单元与对应 US。US 在此仅用于展示对应关系。'
+    include feat_f.us_ask, feat_f.us_pay
+    include feat_f.f_order, feat_f.f_payment
+  }
+
+  view chain001F-i-goal of feat_f {
+    title 'I 环 · 业务目标 · Feature-001-F'
+    description '只承载业务目标。状态流转与业务步骤各自成图。'
+    include feat_f.i_goal
+  }
+
+  view chain001F-ui of feat_f {
+    title 'UI 环 · Feature-001-F'
+    description '只承载交互面与信息设计。'
+    include feat_f.ui_interaction, feat_f.ui_information
+  }
+}
+```
+
+业务步骤的责任边界用泳道表达：
+
+```c4
+views {
+  dynamic view seq001F-i-step-lanes {
+    variant sequence
+    title 'I 环 · 业务步骤泳道流程 · Feature-001-F'
+    description '按责任分区：角色发起、接入层归一化、领域层检索、领域层校验。'
+    include feat_f.lane_client.actor_customer
+    include feat_f.lane_edge.api_placeOrder
+    include feat_f.lane_core.i_stepLaneSearch
+    include feat_f.lane_core.i_stepLaneValidate
+
+    feat_f.lane_client.actor_customer -> feat_f.lane_edge.api_placeOrder '①提出问题'
+    feat_f.lane_edge.api_placeOrder -> feat_f.lane_core.i_stepLaneSearch '②检索候选知识'
+    feat_f.lane_core.i_stepLaneSearch -> feat_f.lane_core.i_stepLaneValidate '③候选返回'
+    feat_f.lane_core.i_stepLaneValidate -> feat_f.lane_edge.api_placeOrder '④生成答复'
+  }
+}
+```
+
+---
+
+## 全景视图：同类聚合
+
+**一张全景只放一种元素。** 「F 全景」混入 US 会让这个名字失去意义。
+
+| 全景视图 | 只包含 | 回答什么 |
 | --- | --- | --- |
-| **F 全景** | 全部 F 链的能力单元 + US + I 逻辑 | 系统对外提供哪些能力 |
-| **NF 全景** | 全部 NF 链的场景单元 + US + I 逻辑 | 系统承诺哪些场景下的表现 |
-| **US 全景** | 全部链的 US，按交付主题分组 | 谁要什么 |
-| **I 全景** | 全部链的业务状态与步骤 | 业务怎么流转 |
-| **UI 全景** | 全部链的界面面 | 用户能看到什么 |
-| **SRC 全景** | 全部链的源码单元 | 代码怎么组织 |
-| **SRC DFD 全景** | 全部链的载体 + 数据流与转换 | 数据怎么流过系统、在哪被转换 |
-| **数据载体全景** | 全部链的载体分类与角色 | 有哪些载体、各自什么角色 |
-| **数据模型全景** | 全部链的持久化实体与关系 | 存储结构长什么样 |
-| **API 清单** | 全部链的对外接口 | 系统对外暴露哪些契约 |
-| **进程与线程** | 环境级 | 接口跑在哪台机器的哪个进程的哪个线程 |
+| `pano-us` | 全部链的 **US** | 谁要什么 |
+| `pano-f` | 全部链的 **F 单元** | 系统对外提供哪些能力 |
+| `pano-nf` | 全部链的 **NF 单元** | 系统承诺哪些场景下的表现 |
+| `pano-i` | 全部链的 **I 环元素** | 业务怎么流转 |
+| `pano-i-state` | 全部链的**业务状态** | 有哪些状态、怎么迁移 |
+| `pano-ui` | 全部链的 **UI 元素** | 用户能看到什么 |
+| `pano-src` | 全部链的 **SRC 单元** | 代码怎么组织 |
+| `pano-carrier` | 全部链的**载体**（SRC 维度） | 有哪些载体、各自什么角色 |
+| `pano-api` | 全部链的**接口**（SRC 维度） | 对外暴露哪些契约 |
+
+```c4
+views {
+  view pano-f {
+    title 'F 全景 · 全部链的业务能力单元'
+    description '所有链的 F 单元，只含业务能力。刻意不含 US——对应关系见各链的能力清单视图。'
+    include feat_f.f_order, feat_f.f_payment
+    include feat_nf.f_degrade
+  }
+
+  view pano-nf {
+    title 'NF 全景 · 全部链的极端场景单元'
+    description '所有链的 NF 单元，只含场景化表现。'
+    include feat_nf.nf_peak, feat_nf.nf_trace
+  }
+}
+```
+
+**违规示例**（都是实际犯过的错）：
+
+```c4
+错  view pano-f { include feat_f.us_ask, feat_f.f_order }
+     「F 全景」里出现 US——名字失去意义，读者无法判断这张图回答什么
+
+错  view pano-i { include feat_f.i_step, feat_f.src_orderService }
+     SRC 是独立环，不该出现在 I 环全景里
+```
 
 **聚合发生在全景层，不发生在链视图层。**
 
@@ -600,7 +692,9 @@ views {
 }
 ```
 
-**命名**：`dfd-<链序号>-<主题>` / `carrier-<链序号>-<主题>` / `erm-<链序号>-<主题>` / `srcdir-<链序号>-<主题>` / `api-<链序号>-<主题>` / `apiseq-<链序号>-<场景>` / `proc-<环境>`。**视图名全局唯一**，重名报 `Duplicate view`。
+**命名**（强制，视图名必须自带类型信息）：`pano-<环>` 同类聚合全景 / `chain<链>-<环>` 分环视图 / `seq<链>-<场景>` 时序 / `dfd<链>-<主题>` / `carrier<链>` / `erm<链>-<主题>` / `srcdir<链>-<主题>` / `api<链>-<主题>` / `proc-<环境>` 运行时。**视图名全局唯一**，重名报 `Duplicate view`。连字符可用。
+
+**`pano-carrier` 与 `carrier001F` 的区别**：前者跨全部链聚合全部载体，后者只看F 链的载体。两者不要混用前缀。
 
 **NF 链同理**，用1xx 段载体编号。DFD 视图里两条链的数据流互不引用。
 
@@ -947,6 +1041,18 @@ views {
 - [ ] `instanceOf` 与 `processNode` / `threadNode` 为**兄弟关系**，未把节点嵌进 `instanceOf`
 - [ ] 进程与线程之间未连边（包含关系由嵌套表达）
 - [ ] 进程视图为环境级，命名不带链序号
+
+**视图聚焦与命名**
+
+- [ ] **每张全景只含一种元素**（`pano-f` 只有 F 单元，无 US / I / SRC）
+- [ ] **无任何视图使用 `include *`**
+- [ ] 每张链视图只承载一个环
+- [ ] **I 环按内容子类拆图**：业务目标 / 状态流转 / 业务步骤各自成图
+- [ ] 业务步骤有责任边界时用泳道流程图
+- [ ] 能力清单视图同时含 US 是有意例外，`description` 已写明
+- [ ] 全景用 `pano-<环>`，分环用 `chain<链>-<环>`，时序用 `seq<链>-<场景>`
+- [ ] SRC 各维度用 `dfd` / `carrier` / `erm` / `api` / `srcdir` / `proc` 前缀
+- [ ] 视图名全局唯一
 
 **FQN 与多文件**
 
