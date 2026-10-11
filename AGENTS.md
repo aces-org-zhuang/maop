@@ -103,6 +103,9 @@ US → F / NF → I → UI → SRC → build & deploy
 - **FQN belongs to the SRC layer.** The necessity for qualified names comes from nesting, not from crossing file boundaries. Cross-file references to **top-level** elements work with short names; only **nested** elements require FQN. Since only the SRC layer nests heavily, US / F / NF / I / UI stay flat and must not be forced into verbose qualified names.
 - **View types follow the layer, not the file layout.** US/F/NF use element views; I-layer steps use dynamic views with state machines in Mermaid; UI interaction surfaces use element views while information design uses tables; SRC uses element views plus sequence views; build and deploy use deployment views after delivery lands.
 - **Files split by layer, not by technical domain.** Only the SRC layer subdivides further. Grouping views by folder is unsupported in 1.58.0, so express layer ownership in filenames.
+- **Design is interactive, never one-shot.** `architecture-design/references/08-design-decision-tree.md` defines nodes 0-6, which ⏸ points require stopping for user confirmation, and the gap inventory required at the end. Writing all seven layers at once denies the user the chance to correct business judgments early, forcing a full rewrite.
+- **AI proposes, the user decides.** The agent supplies candidates, recommended values with stated reasoning, and risks. Business targets, non-functional thresholds, scope, and priority are the user's calls. Setting an NF value and treating it as confirmed is a defect.
+- **Scale is judged before the chain runs.** Node 0 decides full chain, partial update, architecture change, or expression only. Skipping layers requires stating why the others do not change.
 - **`build` is mandatory, not optional.** A `dynamic view` with only `include` and no messages passes `validate` but fails `build` with `actors array must not be empty`. Always run both.
 
 ## Documentation Rules
