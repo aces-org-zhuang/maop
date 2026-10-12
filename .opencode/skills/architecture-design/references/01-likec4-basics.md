@@ -394,3 +394,30 @@ likec4 format          # 就地格式化
 | `views` 块内解析到下一个 `view` 时报 `Expecting token of type '}'` | **`dynamic view` 与 `view` 不能混在同一个 `views` 块** | 拆成两个文件，各自一个 `views` 块 |
 | `The requested module 'likec4' does not provide an export named 'defineConfig'` | 1.58.0 **不导出 `defineConfig`**（实测只导出 `LikeC4`） | `likec4.config.ts` 改为 `export default { ... }` 默认导出对象；该错误只 WARN 不阻断，`validate` 仍能跑通，但项目配置未生效 |
 | EBADENGINE / ERR_MODULE_NOT_FOUND | Node 版本低于要求 | 升级到 >= 22.22.3 |
+
+## serve 的两个坑（实测 1.58.0）
+
+### 坑一：AI 环境变量会杀死 serve 进程
+
+likec4 serve 自动探测 `ANTHROPIC_API_KEY` / `OPENROUTER_API_KEY` / `GEMINI_API_KEY` 等
+AI provider 变量，命中后尝试动态安装 `@tanstack/ai-*` 扩展包，**安装失败直接让整个
+serve 进程退出**——表现为「模型没问题但服务起不来」。
+
+修法：启动前清掉这些变量（design-beauty 的 `scripts/serve-clean.mjs`，spawn 前删除
+十余个 AI 环境变量）。
+
+### 坑二：手机/局域网访问需要显式监听与放行
+
+默认 serve 只绑 localhost，手机看不到。三步：
+
+1. **监听全部网卡**：`likec4 serve <dir> --port <n> --listen 0.0.0.0`
+2. **防火墙放行**：Windows 加端口入站规则
+   `New-NetFirewallRule -DisplayName 'likec4-dev-preview' -Direction Inbound -Action Allow -Protocol TCP -LocalPort 3000-3003 -Profile Any`；
+   注意 Windows 自动生成的 node.exe 规则里**可能存在「阻止」规则，阻止优先于允许**，
+   需停用（`Disable-NetFirewallRule`），实测公用配置文件下命中过
+3. **访问地址**：手机连同一 WiFi，打开 `http://<本机局域网IP>:<端口>`
+   （本机 IP 用 `os.networkInterfaces()` 或 `ipconfig` 查，取非回环 IPv4）
+
+验证：`netstat -ano | findstr :3001` 应显示 `0.0.0.0:3001 LISTENING`；
+本机 `curl http://<局域网IP>:3001` 返回 200。若手机仍访问不了，查路由器是否开了
+「AP 隔离 / 无线隔离」（禁止局域网设备互访）。
