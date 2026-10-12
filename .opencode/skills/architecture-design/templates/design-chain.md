@@ -886,9 +886,9 @@ views {
 
 ```c4
 views {
-  view api001F of feat_checkout_f.lane_edge {
+  view api001F {
     title 'SRC 环 · Feature-001-F · 对外接口'
-    description '本链对外接口清单，含方法、路径与路由位置。'
+    description '本链对外接口清单，含方法、路径与路由位置。**逐个 include 接口元素**——只 include lane_edge 容器不会带出子元素，图上只剩一个空的「服务端接入泳道」框。'
     include feat_checkout_f.lane_edge.api_placeOrder
     include feat_checkout_f.lane_edge.api_getOrder
   }

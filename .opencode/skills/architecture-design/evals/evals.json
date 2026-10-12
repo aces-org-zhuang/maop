@@ -1303,6 +1303,44 @@
         "给出适用于所有环的通则",
         "要求确无内容时显式声明并给理由"
       ]
+    },
+    {
+      "id": 111,
+      "prompt": "我的 API 全景视图 include 了各条链的 lane_edge（服务端接入泳道），图上就显示三个「服务端接入泳道」的框。这样可以吗？",
+      "expected_output": "不行，图上一个接口都没有。因为 LikeC4 的 include 容器不会带出子元素，include lane_edge 渲染出来就是一个空的泳道框。读者看到的是「一个叫泳道的东西」，而不是 API-001 POST /wechat/callback。必须逐个 include 接口元素：include feat_a.lane_edge.api_chatCallback。判据是把视图所有叶子节点列出来，如果没有一个标题带体系编号（API-001 / SRC-001 / I-003），说明这张图只有分类容器没有任何具体内容。",
+      "files": [],
+      "expectations": [
+        "指出 include 容器不带出子元素，接口全部丢失",
+        "要求逐个 include 接口元素",
+        "给出叶子节点标题须带体系编号的判据",
+        "指出读者看到的是分类容器而非具体接口"
+      ]
+    },
+    {
+      "id": 112,
+      "prompt": "视图要「拆到具体元素」，那我把所有 SRC 单元平铺在一张图上不就行了？这样和最多跨一层冲突吗？",
+      "expected_output": "不冲突，两条规则管的是不同维度。「最多跨一层」管祖先容器嵌套多深——祖先最多到直接上一层；「拆到具体元素」管 include 了什么——要逐个 include 叶子而不是只 include 容器。所以正确写法是：逐个 include 具体 SRC 单元，同时只带上直接上层（UI 面）作为归属锚，不带更上层的 US 或 I。如果完全不带上层容器，SRC 与 UI 的归属关系就丢了，那是另一种错误。",
+      "files": [],
+      "expectations": [
+        "区分两条规则管不同维度",
+        "说明最多跨一层管祖先嵌套深度",
+        "说明拆到具体管 include 对象",
+        "给出逐个 include 叶子并带一层祖先的正确写法"
+      ]
+    },
+    {
+      "id": 113,
+      "prompt": "我怎么快速检查有没有哪张视图是空的或者只有分类容器？",
+      "expected_output": "跑校验器：likec4 export json -o out.json 然后 node scripts/check-naming.mjs out.json。它会检查六类问题，其中一类专门抓这个：列出每张视图的叶子节点，若全部标题都不带体系编号（Feature / US / F / NF / I / UI / SRC / S / IN / BIZ / POD / OUT / DAO / CVT / API），就报「只显示分类容器，没有拆到具体元素」。这个检查在 pano-api 上抓到过——那张图当时 include 了三个 lane_edge，图上只有三个空泳道框，API 全部丢失。",
+      "files": [
+        "scripts/check-naming.mjs"
+      ],
+      "expectations": [
+        "给出校验器的用法",
+        "说明该检查的判据是叶子节点是否带编号",
+        "举出 pano-api 的真实案例",
+        "指出空视图与只有分类容器的区别"
+      ]
     }
   ]
 }

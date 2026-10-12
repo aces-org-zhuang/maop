@@ -1078,6 +1078,28 @@ for(const id of Object.keys(d.views)){
 | `L1 > 0` 且容器是祖父层 | 越层 | **错误** |
 | 有 `level ≥ 2` 的节点 | 跨了两层以上 | **错误** |
 
+#### 视图必须拆到具体元素，不能只有分类容器（硬规则）
+
+**一张视图里出现的应该是带编号的具体元素，不是分类容器。**
+
+反面：`pano-api` 里只 `include` 了三个 `lane_edge`，图上就只剩三个「服务端接入泳道」的空框——**一个 API 都没有**。读者看到的是「一个叫泳道的东西」，不是 `API-001 POST /wechat/callback`。
+
+```c4
+错  view pano-api { include feat_a.lane_edge, feat_b.lane_edge }
+     渲染结果：三个空的「服务端接入泳道」框
+     include 容器不会带出子元素，接口全部丢失
+
+对  view pano-api {
+      include feat_a.lane_edge.api_chatCallback, feat_a.lane_edge.api_handoffList
+      include feat_b.lane_edge.api_status
+    }
+     渲染结果：API-001 / API-002 / API-101 三个接口节点
+```
+
+**判据**：把视图里所有**叶子节点**（无子节点者）列出来，如果它们的标题里**没有一个带体系编号**（`SRC-001` / `API-001` / `I-003` / `S-000` / `UI-002`），这张图就只有一个分类容器，没有任何具体内容。
+
+**这条与「最多跨一层」不冲突**：拆到具体元素指的是**逐个 `include` 叶子**，不是把它们平铺。祖先容器仍按最多跨一层的要求处理。
+
 > **实测坑（务必知道）**：`include` 容器**不会**自动带出子元素。`include feat.us_x` 渲染出来就是一个**空 US 框**，里面的 I 步骤一个都不显示。这会让「I 环业务步骤视图」看起来配好了，实际是空的。必须**祖先与目标元素同时显式 `include`**。
 
 > **注意**：不要用「节点的祖先链是否在视图里」来判定归属错位——LikeC4 渲染嵌套时节点 id 保持完整 FQN，容易误判。判定归属是否正确应看**容器的 `children` 数组里每个元素的 id 是否以容器 id 为前缀**。
