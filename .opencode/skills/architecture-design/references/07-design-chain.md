@@ -192,7 +192,7 @@ US-001 客户提问获得专业答复
 
 ```c4
 对  view chain001F-i-001 {
-      title 'I 环 · Feature-001-F · 阶段 I-001 取得可靠候选知识'
+      title 'I 环 · Feature-001-F · I-001 取得可靠候选知识'
       include feat_f.us_ask.i_001                 // 阶段容器
       include feat_f.us_ask.i_001.st_pending      // 该阶段的状态
       include feat_f.us_ask.i_001.i_001_1         // 该阶段的步骤
@@ -326,7 +326,7 @@ F[US-001, US-002, US-003]     ← 单元嵌在 F 容器内
 ```c4
 views {
   view chain001F-i-001 {
-    title 'I 环 · Feature-001-F · 阶段 I-001 取得可靠候选知识'
+    title 'I 环 · Feature-001-F · I-001 取得可靠候选知识'
     include feat_answer_f.us_ask.i_001                    // 阶段容器
     include feat_answer_f.us_ask.i_001.st_pending         // 该阶段状态
     include feat_answer_f.us_ask.i_001.st_searching
@@ -345,7 +345,7 @@ views {
 views {
   dynamic view seq001F-i-001-lanes {
     variant sequence
-    title 'I 环 · 阶段 I-001 泳道流程 · Feature-001-F'
+    title 'I 环 · Feature-001-F · I-001 泳道流程'
     include feat_answer_f.lane_client.actor_customer
     include feat_answer_f.lane_edge.api_chatCallback
     include feat_answer_f.us_ask.i_001.i_001_1            // 嵌套后的真实步骤
@@ -709,24 +709,48 @@ machine appHost 'app-1' {
 
 **`title` 不是自由文本。** 只规范 id 而不管 title，会让每张图的标题各写各的，最终读者无法从标题回推它属于哪个环、哪个 Feature——这正是「这张图为什么不是 SRC 层的」这类问题的来源。
 
-**title 必须三段式：`<环代号> · <编号段> · <主题>`**，段间用 ` · ` 分隔。
+**title 必须三段式：`<环代号> · <范围> · <编号路径 + 主题>`**，段间用 ` · ` 分隔。
 
-| 视图类别 | title 格式 | 示例 |
+- **环代号** = 元素编号前缀 + 环（`US 环` / `F 环` / `NF 环` / `I 环` / `UI 环` / `SRC 环` / `构建部署`）
+- **范围** 只有两种取值：单链视图写 `Feature-<编号>-<F|NF>`；聚合视图写 `全部 Feature`
+- **编号路径** 从归属锚写到目标单元，是图中真实存在的元素编号链
+
+**id 是机器键（ASCII、无空格），title 是人读键，两者必须双射**——能从 id 机械推导 title，反之亦然。这是校验器能机械检查、读者不打开图就能定位的前提。
+
+#### id ↔ title 全量对照表
+
+| id 模式 | title 模板 | 示例 |
 | --- | --- | --- |
-| `pano-<环>` | `<环代号> 全景 · 全部 <Feature 范围> · <主题>` | `F 全景 · 全部 Feature-NNN-F · 业务能力单元` |
-| `chain<链>-us` | `US 环 · Feature-<编号>-<F\|NF> · 用户故事` | `US 环 · Feature-001-F · 用户故事` |
-| `chain<链>-f` | `F 环 · Feature-<编号>-F · 能力单元清单` | `F 环 · Feature-001-F · 能力单元清单` |
-| `chain<链>-nf` | `NF 环 · Feature-<编号>-NF · 极端场景单元清单` | `NF 环 · Feature-001-NF · 极端场景单元清单` |
-| `chain<链>-i-*` | `I 环 · <子类> · Feature-<编号>-<F\|NF>` | `I 环 · 业务步骤 · Feature-001-F` |
-| `chain<链>-ui` | `UI 环 · Feature-<编号>-<F\|NF> · 交互面与信息设计` | `UI 环 · Feature-001-F · 交互面与信息设计` |
-| `srcdir<链>` | `SRC 环 · 代码结构 · Feature-<编号>-<F\|NF>` | `SRC 环 · 代码结构 · Feature-001-F` |
-| `dfd<链>` | `SRC 环 · 数据流 · Feature-<编号>-<F\|NF> · <场景>` | `SRC 环 · 数据流 · Feature-001-F · 应答` |
-| `carrier<链>` | `SRC 环 · 数据载体 · Feature-<编号>-<F\|NF>` | `SRC 环 · 数据载体 · Feature-001-F` |
-| `erm<链>` | `SRC 环 · 数据模型 · Feature-<编号>-<F\|NF> · <实体>` | `SRC 环 · 数据模型 · Feature-001-F · 工单` |
-| `api<链>` | `SRC 环 · 对外接口 · Feature-<编号>-<F\|NF>` | `SRC 环 · 对外接口 · Feature-001-F` |
-| `seq<链>-*` | `<环代号> · <场景> · Feature-<编号>-<F\|NF>` | `SRC 环 · 置信度不足转人工 · Feature-001-F` |
-| `proc-<环境>` | `构建部署 · <环境> · 进程与线程` | `构建部署 · 生产环境 · 进程与线程` |
-| `index` | `<系统名> · 全部 Feature 导航` | `美妆客服服务 · 全部 Feature 导航` |
+| `chain<链>-us` | `US 环 · Feature-<链> · 用户故事` | `US 环 · Feature-001-F · 用户故事` |
+| `chain<链>-f` | `F 环 · Feature-<链> · 业务能力单元清单` | `F 环 · Feature-001-F · 业务能力单元清单` |
+| `chain<链>-nf` | `NF 环 · Feature-<链> · 极端场景单元清单` | `NF 环 · Feature-001-NF · 极端场景单元清单` |
+| `chain<链>-i-<阶段>` | `I 环 · Feature-<链> · I-<阶段> <阶段性目标>` | `I 环 · Feature-001-F · I-001 取得可靠候选知识` |
+| `seq<链>-i-<阶段>-lanes` | `I 环 · Feature-<链> · I-<阶段> 泳道流程` | `I 环 · Feature-001-F · I-001 泳道流程` |
+| `ui<链>-<单元>` | `UI 环 · Feature-<链> · I-<阶段>-UI-<单元> <单元名>` | `UI 环 · Feature-001-F · I-001-UI-001 会话输入` |
+| `ui<链>-<单元>-info-<n>` | `UI 环 · Feature-<链> · UI-<单元>-信息设计-<0n> <名称>` | `UI 环 · Feature-001-F · UI-001-信息设计-001 提问输入信息` |
+| `ui<链>-<单元>-act-<n>` | `UI 环 · Feature-<链> · UI-<单元>-交互设计-<0n> <名称>` | `UI 环 · Feature-001-F · UI-001-交互设计-001 提交提问` |
+| `pano-src-<链>` | `SRC 环 · Feature-<链> · 模块目录全览` | `SRC 环 · Feature-001-F · 模块目录全览` |
+| `dfd<链>-src<模块>-<n>` | `SRC 环 · Feature-<链> · SRC-<模块>-DFD-<0n> <数据流名>` | `SRC 环 · Feature-001-F · SRC-001-DFD-001 提问进入数据流` |
+| `api<链>-src<模块>-<n>` | `SRC 环 · Feature-<链> · SRC-<模块>-API-<编号> <METHOD> <路径> <名称>` | `SRC 环 · Feature-001-F · SRC-001-API-001 POST /wechat/callback 微信客服回调` |
+| `carrier<链>` | `SRC 环 · Feature-<链> · 数据载体全景` | `SRC 环 · Feature-001-F · 数据载体全景` |
+| `erm<链>-<主题>` | `SRC 环 · Feature-<链> · 数据模型全景 · <主题>` | `SRC 环 · Feature-001-F · 数据模型全景 · 工单` |
+| `pano-<环>` | `<环代号> · 全部 Feature · <主题>` | `I 环 · 全部 Feature · 业务状态` |
+| `proc-<环境>` | `构建部署 · <环境名> · 进程与线程` | `构建部署 · 生产环境 · 进程与线程` |
+| `index` | `<项目名> · 全部 Feature 导航` | `美妆客服服务 · 全部 Feature 导航` |
+
+#### title 编号路径的两条底层规则
+
+| 规则 | 内容 |
+| --- | --- |
+| **元素编号链内唯一** | `API-001` 全链唯一，即使嵌在不同模块——它是元素，不是序号 |
+| **视图序号在最小归属单元内从 001 重起** | `DFD-001`（每模块）、`信息设计-001`（每 UI 单元）——它们是视图序号，不是元素编号 |
+
+#### 四条既定裁决（实测后定案，不再摇摆）
+
+1. **carrier / erm 保留链级聚合**。数据流天然跨模块（IN→BIZ→POD），按模块拆会把一次流动切进多张图。链级聚合的属性用 title 里的「全景」二字明示。
+2. **编号路径不加类别词**。写 `I-001 取得可靠候选知识`，不写「阶段 I-001」——编号前缀已表意；类别词一旦开始用，就会出现「有的视图加、有的不加」两种格式并存。
+3. **erm 主题段 id 用英文 slug**（`erm001F-ticket`），title 用中文（`工单`）。LikeC4 的 id 不允许中文，这个映射由上面的对照表固定，不靠记忆。
+4. **API title 保留 METHOD + 路径**。`SRC-001-API-001 POST /wechat/callback 微信客服回调` 较长，但 METHOD + 路径是接口的身份，删掉就失去唯一性。
 
 **SRC 四维度的 title 一律以 `SRC 环 ·` 开头**。这是最容易漏的一条：`erm` / `carrier` / `dfd` / `api` 都是 SRC 环的维度，标题里出现「数据模型全景」而不写 SRC，读者无从判断它属于哪一环。
 
@@ -734,7 +758,7 @@ machine appHost 'app-1' {
 错  view erm001F { title '数据模型全景 · Feature-001-F 工单结构' }
      「数据模型全景」看不出属于 SRC 环，读者会以为它是独立的一层
 
-对  view erm001F-ticket { title 'SRC 环 · 数据模型 · Feature-001-F · 工单' }
+对  view erm001F-ticket { title 'SRC 环 · Feature-001-F · 数据模型全景 · 工单' }
 
 错  view chain001F-f { title '能力清单' }
      看不出是 F 环还是 US 环，两者在设计链里位置完全不同

@@ -561,20 +561,21 @@ views {
 
 **`title` 不是自由文本。** 只规范 id 而不管 title，标题就会各写各的，读者无法从标题回推它属于哪个环——「这张图为什么不是 SRC 层的」这类问题就是这么来的。
 
-**title 必须三段式：`<环代号> · <范围> · <主题>`**
+**title 必须三段式：`<环代号> · <范围> · <编号路径 + 主题>`**。**id 是机器键，title 是人读键，两者必须双射**——从 id 能机械推导 title，反之亦然。
 
 | 视图类别 | title 格式 | 示例 |
 | --- | --- | --- |
-| `pano-<环>` | `<环代号> 全景 · 全部 <范围> · <主题>` | `F 环 · 全部 Feature-NNN-F · 业务能力单元` |
-| `chain<链>-us` | `US 环 · Feature-<编号>-<F\|NF> · 用户故事` | `US 环 · Feature-001-F · 用户故事` |
-| `chain<链>-f` | `F 环 · Feature-<编号>-F · 业务能力单元清单` | `F 环 · Feature-001-F · 业务能力单元清单` |
-| `chain<链>-i-*` | `I 环 · Feature-<编号>-<F\|NF> · <子类>` | `I 环 · Feature-001-F · 业务步骤` |
-| `chain<链>-ui` | `UI 环 · Feature-<编号>-<F\|NF> · 交互面与信息设计` | `UI 环 · Feature-001-F · 交互面与信息设计` |
-| `srcdir<链>` | `SRC 环 · Feature-<编号>-<F\|NF> · 代码结构` | `SRC 环 · Feature-001-F · 代码结构` |
-| `dfd<链>` | `SRC 环 · Feature-<编号>-<F\|NF> · 数据流 · <场景>` | `SRC 环 · Feature-001-F · 数据流 · 订单` |
-| `carrier<链>` | `SRC 环 · Feature-<编号>-<F\|NF> · 数据载体` | `SRC 环 · Feature-001-F · 数据载体` |
-| `erm<链>` | `SRC 环 · Feature-<编号>-<F\|NF> · 数据模型 · <实体>` | `SRC 环 · Feature-001-F · 数据模型 · 工单` |
-| `api<链>` | `SRC 环 · Feature-<编号>-<F\|NF> · 对外接口` | `SRC 环 · Feature-001-F · 对外接口` |
+| `chain<链>-i-<阶段>` | `I 环 · Feature-<链> · I-<阶段> <阶段性目标>` | `I 环 · Feature-001-F · I-001 取得可靠候选知识` |
+| `seq<链>-i-<阶段>-lanes` | `I 环 · Feature-<链> · I-<阶段> 泳道流程` | `I 环 · Feature-001-F · I-001 泳道流程` |
+| `ui<链>-<单元>` | `UI 环 · Feature-<链> · I-<阶段>-UI-<单元> <单元名>` | `UI 环 · Feature-001-F · I-001-UI-001 会话输入` |
+| `ui<链>-<单元>-info-<n>` | `UI 环 · Feature-<链> · UI-<单元>-信息设计-<0n> <名称>` | `UI 环 · Feature-001-F · UI-001-信息设计-001 提问输入信息` |
+| `ui<链>-<单元>-act-<n>` | `UI 环 · Feature-<链> · UI-<单元>-交互设计-<0n> <名称>` | `UI 环 · Feature-001-F · UI-001-交互设计-001 提交提问` |
+| `pano-src-<链>` | `SRC 环 · Feature-<链> · 模块目录全览` | `SRC 环 · Feature-001-F · 模块目录全览` |
+| `dfd<链>-src<模块>-<n>` | `SRC 环 · Feature-<链> · SRC-<模块>-DFD-<0n> <数据流名>` | `SRC 环 · Feature-001-F · SRC-001-DFD-001 提问进入数据流` |
+| `api<链>-src<模块>-<n>` | `SRC 环 · Feature-<链> · SRC-<模块>-API-<编号> <METHOD> <路径> <名称>` | `SRC 环 · Feature-001-F · SRC-001-API-001 POST /orders 提交订单` |
+| `carrier<链>` | `SRC 环 · Feature-<链> · 数据载体全景` | `SRC 环 · Feature-001-F · 数据载体全景` |
+| `erm<链>-<主题>` | `SRC 环 · Feature-<链> · 数据模型全景 · <主题>` | `SRC 环 · Feature-001-F · 数据模型全景 · 工单` |
+| `pano-<环>` | `<环代号> · 全部 Feature · <主题>` | `I 环 · 全部 Feature · 业务状态` |
 | `proc-<环境>` | `构建部署 · <环境> · 进程与线程` | `构建部署 · 生产环境 · 进程与线程` |
 
 **SRC 四维度一律以 `SRC 环 ·` 开头**——最容易漏的就是这条。
@@ -582,11 +583,15 @@ views {
 ```c4
 错  title '数据模型全景 · Feature-001-F 工单结构'
      看不出属于 SRC 环，读者会以为它是独立的一层
-对  title 'SRC 环 · Feature-001-F · 数据模型 · 工单'
+对  title 'SRC 环 · Feature-001-F · 数据模型全景 · 工单'
 
 错  title '能力清单'
      看不出是 F 环还是 US 环
 对  title 'F 环 · Feature-001-F · 业务能力单元清单'
+
+错  title 'I 环 · Feature-001-F · 阶段 I-001 取得候选知识'
+     编号路径不加类别词，「阶段」二字必删——编号前缀已表意
+对  title 'I 环 · Feature-001-F · I-001 取得候选知识'
 ```
 
 **视图 id 只能用九个既定前缀，禁止驼峰与自造前缀**。要区分用连字符后缀（`srcdir001NF-notice`），不改前缀本身。链编号段 `001F` 里的 `F` 是体系既定写法，不算驼峰。
