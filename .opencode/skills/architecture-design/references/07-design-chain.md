@@ -1184,7 +1184,7 @@ model {
 **`validate` 与 `build` 都只检查语法和布局，不检查「该显示的元素有没有显示」。** 元素漏画、归属丢失、越层三类错误全部静默通过。必须导出 JSON 核对实际渲染结果：
 
 ```bash
-likec4 export json -o out.json
+likec4 export json src -o out.json
 node -e "
 const d=require('./out.json');
 for(const id of Object.keys(d.views)){
@@ -1350,6 +1350,16 @@ dep-<环境>         部署视图
 - **视图类型**由环性质决定（上表）
 - **文件组织**按环拆分，详见 `02-multifile-and-fqn.md`
 - **FQN 规则**：Feature 内嵌后，各环元素都成了嵌套元素，**跨作用域引用一律需FQN**（`feat_checkout.us_place`）。详见 `02-multifile-and-fqn.md`
+
+### 多 Feature 设计仓：每个 Feature 一个独立服务
+
+**主 `src/` 是唯一事实源**。多 Feature 时可按 Feature 拆出独立 LikeC4 工程，各自 serve，方便单独查看该 Feature 配套的完整体系各层图：
+
+- `features/<feature-slug>/src/` 复用全部模型文件（模型是共享事实，多余元素无害），只保留该 Feature 的视图 + 自己的 index
+- **归属判定按视图 id 中的链编号段**：`pano-` 除 `pano-src-<链>` 外都是跨 Feature 聚合，只留在主工程；`proc-*`（收敛的运行现实）全部工程保留
+- 子工程由生成器从主 `src/` 派生（design-beauty 见 `scripts/sync-features.mjs`），**不要手工编辑**，模型改动后重新生成
+- **根命令必须显式传 sources 目录**（`likec4 validate src`）：无参数时全仓扫描会把 `features/**` 并入主工程，FQN 冲突产生大量误报（实测 6957 errors）
+- serve 需要 AI 环境变量清理（见 `01-likec4-basics.md` 的 serve 坑）
 
 ---
 

@@ -403,7 +403,7 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 - [ ] 已导出 JSON 核对实际渲染内容（`validate` 与 `build` **都拦不住**漏画与越层）：
 
 ```bash
-likec4 export json -o out.json
+likec4 export json src -o out.json
 node -e "
 const d=require('./out.json');
 for(const id of Object.keys(d.views)){

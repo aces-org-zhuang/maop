@@ -96,7 +96,7 @@ grep -hoE "(title|description) '[^']*'" src/**/*.c4 | grep -oE "'[^']*'" \
 - **视图必须拆到具体元素，不能只有分类容器（硬规则）**。视图里的叶子节点应当是带编号的具体元素（`SRC-001` / `API-001` / `I-003` / `S-000` / `UI-002`），不是「服务端接入泳道」这类分类容器。**只 `include` 容器不会带出子元素**——`include lane_edge` 渲染出来是一个空的泳道框，里面一个 API 都没有，读者看不到 `API-001`。**判据：列出视图全部叶子节点，若没有一个标题带体系编号，说明这张图没有任何具体内容。** 这与「最多跨一层」不冲突：拆到具体指逐个 `include` 叶子，不是把它们平铺。
 - **视图 id 与 title 都受命名规范约束，`title` 不是自由文本**。**title 必须三段式 `<环代号> · <范围> · <编号路径 + 主题>`**，SRC 四维度（`dfd` / `carrier` / `erm` / `api` / `srcdir`）**一律以 `SRC 环 ·` 开头**。**id 是机器键，title 是人读键，两者必须双射**——每个视图类别在 `references/07-design-chain.md` 的 id ↔ title 全量对照表中有唯一模板。四条既定裁决不再摇摆：① carrier / erm 保留链级聚合，title 用「全景」二字明示；② 编号路径不加类别词（写 `I-001 取得候选知识`，不写「阶段 I-001」）；③ erm 主题段 id 用英文 slug、title 用中文；④ API title 保留 METHOD + 路径。视图 id 只能用既定前缀，**禁止驼峰与自造前缀**——要区分加连字符后缀，不改前缀本身。
 - **编号按 Feature 分段，链内同环连续**。`Feature-001` 用 `0xx` 段、`Feature-002` 用 `2xx` 段；同链同环连续不跳号，跳号必须在文件头说明理由（预留给后续增量）。**泳道元素必须复用真实编号，不得自造**——出现「（泳道引用）」「（泳道占位）」后缀说明同一环节被定义了两次。详见 `references/07-design-chain.md`。
-- **交付前必须跑命名机械校验**：`scripts/check-naming.mjs` 检查视图 id 前缀、title 三段式、SRC 四维度的 `SRC 环 ·` 前缀、编号重复与泳道自造编号。**这些错误 `validate` 与 `build` 全部拦不住**。用法：`likec4 export json -o out.json && node scripts/check-naming.mjs out.json`。
+- **交付前必须跑命名机械校验**：`scripts/check-naming.mjs` 检查视图 id 前缀、title 三段式、SRC 四维度的 `SRC 环 ·` 前缀、编号重复与泳道自造编号。**这些错误 `validate` 与 `build` 全部拦不住**。用法：`likec4 export json <sources目录> -o out.json && node scripts/check-naming.mjs out.json`。**sources 目录必须显式传**——无参数时 LikeC4 全仓扫描，会把同仓的 Feature 子工程（features/*/src）也并入，FQN 冲突导致大量误报。
 - **视图名必须自带类型信息**：`pano-<环>`（同类聚合全景）/ `chain<链>-<环>`（分环）/ `seq<链>-<场景>`（时序）/ `dfd`·`carrier`·`erm`·`api`·`srcdir`·`proc`（SRC 各维度）。连字符可用。
 - **全量设计时每一环都要有全景视图**，不只 NF：F/NF/US/I/UI/SRC 六张，另有 I 状态、数据载体、API 三张 SRC 维度全景，全部**跨全部 Feature 聚合**。**聚合发生在全景层，不发生在链视图层。**
 - **推演是红绿循环，不是一次画完的图**。每轮三步：给当前视野所有节点打标（🟢 已覆盖 / 🔴 缺口）→ 选最宽泛的 🔴 判断下钻或横向扩散 → 取最高保真证据把红点转绿或边界化。**每轮必须输出 `Round N Map`**，让用户看到判断如何演进。一轮没取到新证据只是重画图，那是空转不是推进。
@@ -243,7 +243,7 @@ opt   loop   break   alt   when   else   try   catch   finally
 - `references/12-design-origin.md`: **设计起点与切分维度**。交付边界确认、F 链与 NF 链的划分与同构关系、跨链边禁令、文件物理隔离、增量与全量两种模式、归属嵌套表达、变更上升路径。
 - `references/08-design-decision-tree.md`: 设计作业决策树，节点 0-6 的引导流程、每步的确认点、场景分支与反模式。
 - `checklists/model-quality.md`: 模型质量自检清单。
-- `scripts/check-naming.mjs`: **命名合规机械校验器**。检查视图 id 前缀、title 三段式、SRC 四维度的 `SRC 环 ·` 前缀、编号重复、泳道自造编号。用法 `likec4 export json -o out.json && node scripts/check-naming.mjs out.json`。**交付前必跑——这类错误 validate 与 build 都拦不住。**
+- `scripts/check-naming.mjs`: **命名合规机械校验器**。检查视图 id 前缀、title 三段式、SRC 四维度的 `SRC 环 ·` 前缀、编号重复、泳道自造编号。用法 `likec4 export json <sources目录> -o out.json && node scripts/check-naming.mjs out.json`。**交付前必跑——这类错误 validate 与 build 都拦不住。**
 - `templates/`: 可落盘模板。
 - `templates/c4-project-skeleton.md`: 新设计仓的最小文件骨架模板（已实机验证）。
 - `templates/architecture-handoff-spec.md`: 架构交接规格模板，字段与 `technical-design` 的 Handoff Mini-Spec 对齐。
